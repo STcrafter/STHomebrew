@@ -18,26 +18,29 @@ export default function CategoryList() {
   const { category } = useParams();
   const items = data[category] || [];
 
+  console.log('Items for', category, ':', items);
+
   const [filters, setFilters] = useState({});
   const [search, setSearch] = useState('');
 
-  // ===== Определяем поля для фильтрации в зависимости от категории =====
   const filterOptions = useMemo(() => {
-    if (!items.length) return {};
+    if (!items.length) {
+      console.log('No items, returning empty options');
+      return {};
+    }
 
-    // Список полей, по которым будем строить фильтры
     let filterFields = [];
     if (category === 'monsters') {
-      // Для монстров: место обитания, опасность (ОП), тип/размер
       filterFields = ['habitat', 'challenge_rating', 'type'];
     } else if (category === 'spells') {
       filterFields = ['classes', 'level', 'school', 'concentration'];
     } else if (category === 'items') {
       filterFields = ['rarity', 'type', 'attunement'];
     } else {
-      // Для классов, рас, черт фильтров нет (только поиск)
       return {};
     }
+
+    console.log('Filter fields for', category, ':', filterFields);
 
     const options = {};
     filterFields.forEach(field => {
@@ -47,7 +50,6 @@ export default function CategoryList() {
         if (Array.isArray(val)) {
           val.forEach(v => values.add(v));
         } else if (val !== undefined && val !== null) {
-          // Для чисел (challenge_rating) преобразуем в строку
           values.add(String(val));
         }
       });
@@ -55,8 +57,12 @@ export default function CategoryList() {
         options[field] = Array.from(values).sort();
       }
     });
+
+    console.log('Generated filterOptions:', options);
     return options;
   }, [items, category]);
+
+  // ... остальной код без изменений (фильтрация, рендер)
 
   // ===== Фильтрация и поиск =====
   const filteredItems = useMemo(() => {
