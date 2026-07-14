@@ -1,0 +1,152 @@
+.page {
+  padding: 1.5rem;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.back {
+  color: #4d6bfe;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+.header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 0;
+  color: #0b1a3a;
+}
+
+.count {
+  margin-left: auto;
+  background: #eef2f6;
+  padding: 0.3rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #3a4a6a;
+}
+
+.content {
+  display: flex;
+  gap: 2rem;
+}
+
+.filterPanel {
+  flex: 0 0 260px;
+}
+
+.list {
+  flex: 1;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border: 1px solid #eef2f6;
+  transition: transform 0.15s, box-shadow 0.15s;
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+}
+
+.cardImage {
+  height: 120px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.cardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  font-size: 2.8rem;
+  opacity: 0.4;
+}
+
+.card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.4rem 0;
+  color: #1a2a4a;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+.tags span {
+  background: #eef2f6;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.6rem;
+  border-radius: 12px;
+  color: #3a4a6a;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #5a6a8a;
+  margin-top: 0.3rem;
+}
+
+.meta span {
+  background: #f1f5f9;
+  padding: 0.05rem 0.6rem;
+  border-radius: 10px;
+}
+
+.empty {
+  text-align: center;
+  padding: 4rem 0;
+  color: #6a7a9a;
+  font-size: 1.2rem;
+}
+
+@media (max-width: 800px) {
+  .content {
+    flex-direction: column;
+  }
+  .filterPanel {
+    flex: 1;
+  }
+  .header h1 { font-size: 1.8rem; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+}
