@@ -1,7 +1,7 @@
 import styles from './StatBlock.module.css';
 
-export default function StatBlock({ stats }) {
-  if (!stats || typeof stats !== 'object') return null;
+export default function StatBlock({ monster }) {
+  if (!monster || typeof monster !== 'object') return null;
 
   // ===== Вспомогательные функции =====
   const getModifier = (score) => {
@@ -26,29 +26,28 @@ export default function StatBlock({ stats }) {
     CHA: 'ХАР',
   };
 
-  // Спасброски — либо из поля saving_throws, либо вычисляем мод
-  const savingThrows = stats.saving_throws || {};
-
-  // Навыки
-  const skills = stats.skills || {};
+  const savingThrows = monster.saving_throws || {};
+  const skills = monster.skills || {};
 
   return (
     <div className={styles.statblock}>
       {/* ===== Шапка ===== */}
-      <div className={styles.header}>
-        {stats.type && <div className={styles.type}>{stats.type}</div>}
-      </div>
+      {monster.type && (
+        <div className={styles.header}>
+          <div className={styles.type}>{monster.type}</div>
+        </div>
+      )}
 
       {/* ===== Базовые параметры ===== */}
       <div className={styles.basics}>
-        {stats.armor_class && (
-          <div><strong>КД</strong> {stats.armor_class}</div>
+        {monster.armor_class && (
+          <div><strong>КД</strong> {monster.armor_class}</div>
         )}
-        {stats.hit_points && (
-          <div><strong>ХП</strong> {stats.hit_points}</div>
+        {monster.hit_points && (
+          <div><strong>ХП</strong> {monster.hit_points}</div>
         )}
-        {stats.speed && (
-          <div><strong>Скорость</strong> {stats.speed}</div>
+        {monster.speed && (
+          <div><strong>Скорость</strong> {monster.speed}</div>
         )}
       </div>
 
@@ -64,7 +63,7 @@ export default function StatBlock({ stats }) {
         <tbody>
           <tr>
             {statAbilities.map(ab => {
-              const score = stats[ab];
+              const score = monster[ab];
               const mod = getModifier(score);
               return (
                 <td key={ab}>
@@ -104,26 +103,25 @@ export default function StatBlock({ stats }) {
       )}
 
       {/* ===== Чувства, языки, ОП ===== */}
-      {stats.senses && (
-        <div className={styles.senses}><strong>Чувства</strong> {stats.senses}</div>
+      {monster.senses && (
+        <div className={styles.senses}><strong>Чувства</strong> {monster.senses}</div>
       )}
-      {stats.languages && (
-        <div className={styles.languages}><strong>Языки</strong> {stats.languages}</div>
+      {monster.languages && (
+        <div className={styles.languages}><strong>Языки</strong> {monster.languages}</div>
       )}
-      {stats.challenge_rating !== undefined && (
-        <div className={styles.cr}><strong>ОП</strong> {stats.challenge_rating}</div>
+      {monster.challenge_rating !== undefined && (
+        <div className={styles.cr}><strong>ОП</strong> {monster.challenge_rating}</div>
       )}
 
-      {/* ===== Особенности (traits) ===== */}
-      {stats.traits && stats.traits.length > 0 && (
+      {/* ===== Особенности ===== */}
+      {monster.traits && monster.traits.length > 0 && (
         <>
           <div className={styles.sectionDivider}>Особенности</div>
           <div className={styles.traits}>
-            {stats.traits.map((trait, idx) => (
+            {monster.traits.map((trait, idx) => (
               <div key={idx} className={styles.trait}>
                 <div className={styles.traitName}>{trait.name}</div>
                 <div className={styles.traitDesc}>{trait.description}</div>
-                {/* Если есть заклинания */}
                 {trait.spells && (
                   <div className={styles.spellList}>
                     {Object.entries(trait.spells).map(([freq, spells]) => (
@@ -141,11 +139,11 @@ export default function StatBlock({ stats }) {
       )}
 
       {/* ===== Действия ===== */}
-      {stats.actions && stats.actions.length > 0 && (
+      {monster.actions && monster.actions.length > 0 && (
         <>
           <div className={styles.sectionDivider}>Действия</div>
           <div className={styles.actions}>
-            {stats.actions.map((action, idx) => (
+            {monster.actions.map((action, idx) => (
               <div key={idx} className={styles.action}>
                 <div className={styles.actionName}>{action.name}</div>
                 <div className={styles.actionDesc}>{action.description}</div>
@@ -156,11 +154,11 @@ export default function StatBlock({ stats }) {
       )}
 
       {/* ===== Бонусные действия ===== */}
-      {stats.bonus_actions && stats.bonus_actions.length > 0 && (
+      {monster.bonus_actions && monster.bonus_actions.length > 0 && (
         <>
           <div className={styles.sectionDivider}>Бонусные действия</div>
           <div className={styles.bonusActions}>
-            {stats.bonus_actions.map((action, idx) => (
+            {monster.bonus_actions.map((action, idx) => (
               <div key={idx} className={styles.action}>
                 <div className={styles.actionName}>{action.name}</div>
                 <div className={styles.actionDesc}>{action.description}</div>
@@ -171,11 +169,11 @@ export default function StatBlock({ stats }) {
       )}
 
       {/* ===== Реакции ===== */}
-      {stats.reactions && stats.reactions.length > 0 && (
+      {monster.reactions && monster.reactions.length > 0 && (
         <>
           <div className={styles.sectionDivider}>Реакции</div>
           <div className={styles.reactions}>
-            {stats.reactions.map((action, idx) => (
+            {monster.reactions.map((action, idx) => (
               <div key={idx} className={styles.action}>
                 <div className={styles.actionName}>{action.name}</div>
                 <div className={styles.actionDesc}>{action.description}</div>
@@ -186,13 +184,13 @@ export default function StatBlock({ stats }) {
       )}
 
       {/* ===== Легендарные действия ===== */}
-      {stats.legendary_actions && (
+      {monster.legendary_actions && (
         <>
           <div className={styles.sectionDivider}>Легендарные действия</div>
           <div className={styles.legendary}>
-            <p className={styles.legendaryDesc}>{stats.legendary_actions.description}</p>
+            <p className={styles.legendaryDesc}>{monster.legendary_actions.description}</p>
             <div className={styles.legendaryActions}>
-              {stats.legendary_actions.actions.map((action, idx) => (
+              {monster.legendary_actions.actions.map((action, idx) => (
                 <div key={idx} className={styles.action}>
                   <div className={styles.actionName}>{action.name}</div>
                   <div className={styles.actionDesc}>{action.description}</div>
@@ -204,13 +202,13 @@ export default function StatBlock({ stats }) {
       )}
 
       {/* ===== Действия логова ===== */}
-      {stats.lair_actions && (
+      {monster.lair_actions && (
         <>
           <div className={styles.sectionDivider}>Действия логова</div>
           <div className={styles.lair}>
-            <p className={styles.lairDesc}>{stats.lair_actions.description}</p>
+            <p className={styles.lairDesc}>{monster.lair_actions.description}</p>
             <div className={styles.lairActions}>
-              {stats.lair_actions.actions.map((action, idx) => (
+              {monster.lair_actions.actions.map((action, idx) => (
                 <div key={idx} className={styles.action}>
                   <div className={styles.actionName}>{action.name}</div>
                   <div className={styles.actionDesc}>{action.description}</div>
@@ -221,10 +219,10 @@ export default function StatBlock({ stats }) {
         </>
       )}
 
-      {/* ===== Места обитания (для информации, можно вывести внизу) ===== */}
-      {stats.habitat && stats.habitat.length > 0 && (
+      {/* ===== Места обитания ===== */}
+      {monster.habitat && monster.habitat.length > 0 && (
         <div className={styles.habitat}>
-          <strong>Места обитания:</strong> {stats.habitat.join(', ')}
+          <strong>Места обитания:</strong> {monster.habitat.join(', ')}
         </div>
       )}
     </div>
