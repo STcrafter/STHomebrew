@@ -5,7 +5,7 @@ import ItemDetail from './pages/ItemDetail';
 
 function App() {
   return (
-    <BrowserRouter basename="/STHomebrew">   // ← так же имя репозитория
+    <BrowserRouter basename="/STHomebrew">  
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/category/:category" element={<CategoryList />} />
