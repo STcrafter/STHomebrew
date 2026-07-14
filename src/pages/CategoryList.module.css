@@ -150,3 +150,56 @@
   .header h1 { font-size: 1.8rem; }
   .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
 }
+
+/* ... существующие стили ... */
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.sortControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  padding: 0.3rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid #eef2f6;
+}
+
+.sortLabel {
+  font-size: 0.9rem;
+  color: #5a6a8a;
+  margin-right: 0.3rem;
+}
+
+.sortButton {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 0.9rem;
+  color: #3a4a6a;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sortButton:hover {
+  background: #f1f5f9;
+}
+
+.sortButton.active {
+  background: #eef2f6;
+  border-color: #dce1e8;
+  font-weight: 500;
+  color: #0b1a3a;
+}
+
+.sortArrow {
+  margin-left: 2px;
+}
