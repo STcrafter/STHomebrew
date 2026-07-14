@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { data } from '../data';
 import FilterPanel from '../components/FilterPanel';
 import SearchBar from '../components/SearchBar';
@@ -18,16 +18,23 @@ export default function CategoryList() {
   const { category } = useParams();
   const items = data[category] || [];
 
-  console.log('Items for', category, ':', items);
-
+  // Состояния фильтров и поиска
   const [filters, setFilters] = useState({});
   const [search, setSearch] = useState('');
 
+  // Состояния сортировки
+  const [sortField, setSortField] = useState('name');
+  const [sortDirection, setSortDirection] = useState('asc'); // 'asc' или 'desc'
+
+  // Сброс сортировки при смене категории
+  useEffect(() => {
+    setSortField('name');
+    setSortDirection('asc');
+  }, [category]);
+
+  // Генерация опций для фильтров
   const filterOptions = useMemo(() => {
-    if (!items.length) {
-      console.log('No items, returning empty options');
-      return {};
-    }
+    if (!items.length) return {};
 
     let filterFields = [];
     if (category === 'monsters') {
@@ -39,8 +46,6 @@ export default function CategoryList() {
     } else {
       return {};
     }
-
-    console.log('Filter fields for', category, ':', filterFields);
 
     const options = {};
     filterFields.forEach(field => {
@@ -57,16 +62,12 @@ export default function CategoryList() {
         options[field] = Array.from(values).sort();
       }
     });
-
-    console.log('Generated filterOptions:', options);
     return options;
   }, [items, category]);
 
-  // ... остальной код без изменений (фильтрация, рендер)
-
-  // ===== Фильтрация и поиск =====
+  // Фильтрация и поиск
   const filteredItems = useMemo(() => {
-    return items.filter(item => {
+    let result = items.filter(item => {
       // Поиск по имени
       if (search && !item.name.toLowerCase().includes(search.toLowerCase())) {
         return false;
@@ -76,12 +77,10 @@ export default function CategoryList() {
         if (!selectedValues || selectedValues.length === 0) continue;
         const itemVal = item[key];
         if (Array.isArray(itemVal)) {
-          // Если поле - массив (habitat), проверяем пересечение
           if (!itemVal.some(v => selectedValues.includes(String(v)))) {
             return false;
           }
         } else {
-          // Для чисел и строк
           if (!selectedValues.includes(String(itemVal))) {
             return false;
           }
@@ -89,7 +88,23 @@ export default function CategoryList() {
       }
       return true;
     });
-  }, [items, search, filters]);
+
+    // Сортировка
+    if (sortField === 'name') {
+      result.sort((a, b) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+        return sortDirection === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+      });
+    } else if (sortField === 'challenge_rating') {
+      result.sort((a, b) => {
+        const crA = a.challenge_rating ?? 0;
+        const crB = b.challenge_rating ?? 0;
+        return sortDirection === 'asc' ? crA - crB : crB - crA;
+      });
+    }
+    return result;
+  }, [items, search, filters, sortField, sortDirection]);
 
   const handleFilterChange = (field, selected) => {
     setFilters(prev => ({ ...prev, [field]: selected }));
@@ -98,6 +113,25 @@ export default function CategoryList() {
   const handleSearch = (query) => {
     setSearch(query);
   };
+
+  // Обработчики сортировки
+  const handleSortFieldChange = (field) => {
+    if (sortField === field) {
+      // Если уже выбрано это поле, инвертируем направление
+      setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      // Иначе меняем поле и ставим сортировку по возрастанию
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  // Определяем доступные поля сортировки для категории
+  const sortOptions = [];
+  sortOptions.push({ field: 'name', label: 'По алфавиту' });
+  if (category === 'monsters') {
+    sortOptions.push({ field: 'challenge_rating', label: 'По опасности' });
+  }
 
   return (
     <div className={styles.page}>
@@ -115,7 +149,26 @@ export default function CategoryList() {
         )}
 
         <main className={styles.list}>
-          <SearchBar onSearch={handleSearch} placeholder="Поиск по названию..." />
+          <div className={styles.toolbar}>
+            <SearchBar onSearch={handleSearch} placeholder="Поиск по названию..." />
+            <div className={styles.sortControls}>
+              <span className={styles.sortLabel}>Сортировать:</span>
+              {sortOptions.map(opt => (
+                <button
+                  key={opt.field}
+                  className={`${styles.sortButton} ${sortField === opt.field ? styles.active : ''}`}
+                  onClick={() => handleSortFieldChange(opt.field)}
+                >
+                  {opt.label}
+                  {sortField === opt.field && (
+                    <span className={styles.sortArrow}>
+                      {sortDirection === 'asc' ? ' ↑' : ' ↓'}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
 
           <div className={styles.grid}>
             {filteredItems.map(item => (
