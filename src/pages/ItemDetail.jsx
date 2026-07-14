@@ -22,28 +22,29 @@ export default function ItemDetail() {
   const renderDetails = () => {
     switch (category) {
       case 'monsters':
-        return (
-          <>
-            {item.image && (
-              <div className={styles.imageWrapper}>
-                <img src={item.image} alt={item.name} className={styles.detailImage} />
-              </div>
-            )}
-            <div className={styles.description}>
-              <h3>Описание</h3>
-              <p>{item.description}</p>
+    return (
+      <>
+        {item.image && (
+          <div className={styles.imageWrapper}>
+            <img src={item.image} alt={item.name} className={styles.detailImage} />
+          </div>
+        )}
+        <div className={styles.description}>
+          <h3>Описание</h3>
+          <p>{item.description}</p>
+        </div>
+        {/* Передаём весь item, а не item.statblock */}
+        <StatBlock monster={item} />
+        {item.tags && (
+          <div className={styles.tags}>
+            <h3>Теги</h3>
+            <div className={styles.tagList}>
+              {item.tags.map((tag, i) => <span key={i}>{tag}</span>)}
             </div>
-            {item.statblock && <StatBlock stats={item.statblock} />}
-            {item.tags && (
-              <div className={styles.tags}>
-                <h3>Теги</h3>
-                <div className={styles.tagList}>
-                  {item.tags.map((tag, i) => <span key={i}>{tag}</span>)}
-                </div>
-              </div>
-            )}
-          </>
-        );
+          </div>
+        )}
+      </>
+    );
 
       case 'spells':
         return (
