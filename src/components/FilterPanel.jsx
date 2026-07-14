@@ -1,6 +1,21 @@
 import { useState } from 'react';
 import styles from './FilterPanel.module.css';
 
+// Словарь перевода названий полей
+const fieldLabels = {
+  habitat: 'Места обитания',
+  challenge_rating: 'Уровень опасности (ОП)',
+  category: 'Тип существа',
+  classes: 'Классы',
+  level: 'Уровень заклинания',
+  school: 'Школа магии',
+  concentration: 'Концентрация',
+  rarity: 'Редкость',
+  type: 'Тип предмета',
+  attunement: 'Настройка',
+  // можно добавить другие поля, если появятся
+};
+
 export default function FilterPanel({ options, onFilterChange }) {
   const [openSections, setOpenSections] = useState({});
 
@@ -31,7 +46,7 @@ export default function FilterPanel({ options, onFilterChange }) {
         return (
           <div key={field} className={styles.section}>
             <div className={styles.sectionHeader} onClick={() => toggleSection(field)}>
-              <span>{field}</span>
+              <span>{fieldLabels[field] || field}</span>
               <span>{openSections[field] ? '−' : '+'}</span>
             </div>
             {openSections[field] && (
