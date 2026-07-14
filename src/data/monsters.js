@@ -133,6 +133,6 @@ export default [
     "Побережья",
     "Горы"
   ],
-  "image": ".../images/aarakocras.jpg"
+  "image": "/images/aarakocras.jpg"
 },
 ];
