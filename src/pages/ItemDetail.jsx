@@ -22,29 +22,34 @@ export default function ItemDetail() {
   const renderDetails = () => {
     switch (category) {
       case 'monsters':
-    return (
-      <>
-        {item.image && (
-          <div className={styles.imageWrapper}>
-            <img src={item.image} alt={item.name} className={styles.detailImage} />
-          </div>
-        )}
-        <div className={styles.description}>
-          <h3>Описание</h3>
-          <p>{item.description}</p>
+  return (
+    <>
+      {item.image && (
+        <div className={styles.imageWrapper}>
+          <img src={item.image} alt={item.name} className={styles.detailImage} />
         </div>
-        {/* Передаём весь item, а не item.statblock */}
-        <StatBlock monster={item} />
-        {item.tags && (
-          <div className={styles.tags}>
-            <h3>Теги</h3>
-            <div className={styles.tagList}>
-              {item.tags.map((tag, i) => <span key={i}>{tag}</span>)}
-            </div>
-          </div>
+      )}
+      <div className={styles.description}>
+        <h3>Описание</h3>
+        {item.description ? (
+          item.description.split(/\n\n+/).map((paragraph, idx) => (
+            <p key={idx}>{paragraph}</p>
+          ))
+        ) : (
+          <p>Описание отсутствует</p>
         )}
-      </>
-    );
+      </div>
+      <StatBlock monster={item} />
+      {item.tags && (
+        <div className={styles.tags}>
+          <h3>Теги</h3>
+          <div className={styles.tagList}>
+            {item.tags.map((tag, i) => <span key={i}>{tag}</span>)}
+          </div>
+        </div>
+      )}
+    </>
+  );
 
       case 'spells':
         return (
