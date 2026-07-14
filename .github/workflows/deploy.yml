@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]  # или master, если у вас так
+    branches: [ main ]  # ГЁГ«ГЁ master, ГҐГ±Г«ГЁ Гі ГўГ Г± ГІГ ГЄ
 
 jobs:
   build-and-deploy:
@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: npm ci
+      - run: npm install   # РІРјРµСЃС‚Рѕ npm ci
       - run: npm run build
       - uses: peaceiris/actions-gh-pages@v3
         with:
