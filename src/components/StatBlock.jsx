@@ -1,11 +1,9 @@
 import styles from './StatBlock.module.css';
 
 export default function StatBlock({ monster }) {
-  // Если передан объект со statblock (старая структура), используем его
   const data = monster?.statblock || monster;
   if (!data || typeof data !== 'object') return null;
 
-  // ===== Вспомогательные функции =====
   const getModifier = (score) => {
     if (score === undefined || score === null) return null;
     const mod = Math.floor((score - 10) / 2);
@@ -32,27 +30,21 @@ export default function StatBlock({ monster }) {
 
   return (
     <div className={styles.statblock}>
-      {/* ===== Шапка ===== */}
+      {/* Шапка */}
       {data.type && (
         <div className={styles.header}>
           <div className={styles.type}>{data.type}</div>
         </div>
       )}
 
-      {/* ===== Базовые параметры ===== */}
+      {/* Базовые параметры */}
       <div className={styles.basics}>
-        {data.armor_class && (
-          <div><strong>КД</strong> {data.armor_class}</div>
-        )}
-        {data.hit_points && (
-          <div><strong>ХП</strong> {data.hit_points}</div>
-        )}
-        {data.speed && (
-          <div><strong>Скорость</strong> {data.speed}</div>
-        )}
+        {data.armor_class && <div><strong>КД</strong> {data.armor_class}</div>}
+        {data.hit_points && <div><strong>ХП</strong> {data.hit_points}</div>}
+        {data.speed && <div><strong>Скорость</strong> {data.speed}</div>}
       </div>
 
-      {/* ===== Таблица характеристик ===== */}
+      {/* Таблица характеристик и спасбросков */}
       <table className={styles.statsTable}>
         <thead>
           <tr>
@@ -76,7 +68,10 @@ export default function StatBlock({ monster }) {
           </tr>
           <tr className={styles.saveRow}>
             {statAbilities.map(ab => {
-              const saveBonus = savingThrows[ab] !== undefined ? savingThrows[ab] : null;
+              // Если спасбросок указан явно – используем его, иначе – модификатор характеристики
+              const saveBonus = savingThrows[ab] !== undefined
+                ? savingThrows[ab]
+                : getModifier(data[ab]);
               return (
                 <td key={ab}>
                   <span className={styles.saveLabel}>Спас.</span>
@@ -90,7 +85,7 @@ export default function StatBlock({ monster }) {
         </tbody>
       </table>
 
-      {/* ===== Навыки ===== */}
+      {/* Навыки */}
       {Object.keys(skills).length > 0 && (
         <div className={styles.skills}>
           <strong>Навыки</strong>{' '}
@@ -103,18 +98,14 @@ export default function StatBlock({ monster }) {
         </div>
       )}
 
-      {/* ===== Чувства, языки, ОП ===== */}
-      {data.senses && (
-        <div className={styles.senses}><strong>Чувства</strong> {data.senses}</div>
-      )}
-      {data.languages && (
-        <div className={styles.languages}><strong>Языки</strong> {data.languages}</div>
-      )}
+      {/* Чувства, языки, ОП */}
+      {data.senses && <div className={styles.senses}><strong>Чувства</strong> {data.senses}</div>}
+      {data.languages && <div className={styles.languages}><strong>Языки</strong> {data.languages}</div>}
       {data.challenge_rating !== undefined && (
         <div className={styles.cr}><strong>ОП</strong> {data.challenge_rating}</div>
       )}
 
-      {/* ===== Особенности ===== */}
+      {/* Особенности */}
       {data.traits && data.traits.length > 0 && (
         <>
           <div className={styles.sectionDivider}>Особенности</div>
@@ -139,7 +130,7 @@ export default function StatBlock({ monster }) {
         </>
       )}
 
-      {/* ===== Действия ===== */}
+      {/* Действия */}
       {data.actions && data.actions.length > 0 && (
         <>
           <div className={styles.sectionDivider}>Действия</div>
@@ -154,7 +145,7 @@ export default function StatBlock({ monster }) {
         </>
       )}
 
-      {/* ===== Бонусные действия ===== */}
+      {/* Бонусные действия */}
       {data.bonus_actions && data.bonus_actions.length > 0 && (
         <>
           <div className={styles.sectionDivider}>Бонусные действия</div>
@@ -169,7 +160,7 @@ export default function StatBlock({ monster }) {
         </>
       )}
 
-      {/* ===== Реакции ===== */}
+      {/* Реакции */}
       {data.reactions && data.reactions.length > 0 && (
         <>
           <div className={styles.sectionDivider}>Реакции</div>
@@ -184,7 +175,7 @@ export default function StatBlock({ monster }) {
         </>
       )}
 
-      {/* ===== Легендарные действия ===== */}
+      {/* Легендарные действия */}
       {data.legendary_actions && (
         <>
           <div className={styles.sectionDivider}>Легендарные действия</div>
@@ -202,7 +193,7 @@ export default function StatBlock({ monster }) {
         </>
       )}
 
-      {/* ===== Действия логова ===== */}
+      {/* Действия логова */}
       {data.lair_actions && (
         <>
           <div className={styles.sectionDivider}>Действия логова</div>
@@ -220,7 +211,7 @@ export default function StatBlock({ monster }) {
         </>
       )}
 
-      {/* ===== Места обитания ===== */}
+      {/* Места обитания */}
       {data.habitat && data.habitat.length > 0 && (
         <div className={styles.habitat}>
           <strong>Места обитания:</strong> {data.habitat.join(', ')}
