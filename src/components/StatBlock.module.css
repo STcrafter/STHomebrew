@@ -1,39 +1,165 @@
-.block {
-  background: white;
-  border-radius: 10px;
-  padding: 1.2rem;
-  border: 1px solid #eef2f6;
+.statblock {
+  background: #f9f6f0;  /* Цвет, как в книге D&D */
+  border: 1px solid #d1c7b8;
+  border-radius: 6px;
+  padding: 1.5rem;
+  font-family: 'Times New Roman', serif;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #1e1a16;
+  max-width: 800px;
+  margin: 1rem 0;
 }
 
-.block h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1.1rem;
-  color: #1a2a4a;
+.header {
+  border-bottom: 2px solid #d1c7b8;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.25rem;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 0.8rem 1.5rem;
+.type {
+  font-style: italic;
+  font-size: 0.95rem;
+  color: #3a322a;
 }
 
-.stat, .metaStat {
+.basics {
   display: flex;
-  justify-content: space-between;
-  padding: 0.2rem 0;
-  border-bottom: 1px solid #f1f5f9;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
 }
 
-.stat .label, .metaStat .label {
-  font-weight: 500;
-  color: #3a4a6a;
-}
-
-.stat .value, .metaStat .value {
+.basics strong {
   font-weight: 600;
-  color: #0b1a3a;
 }
 
-.metaStat {
-  grid-column: span 2;
+/* Таблица характеристик */
+.statsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  text-align: center;
+}
+
+.statsTable th {
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.1rem 0.2rem;
+  border-bottom: 1px solid #d1c7b8;
+}
+
+.statsTable td {
+  padding: 0.15rem 0.2rem;
+  border-bottom: 1px solid #e8e0d8;
+}
+
+.score {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.mod {
+  font-size: 0.8rem;
+  color: #5a4e42;
+  margin-left: 2px;
+}
+
+.saveRow td {
+  padding-top: 0.15rem;
+  padding-bottom: 0.3rem;
+}
+
+.saveLabel {
+  font-size: 0.6rem;
+  color: #5a4e42;
+  margin-right: 4px;
+}
+
+.saveValue {
+  font-weight: 500;
+}
+
+/* Навыки, чувства, языки, ОП */
+.skills,
+.senses,
+.languages,
+.cr {
+  margin: 0.25rem 0;
+}
+
+.skills strong,
+.senses strong,
+.languages strong,
+.cr strong {
+  font-weight: 600;
+}
+
+.sectionDivider {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid #d1c7b8;
+  margin: 1rem 0 0.5rem 0;
+  padding-bottom: 0.1rem;
+}
+
+/* Особенности, действия и т.д. */
+.traits,
+.actions,
+.bonusActions,
+.reactions,
+.legendaryActions,
+.lairActions {
+  margin: 0.25rem 0;
+}
+
+.trait,
+.action {
+  margin-bottom: 0.5rem;
+}
+
+.traitName,
+.actionName {
+  font-weight: 700;
+  font-style: italic;
+}
+
+.traitDesc,
+.actionDesc {
+  margin-left: 0.5rem;
+}
+
+/* Заклинания внутри особенностей */
+.spellList {
+  margin: 0.25rem 0 0.25rem 1rem;
+}
+
+.spellGroup {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.spellFreq {
+  font-weight: 600;
+  min-width: 6rem;
+}
+
+.spellNames {
+  font-style: italic;
+}
+
+/* Легендарные действия и логово */
+.legendaryDesc,
+.lairDesc {
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.habitat {
+  margin-top: 1rem;
+  border-top: 1px solid #d1c7b8;
+  padding-top: 0.5rem;
+  font-style: italic;
 }
