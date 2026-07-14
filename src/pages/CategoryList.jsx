@@ -5,7 +5,6 @@ import FilterPanel from '../components/FilterPanel';
 import SearchBar from '../components/SearchBar';
 import styles from './CategoryList.module.css';
 
-// Маппинг названий категорий на русский
 const categoryLabels = {
   monsters: 'Монстры',
   spells: 'Заклинания',
@@ -19,24 +18,28 @@ export default function CategoryList() {
   const { category } = useParams();
   const items = data[category] || [];
 
-  // Состояния фильтров и поиска
   const [filters, setFilters] = useState({});
   const [search, setSearch] = useState('');
 
-  // Получение всех возможных значений для фильтрации (для динамических фильтров)
+  // ===== Определяем поля для фильтрации в зависимости от категории =====
   const filterOptions = useMemo(() => {
     if (!items.length) return {};
-    const options = {};
-    // Определяем поля для фильтрации в зависимости от категории
+
+    // Список полей, по которым будем строить фильтры
     let filterFields = [];
-    if (category === 'monsters') filterFields = ['tags']; // теги как массив
-    else if (category === 'spells') filterFields = ['classes', 'level', 'school', 'concentration'];
-    else if (category === 'items') filterFields = ['rarity', 'type', 'attunement'];
-    else if (category === 'classes' || category === 'races' || category === 'feats') {
-      // Для этих категорий фильтров нет, только поиск
+    if (category === 'monsters') {
+      // Для монстров: место обитания, опасность (ОП), тип/размер
+      filterFields = ['habitat', 'challenge_rating', 'type'];
+    } else if (category === 'spells') {
+      filterFields = ['classes', 'level', 'school', 'concentration'];
+    } else if (category === 'items') {
+      filterFields = ['rarity', 'type', 'attunement'];
+    } else {
+      // Для классов, рас, черт фильтров нет (только поиск)
       return {};
     }
 
+    const options = {};
     filterFields.forEach(field => {
       const values = new Set();
       items.forEach(item => {
@@ -44,6 +47,7 @@ export default function CategoryList() {
         if (Array.isArray(val)) {
           val.forEach(v => values.add(v));
         } else if (val !== undefined && val !== null) {
+          // Для чисел (challenge_rating) преобразуем в строку
           values.add(String(val));
         }
       });
@@ -54,7 +58,7 @@ export default function CategoryList() {
     return options;
   }, [items, category]);
 
-  // Фильтрация и поиск
+  // ===== Фильтрация и поиск =====
   const filteredItems = useMemo(() => {
     return items.filter(item => {
       // Поиск по имени
@@ -66,11 +70,12 @@ export default function CategoryList() {
         if (!selectedValues || selectedValues.length === 0) continue;
         const itemVal = item[key];
         if (Array.isArray(itemVal)) {
-          // Если поле - массив, проверяем пересечение
+          // Если поле - массив (habitat), проверяем пересечение
           if (!itemVal.some(v => selectedValues.includes(String(v)))) {
             return false;
           }
         } else {
+          // Для чисел и строк
           if (!selectedValues.includes(String(itemVal))) {
             return false;
           }
@@ -97,7 +102,6 @@ export default function CategoryList() {
       </div>
 
       <div className={styles.content}>
-        {/* Панель фильтров (если есть опции) */}
         {Object.keys(filterOptions).length > 0 && (
           <aside className={styles.filterPanel}>
             <FilterPanel options={filterOptions} onFilterChange={handleFilterChange} />
@@ -119,9 +123,14 @@ export default function CategoryList() {
                 </div>
                 <h3>{item.name}</h3>
                 {/* Краткая информация для превью */}
-                {category === 'monsters' && item.tags && (
-                  <div className={styles.tags}>
-                    {item.tags.slice(0, 3).map((tag, i) => <span key={i}>{tag}</span>)}
+                {category === 'monsters' && (
+                  <div className={styles.meta}>
+                    {item.challenge_rating !== undefined && (
+                      <span>ОП {item.challenge_rating}</span>
+                    )}
+                    {item.habitat && item.habitat.length > 0 && (
+                      <span>{item.habitat.slice(0, 2).join(', ')}</span>
+                    )}
                   </div>
                 )}
                 {category === 'spells' && (
