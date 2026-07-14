@@ -14,7 +14,6 @@ export default function FilterPanel({ options, onFilterChange }) {
       ? [...current, value]
       : current.filter(v => v !== value);
     onFilterChange(field, newSelected.length > 0 ? newSelected : null);
-    // Сохраняем выбранное в options (для сохранения состояния)
     if (options[field]) {
       options[field].selected = newSelected;
     }
@@ -24,10 +23,7 @@ export default function FilterPanel({ options, onFilterChange }) {
     <div className={styles.panel}>
       <h3>Фильтры</h3>
       {Object.entries(options).map(([field, values]) => {
-        if (typeof values === 'object' && !Array.isArray(values)) {
-          // Если уже содержит selected, но мы передаём массив строк
-          return null;
-        }
+        if (typeof values === 'object' && !Array.isArray(values)) return null;
         const selected = options[field]?.selected || [];
         const displayValues = Array.isArray(values) ? values : [];
         if (displayValues.length === 0) return null;
