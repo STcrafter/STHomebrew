@@ -34,7 +34,7 @@ export default function FilterPanel({ options, onFilterChange }) {
               <span>{field}</span>
               <span>{openSections[field] ? '−' : '+'}</span>
             </div>
-            {openSections[field] !== false && (
+            {openSections[field] && (
               <div className={styles.sectionContent}>
                 {displayValues.map((val) => (
                   <label key={val} className={styles.checkbox}>
