@@ -187,7 +187,7 @@ export default [
     "Побережья",
     "Горы"
   ],
-  "image": "/images/aarakocras.jpg"
+  "image": "/STHomebrew/images/aarakocras.jpg"
 },
   {
   "id": "mme2026_3",
@@ -277,6 +277,6 @@ export default [
     "Побережья",
     "Горы"
   ],
-  "image": "/images/aarakocras.jpg"
+  "image": "/STHomebrew/images/aarakocras.jpg"
 },
 ];
