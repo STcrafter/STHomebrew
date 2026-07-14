@@ -31,7 +31,7 @@ export default function CategoryList() {
 
     let filterFields = [];
     if (category === 'monsters') {
-      filterFields = ['habitat', 'challenge_rating', 'type'];
+      filterFields = ['habitat', 'challenge_rating', 'category'];
     } else if (category === 'spells') {
       filterFields = ['classes', 'level', 'school', 'concentration'];
     } else if (category === 'items') {
