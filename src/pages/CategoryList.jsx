@@ -33,37 +33,53 @@ export default function CategoryList() {
   }, [category]);
 
   // Генерация опций для фильтров
-  const filterOptions = useMemo(() => {
-    if (!items.length) return {};
+const filterOptions = useMemo(() => {
+  if (!items.length) return {};
 
-    let filterFields = [];
-    if (category === 'monsters') {
-      filterFields = ['habitat', 'challenge_rating', 'category'];
-    } else if (category === 'spells') {
-      filterFields = ['classes', 'level', 'school', 'concentration'];
-    } else if (category === 'items') {
-      filterFields = ['rarity', 'type', 'attunement'];
-    } else {
-      return {};
-    }
+  let filterFields = [];
+  if (category === 'monsters') {
+    filterFields = ['habitat', 'challenge_rating', 'category'];
+  } else if (category === 'spells') {
+    filterFields = ['classes', 'level', 'school', 'concentration'];
+  } else if (category === 'items') {
+    filterFields = ['rarity', 'type', 'attunement'];
+  } else {
+    return {};
+  }
 
-    const options = {};
-    filterFields.forEach(field => {
-      const values = new Set();
-      items.forEach(item => {
-        const val = item[field];
-        if (Array.isArray(val)) {
-          val.forEach(v => values.add(v));
-        } else if (val !== undefined && val !== null) {
-          values.add(String(val));
-        }
-      });
-      if (values.size > 0) {
-        options[field] = Array.from(values).sort();
+  const options = {};
+  filterFields.forEach(field => {
+    const values = new Set();
+    items.forEach(item => {
+      let val = item[field];
+      if (val === undefined || val === null) return;
+      
+      // Преобразуем булевы значения в читаемый вид
+      if (typeof val === 'boolean') {
+        val = val ? 'Да' : 'Нет';
+      }
+      // Если это массив, добавляем каждый элемент
+      if (Array.isArray(val)) {
+        val.forEach(v => {
+          // Если элемент тоже булевый (маловероятно, но на всякий случай)
+          const strVal = typeof v === 'boolean' ? (v ? 'Да' : 'Нет') : String(v);
+          values.add(strVal);
+        });
+      } else {
+        values.add(String(val));
       }
     });
-    return options;
-  }, [items, category]);
+    if (values.size > 0) {
+      // Для числовых полей (challenge_rating, level) сортируем по возрастанию чисел
+      if (field === 'challenge_rating' || field === 'level') {
+        options[field] = Array.from(values).sort((a, b) => Number(a) - Number(b));
+      } else {
+        options[field] = Array.from(values).sort();
+      }
+    }
+  });
+  return options;
+}, [items, category]);
 
   // Фильтрация и поиск
   const filteredItems = useMemo(() => {
