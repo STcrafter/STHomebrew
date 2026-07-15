@@ -97,7 +97,26 @@ export default function StatBlock({ monster }) {
           ))}
         </div>
       )}
-
+{/* ===== Уязвимости, Сопротивления, Иммунитеты ===== */}
+{(data.damage_vulnerabilities?.length > 0 ||
+  data.damage_resistances?.length > 0 ||
+  data.damage_immunities?.length > 0 ||
+  data.condition_immunities?.length > 0) && (
+  <div className={styles.damageInfo}>
+    {data.damage_vulnerabilities?.length > 0 && (
+      <div><strong>Уязвимости</strong> {data.damage_vulnerabilities.join(', ')}</div>
+    )}
+    {data.damage_resistances?.length > 0 && (
+      <div><strong>Сопротивления</strong> {data.damage_resistances.join(', ')}</div>
+    )}
+    {data.damage_immunities?.length > 0 && (
+      <div><strong>Иммунитеты к урону</strong> {data.damage_immunities.join(', ')}</div>
+    )}
+    {data.condition_immunities?.length > 0 && (
+      <div><strong>Иммунитеты к состояниям</strong> {data.condition_immunities.join(', ')}</div>
+    )}
+  </div>
+)}
       {/* Чувства, языки, ОП */}
       {data.senses && <div className={styles.senses}><strong>Чувства</strong> {data.senses}</div>}
       {data.languages && <div className={styles.languages}><strong>Языки</strong> {data.languages}</div>}
