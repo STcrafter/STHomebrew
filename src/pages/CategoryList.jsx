@@ -238,6 +238,17 @@ if (category === 'monsters') {
                     <span>{item.prerequisites || 'Нет требований'}</span>
                   </div>
                 )}
+                {category === 'subclasses' && (
+  <div className={styles.meta}>
+    <span>{item.class}</span>
+    <span>Особенностей: {item.features?.length || 0}</span>
+  </div>
+)}
+{category === 'homerules' && (
+  <div className={styles.meta}>
+    <span>{item.source}</span>
+  </div>
+)}
               </Link>
             ))}
           </div>
