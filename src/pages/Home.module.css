@@ -72,3 +72,14 @@
   .card { padding: 1.5rem 1rem; }
   .icon { width: 60px; height: 60px; font-size: 2rem; }
 }
+
+.constructorLink {
+  color: #5a6a8a;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.15s;
+}
+
+.constructorLink:hover {
+  color: #0b1a3a;
+}
