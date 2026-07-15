@@ -4,6 +4,8 @@ import classes from './classes.js';
 import races from './races.js';
 import items from './items.js';
 import feats from './feats.js';
+import subclasses from './subclasses.js';
+import homerules from './homerules.js';
 
 export const data = {
   monsters,
@@ -12,4 +14,6 @@ export const data = {
   races,
   items,
   feats,
+  subclasses,
+  homerules,
 };
