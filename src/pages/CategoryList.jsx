@@ -4,6 +4,7 @@ import { data } from '../data';
 import FilterPanel from '../components/FilterPanel';
 import SearchBar from '../components/SearchBar';
 import styles from './CategoryList.module.css';
+import { formatChallengeRating } from '../utils/helpers';
 
 const categoryLabels = {
   monsters: 'Монстры',
@@ -202,15 +203,15 @@ if (category === 'monsters') {
                 <h3>{item.name}</h3>
                 {/* Краткая информация для превью */}
                 {category === 'monsters' && (
-                  <div className={styles.meta}>
-                    {item.challenge_rating !== undefined && (
-                      <span>ОП {item.challenge_rating}</span>
-                    )}
-                    {item.habitat && item.habitat.length > 0 && (
-                      <span>{item.habitat.slice(0, 2).join(', ')}</span>
-                    )}
-                  </div>
-                )}
+  <div className={styles.meta}>
+    {item.challenge_rating !== undefined && (
+      <span>ОП {formatChallengeRating(item.challenge_rating)}</span>
+    )}
+    {item.habitat && item.habitat.length > 0 && (
+      <span>{item.habitat.slice(0, 2).join(', ')}</span>
+    )}
+  </div>
+)}
                 {category === 'spells' && (
                   <div className={styles.meta}>
                     <span>{item.level} уровень</span>
