@@ -163,3 +163,16 @@
   padding-top: 0.5rem;
   font-style: italic;
 }
+
+.damageInfo {
+  margin: 0.4rem 0;
+}
+
+.damageInfo div {
+  margin: 0.1rem 0;
+}
+
+.damageInfo strong {
+  font-weight: 600;
+  margin-right: 0.3rem;
+}
