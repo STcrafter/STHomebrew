@@ -144,3 +144,66 @@
   text-align: center;
   padding: 4rem 0;
 }
+
+/* ===== Стили для подклассов ===== */
+.subclassPage {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.subclassDescription h2,
+.subclassFeatures h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: #0b1a3a;
+}
+
+.subclassDescription p {
+  background: white;
+  padding: 1.2rem;
+  border-radius: 10px;
+  border: 1px solid #eef2f6;
+  line-height: 1.8;
+}
+
+.subclassFeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.subclassFeature {
+  background: white;
+  border-radius: 10px;
+  padding: 1.2rem 1.5rem;
+  border: 1px solid #eef2f6;
+}
+
+.featureTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem 0;
+  color: #0b1a3a;
+}
+
+.featureLevel {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #5a6a8a;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.featureDivider {
+  border: none;
+  border-top: 1px solid #eef2f6;
+  margin: 0.5rem 0 0.8rem 0;
+}
+
+.featureDescription {
+  line-height: 1.7;
+  color: #1a2a4a;
+  margin: 0;
+}
