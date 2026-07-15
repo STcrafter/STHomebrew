@@ -6,9 +6,11 @@ const categories = [
   { id: 'monsters', label: 'Монстры', icon: '🐉', color: '#4d6bfe' },
   { id: 'spells', label: 'Заклинания', icon: '✨', color: '#7c3aed' },
   { id: 'classes', label: 'Классы', icon: '⚔️', color: '#ea580c' },
+  { id: 'subclasses', label: 'Подклассы', icon: '🛡️', color: '#b45309' }, // Новая
   { id: 'races', label: 'Расы', icon: '🧝', color: '#059669' },
-  { id: 'items', label: 'Предметы', icon: '🏺', color: '#d97706' },
+  { id: 'items', label: 'Предметы', icon: '🧪', color: '#d97706' }, // Изменено с 🏺 на 🧪
   { id: 'feats', label: 'Черты', icon: '💪', color: '#dc2626' },
+  { id: 'homerules', label: 'Домашние правила', icon: '📜', color: '#6366f1' }, // Новая
 ];
 
 export default function Home() {
