@@ -202,3 +202,16 @@
   background: #e6edfc;
   border-color: #4d6bfe;
 }
+
+.backLink {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: #4d6bfe;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
