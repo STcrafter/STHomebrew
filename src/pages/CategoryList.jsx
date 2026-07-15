@@ -9,11 +9,12 @@ const categoryLabels = {
   monsters: 'Монстры',
   spells: 'Заклинания',
   classes: 'Классы',
+  subclasses: 'Подклассы',
   races: 'Расы',
   items: 'Предметы',
   feats: 'Черты',
+  homerules: 'Домашние правила',
 };
-
 export default function CategoryList() {
   const { category } = useParams();
   const items = data[category] || [];
