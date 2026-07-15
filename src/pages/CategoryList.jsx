@@ -38,15 +38,17 @@ const filterOptions = useMemo(() => {
   if (!items.length) return {};
 
   let filterFields = [];
-  if (category === 'monsters') {
-    filterFields = ['habitat', 'challenge_rating', 'category'];
-  } else if (category === 'spells') {
-    filterFields = ['classes', 'level', 'school', 'concentration'];
-  } else if (category === 'items') {
-    filterFields = ['rarity', 'type', 'attunement'];
-  } else {
-    return {};
-  }
+if (category === 'monsters') {
+  filterFields = ['habitat', 'challenge_rating', 'category'];
+} else if (category === 'spells') {
+  filterFields = ['classes', 'level', 'school', 'concentration'];
+} else if (category === 'items') {
+  filterFields = ['rarity', 'type', 'attunement'];
+} else if (category === 'subclasses') {
+  filterFields = ['class']; // фильтр по классу
+} else {
+  return {}; // для homerules и других без фильтров
+}
 
   const options = {};
   filterFields.forEach(field => {
