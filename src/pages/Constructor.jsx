@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import styles from './Constructor.module.css';
 
 // ===== Конфигурация полей для каждой категории =====
@@ -190,6 +191,7 @@ export default function Constructor() {
   const fields = CATEGORY_CONFIG[category].fields;
 
   return (
+    <Link to="/" className={styles.backLink}>← На главную</Link>
     <div className={styles.constructor}>
       <h1>Конструктор объектов</h1>
       <div className={styles.categorySelector}>
