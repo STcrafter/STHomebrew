@@ -149,7 +149,43 @@ export default function ItemDetail() {
             </div>
           </>
         );
+case 'subclasses':
+  return (
+    <>
+      <div className={styles.description}>
+        <h3>Описание подкласса</h3>
+        <p>{item.description}</p>
+      </div>
+      {item.features && item.features.length > 0 && (
+        <div className={styles.features}>
+          <h3>Особенности</h3>
+          <ul>
+            {item.features.map((feat, i) => <li key={i}>{feat}</li>)}
+          </ul>
+        </div>
+      )}
+    </>
+  );
 
+case 'homerules':
+  return (
+    <>
+      <div className={styles.homeruleMeta}>
+        <div><strong>Источник:</strong> {item.source}</div>
+      </div>
+      <div className={styles.description}>
+        <h3>Описание правила</h3>
+        {item.description ? (
+          item.description.split(/\n\n+/).map((paragraph, idx) => (
+            <p key={idx}>{paragraph}</p>
+          ))
+        ) : (
+          <p>Описание отсутствует</p>
+        )}
+      </div>
+      {/* Если будут таблицы, можно добавить отдельный компонент */}
+    </>
+  );
       default:
         return <p>Нет данных для этой категории</p>;
     }
