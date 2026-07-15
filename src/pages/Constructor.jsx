@@ -112,18 +112,74 @@ export default function Constructor() {
   };
 
   // Генерация JS-кода
-  const generateCode = () => {
-    const fields = CATEGORY_CONFIG[category].fields;
-    const obj = {};
-    fields.forEach(f => {
-      const val = formData[f.key];
-      if (val !== undefined && val !== null && val !== '') {
-        obj[f.key] = val;
+ const generateCode = () => {
+  const fields = CATEGORY_CONFIG[category].fields;
+  const obj = {};
+
+  fields.forEach(f => {
+    const val = formData[f.key];
+    if (val === undefined || val === null || val === '') {
+      // Если поле пустое — пропускаем
+      return;
+    }
+
+    // Обработка массивов с подполями (превращаем в плоский массив строк)
+    if (f.type === 'array' && f.subfields?.length === 1 && f.subfields[0].key === 'value') {
+      // Это массив строк (habitat, damage_vulnerabilities и т.д.)
+      if (Array.isArray(val) && val.length > 0) {
+        obj[f.key] = val.map(item => item.value).filter(v => v && v.trim() !== '');
       }
-    });
-    const code = JSON.stringify(obj, null, 2);
-    setGeneratedCode(code);
-  };
+      return;
+    }
+
+    // Обработка массивов с несколькими подполями (traits, actions и т.д.)
+    if (f.type === 'array' && Array.isArray(val) && val.length > 0) {
+      const processed = val.map(item => {
+        const newItem = {};
+        f.subfields.forEach(sub => {
+          const subVal = item[sub.key];
+          if (subVal !== undefined && subVal !== null && subVal !== '') {
+            // Если подполе типа json — парсим
+            if (sub.type === 'json' && typeof subVal === 'string' && subVal.trim()) {
+              try {
+                newItem[sub.key] = JSON.parse(subVal);
+              } catch (e) {
+                newItem[sub.key] = subVal; // если не парсится, оставляем строку
+              }
+            } else {
+              newItem[sub.key] = subVal;
+            }
+          }
+        });
+        return newItem;
+      });
+      obj[f.key] = processed;
+      return;
+    }
+
+    // Обработка полей типа json
+    if (f.type === 'json' && typeof val === 'string' && val.trim()) {
+      try {
+        obj[f.key] = JSON.parse(val);
+      } catch (e) {
+        obj[f.key] = val; // если не парсится, оставляем строку
+      }
+      return;
+    }
+
+    // Обработка числовых полей
+    if (f.type === 'number') {
+      obj[f.key] = Number(val);
+      return;
+    }
+
+    // Остальные поля (текст, textarea, checkbox)
+    obj[f.key] = val;
+  });
+
+  const code = JSON.stringify(obj, null, 2);
+  setGeneratedCode(code);
+};
 
   // Копирование в буфер
   const copyToClipboard = () => {
