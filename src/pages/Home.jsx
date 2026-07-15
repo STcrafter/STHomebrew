@@ -29,6 +29,11 @@ export default function Home() {
             <h2>{cat.label}</h2>
           </Link>
         ))}
+        <footer className={styles.footer}>
+  <Link to="/constructor" className={styles.constructorLink}>
+    🛠️ Конструктор объектов
+  </Link>
+</footer>
       </div>
     </div>
   );
