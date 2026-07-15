@@ -151,20 +151,27 @@ export default function ItemDetail() {
         );
 case 'subclasses':
   return (
-    <>
-      <div className={styles.description}>
-        <h3>Описание подкласса</h3>
+    <div className={styles.subclassPage}>
+      <div className={styles.subclassDescription}>
+        <h2>Описание подкласса</h2>
         <p>{item.description}</p>
       </div>
       {item.features && item.features.length > 0 && (
-        <div className={styles.features}>
-          <h3>Особенности</h3>
-          <ul>
-            {item.features.map((feat, i) => <li key={i}>{feat}</li>)}
-          </ul>
+        <div className={styles.subclassFeatures}>
+          <h2>Особенности</h2>
+          {item.features.map((feature, idx) => (
+            <div key={idx} className={styles.subclassFeature}>
+              <h3 className={styles.featureTitle}>{feature.name}</h3>
+              <div className={styles.featureLevel}>
+                {feature.level} уровень {item.name}
+              </div>
+              <hr className={styles.featureDivider} />
+              <p className={styles.featureDescription}>{feature.description}</p>
+            </div>
+          ))}
         </div>
       )}
-    </>
+    </div>
   );
 
 case 'homerules':
