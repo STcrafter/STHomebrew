@@ -29,7 +29,7 @@ const CATEGORY_CONFIG = {
       { key: 'skills', label: 'Навыки (объект, например {"Скрытность": 8})', type: 'json', placeholder: '{"Скрытность": 8, "Восприятие": 4}' },
       { key: 'senses', label: 'Чувства', type: 'text', placeholder: 'Тёмное зрение 60 фт., Пассивное Восприятие 14' },
       { key: 'languages', label: 'Языки', type: 'text', placeholder: '—' },
-      { key: 'challenge_rating', label: 'ОП (число)', type: 'number', default: 0 },
+      { key: 'challenge_rating', label: 'ОП (число или дробь: 0.125, 0.25, 0.5, 1, 2, ...)', type: 'number', default: 0, step: 0.125 },
       { key: 'traits', label: 'Особенности (массив объектов с name, description, spells)', type: 'array', subfields: [
         { key: 'name', label: 'Название', type: 'text' },
         { key: 'description', label: 'Описание', type: 'textarea', rows: 2 },
@@ -49,9 +49,7 @@ const CATEGORY_CONFIG = {
       ] },
       { key: 'legendary_actions', label: 'Легендарные действия (объект с description и actions)', type: 'json', placeholder: '{"description": "...", "actions": [{"name": "...", "description": "..."}]}' },
       { key: 'lair_actions', label: 'Действия логова (объект с description и actions)', type: 'json', placeholder: '{"description": "...", "actions": [{"name": "...", "description": "..."}]}' },
-      { key: 'habitat', label: 'Места обитания (массив строк)', type: 'array', subfields: [
-        { key: 'value', label: 'Место', type: 'text' },
-      ] },
+      { key: 'habitat', label: 'Места обитания (массив строк)', type: 'array', subfields: [{ key: 'value', label: 'Место', type: 'text' }] },
       { key: 'image', label: 'Путь к картинке', type: 'text', placeholder: '/images/monster.jpg' },
     ],
   },
@@ -71,8 +69,7 @@ const CATEGORY_CONFIG = {
       { key: 'components', label: 'Компоненты', type: 'text', placeholder: 'В, С, М (щепотка серы)' },
     ],
   },
-  // Добавьте остальные категории (классы, подклассы, расы, предметы, черты, домашние правила) аналогично
-  // Для краткости я показал только монстров и заклинания — остальные вы можете добавить по аналогии
+  // Добавьте остальные категории по аналогии, если нужно
 };
 
 export default function Constructor() {
@@ -80,12 +77,10 @@ export default function Constructor() {
   const [formData, setFormData] = useState({});
   const [generatedCode, setGeneratedCode] = useState('');
 
-  // Обработчик изменения полей
   const handleFieldChange = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
-  // Обработчик для массивов (добавление элемента)
   const handleArrayAdd = (key, subfields) => {
     const current = formData[key] || [];
     const newItem = {};
@@ -97,14 +92,12 @@ export default function Constructor() {
     setFormData(prev => ({ ...prev, [key]: [...current, newItem] }));
   };
 
-  // Обработчик для массивов (удаление элемента)
   const handleArrayRemove = (key, index) => {
     const current = formData[key] || [];
     const updated = current.filter((_, i) => i !== index);
     setFormData(prev => ({ ...prev, [key]: updated }));
   };
 
-  // Обработчик для массивов (изменение элемента)
   const handleArrayItemChange = (key, index, subKey, value) => {
     const current = formData[key] || [];
     const updated = [...current];
@@ -112,77 +105,73 @@ export default function Constructor() {
     setFormData(prev => ({ ...prev, [key]: updated }));
   };
 
-  // Генерация JS-кода
- const generateCode = () => {
-  const fields = CATEGORY_CONFIG[category].fields;
-  const obj = {};
+  const generateCode = () => {
+    const fields = CATEGORY_CONFIG[category].fields;
+    const obj = {};
 
-  fields.forEach(f => {
-    const val = formData[f.key];
-    if (val === undefined || val === null || val === '') {
-      // Если поле пустое — пропускаем
-      return;
-    }
-
-    // Обработка массивов с подполями (превращаем в плоский массив строк)
-    if (f.type === 'array' && f.subfields?.length === 1 && f.subfields[0].key === 'value') {
-      // Это массив строк (habitat, damage_vulnerabilities и т.д.)
-      if (Array.isArray(val) && val.length > 0) {
-        obj[f.key] = val.map(item => item.value).filter(v => v && v.trim() !== '');
+    fields.forEach(f => {
+      const val = formData[f.key];
+      if (val === undefined || val === null || val === '') {
+        return;
       }
-      return;
-    }
 
-    // Обработка массивов с несколькими подполями (traits, actions и т.д.)
-    if (f.type === 'array' && Array.isArray(val) && val.length > 0) {
-      const processed = val.map(item => {
-        const newItem = {};
-        f.subfields.forEach(sub => {
-          const subVal = item[sub.key];
-          if (subVal !== undefined && subVal !== null && subVal !== '') {
-            // Если подполе типа json — парсим
-            if (sub.type === 'json' && typeof subVal === 'string' && subVal.trim()) {
-              try {
-                newItem[sub.key] = JSON.parse(subVal);
-              } catch (e) {
-                newItem[sub.key] = subVal; // если не парсится, оставляем строку
+      // Массив строк (одно подполе "value")
+      if (f.type === 'array' && f.subfields?.length === 1 && f.subfields[0].key === 'value') {
+        if (Array.isArray(val) && val.length > 0) {
+          const flat = val.map(item => item.value).filter(v => v && v.trim() !== '');
+          if (flat.length > 0) obj[f.key] = flat;
+        }
+        return;
+      }
+
+      // Массив объектов (несколько подполей)
+      if (f.type === 'array' && Array.isArray(val) && val.length > 0) {
+        const processed = val.map(item => {
+          const newItem = {};
+          f.subfields.forEach(sub => {
+            const subVal = item[sub.key];
+            if (subVal !== undefined && subVal !== null && subVal !== '') {
+              if (sub.type === 'json' && typeof subVal === 'string' && subVal.trim()) {
+                try {
+                  newItem[sub.key] = JSON.parse(subVal);
+                } catch (e) {
+                  newItem[sub.key] = subVal;
+                }
+              } else {
+                newItem[sub.key] = subVal;
               }
-            } else {
-              newItem[sub.key] = subVal;
             }
-          }
+          });
+          return newItem;
         });
-        return newItem;
-      });
-      obj[f.key] = processed;
-      return;
-    }
-
-    // Обработка полей типа json
-    if (f.type === 'json' && typeof val === 'string' && val.trim()) {
-      try {
-        obj[f.key] = JSON.parse(val);
-      } catch (e) {
-        obj[f.key] = val; // если не парсится, оставляем строку
+        if (processed.length > 0) obj[f.key] = processed;
+        return;
       }
-      return;
-    }
 
-    // Обработка числовых полей
-    if (f.type === 'number') {
-      obj[f.key] = Number(val);
-      return;
-    }
+      // JSON-поля
+      if (f.type === 'json' && typeof val === 'string' && val.trim()) {
+        try {
+          obj[f.key] = JSON.parse(val);
+        } catch (e) {
+          obj[f.key] = val;
+        }
+        return;
+      }
 
-    // Остальные поля (текст, textarea, checkbox)
-    obj[f.key] = val;
-  });
+      // Числовые поля
+      if (f.type === 'number') {
+        obj[f.key] = Number(val);
+        return;
+      }
 
-  const code = JSON.stringify(obj, null, 2);
-  setGeneratedCode(code);
-};
+      // Остальные поля
+      obj[f.key] = val;
+    });
 
-  // Копирование в буфер
+    const code = JSON.stringify(obj, null, 2);
+    setGeneratedCode(code);
+  };
+
   const copyToClipboard = () => {
     navigator.clipboard?.writeText(generatedCode);
     alert('Код скопирован в буфер обмена!');
@@ -191,145 +180,148 @@ export default function Constructor() {
   const fields = CATEGORY_CONFIG[category].fields;
 
   return (
-    <Link to="/" className={styles.backLink}>← На главную</Link>
-    <div className={styles.constructor}>
-      <h1>Конструктор объектов</h1>
-      <div className={styles.categorySelector}>
-        <label>Выберите категорию:</label>
-        <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          {Object.entries(CATEGORY_CONFIG).map(([key, config]) => (
-            <option key={key} value={key}>{config.label}</option>
+    <div className={styles.page}>
+      <Link to="/" className={styles.backLink}>← На главную</Link>
+      <div className={styles.constructor}>
+        <h1>Конструктор объектов</h1>
+        <div className={styles.categorySelector}>
+          <label>Выберите категорию:</label>
+          <select value={category} onChange={(e) => setCategory(e.target.value)}>
+            {Object.entries(CATEGORY_CONFIG).map(([key, config]) => (
+              <option key={key} value={key}>{config.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className={styles.form}>
+          {fields.map((field) => (
+            <div key={field.key} className={styles.fieldGroup}>
+              <label className={styles.fieldLabel}>
+                {field.label}
+                {field.required && <span className={styles.required}>*</span>}
+              </label>
+
+              {field.type === 'text' && (
+                <input
+                  type="text"
+                  value={formData[field.key] || ''}
+                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                  placeholder={field.placeholder || ''}
+                  className={styles.fieldInput}
+                />
+              )}
+
+              {field.type === 'number' && (
+                <input
+                  type="number"
+                  value={formData[field.key] ?? field.default ?? 0}
+                  onChange={(e) => handleFieldChange(field.key, Number(e.target.value))}
+                  step={field.step || 1}
+                  className={styles.fieldInput}
+                />
+              )}
+
+              {field.type === 'textarea' && (
+                <textarea
+                  value={formData[field.key] || ''}
+                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                  placeholder={field.placeholder || ''}
+                  rows={field.rows || 3}
+                  className={styles.fieldTextarea}
+                />
+              )}
+
+              {field.type === 'checkbox' && (
+                <input
+                  type="checkbox"
+                  checked={formData[field.key] || false}
+                  onChange={(e) => handleFieldChange(field.key, e.target.checked)}
+                  className={styles.fieldCheckbox}
+                />
+              )}
+
+              {field.type === 'json' && (
+                <textarea
+                  value={formData[field.key] || ''}
+                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                  placeholder={field.placeholder || 'Введите JSON'}
+                  rows={4}
+                  className={styles.fieldTextarea}
+                />
+              )}
+
+              {field.type === 'array' && (
+                <div className={styles.arrayGroup}>
+                  {(formData[field.key] || []).map((item, index) => (
+                    <div key={index} className={styles.arrayItem}>
+                      {field.subfields.map((sub) => (
+                        <div key={sub.key} className={styles.arraySubfield}>
+                          <label>{sub.label}</label>
+                          {sub.type === 'text' && (
+                            <input
+                              type="text"
+                              value={item[sub.key] || ''}
+                              onChange={(e) => handleArrayItemChange(field.key, index, sub.key, e.target.value)}
+                              placeholder={sub.placeholder || ''}
+                              className={styles.fieldInput}
+                            />
+                          )}
+                          {sub.type === 'textarea' && (
+                            <textarea
+                              value={item[sub.key] || ''}
+                              onChange={(e) => handleArrayItemChange(field.key, index, sub.key, e.target.value)}
+                              placeholder={sub.placeholder || ''}
+                              rows={sub.rows || 2}
+                              className={styles.fieldTextarea}
+                            />
+                          )}
+                          {sub.type === 'json' && (
+                            <textarea
+                              value={item[sub.key] || ''}
+                              onChange={(e) => handleArrayItemChange(field.key, index, sub.key, e.target.value)}
+                              placeholder={sub.placeholder || 'Введите JSON'}
+                              rows={3}
+                              className={styles.fieldTextarea}
+                            />
+                          )}
+                        </div>
+                      ))}
+                      <button
+                        onClick={() => handleArrayRemove(field.key, index)}
+                        className={styles.removeButton}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    onClick={() => handleArrayAdd(field.key, field.subfields)}
+                    className={styles.addButton}
+                  >
+                    + Добавить
+                  </button>
+                </div>
+              )}
+            </div>
           ))}
-        </select>
-      </div>
+        </div>
 
-      <div className={styles.form}>
-        {fields.map((field) => (
-          <div key={field.key} className={styles.fieldGroup}>
-            <label className={styles.fieldLabel}>
-              {field.label}
-              {field.required && <span className={styles.required}>*</span>}
-            </label>
-
-            {field.type === 'text' && (
-              <input
-                type="text"
-                value={formData[field.key] || ''}
-                onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                placeholder={field.placeholder || ''}
-                className={styles.fieldInput}
-              />
-            )}
-
-            {field.type === 'number' && (
-              <input
-                type="number"
-                value={formData[field.key] ?? field.default ?? 0}
-                onChange={(e) => handleFieldChange(field.key, Number(e.target.value))}
-                className={styles.fieldInput}
-              />
-            )}
-
-            {field.type === 'textarea' && (
-              <textarea
-                value={formData[field.key] || ''}
-                onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                placeholder={field.placeholder || ''}
-                rows={field.rows || 3}
-                className={styles.fieldTextarea}
-              />
-            )}
-
-            {field.type === 'checkbox' && (
-              <input
-                type="checkbox"
-                checked={formData[field.key] || false}
-                onChange={(e) => handleFieldChange(field.key, e.target.checked)}
-                className={styles.fieldCheckbox}
-              />
-            )}
-
-            {field.type === 'json' && (
-              <textarea
-                value={formData[field.key] || ''}
-                onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                placeholder={field.placeholder || 'Введите JSON'}
-                rows={4}
-                className={styles.fieldTextarea}
-              />
-            )}
-
-            {field.type === 'array' && (
-              <div className={styles.arrayGroup}>
-                {(formData[field.key] || []).map((item, index) => (
-                  <div key={index} className={styles.arrayItem}>
-                    {field.subfields.map((sub) => (
-                      <div key={sub.key} className={styles.arraySubfield}>
-                        <label>{sub.label}</label>
-                        {sub.type === 'text' && (
-                          <input
-                            type="text"
-                            value={item[sub.key] || ''}
-                            onChange={(e) => handleArrayItemChange(field.key, index, sub.key, e.target.value)}
-                            placeholder={sub.placeholder || ''}
-                            className={styles.fieldInput}
-                          />
-                        )}
-                        {sub.type === 'textarea' && (
-                          <textarea
-                            value={item[sub.key] || ''}
-                            onChange={(e) => handleArrayItemChange(field.key, index, sub.key, e.target.value)}
-                            placeholder={sub.placeholder || ''}
-                            rows={sub.rows || 2}
-                            className={styles.fieldTextarea}
-                          />
-                        )}
-                        {sub.type === 'json' && (
-                          <textarea
-                            value={item[sub.key] || ''}
-                            onChange={(e) => handleArrayItemChange(field.key, index, sub.key, e.target.value)}
-                            placeholder={sub.placeholder || 'Введите JSON'}
-                            rows={3}
-                            className={styles.fieldTextarea}
-                          />
-                        )}
-                      </div>
-                    ))}
-                    <button
-                      onClick={() => handleArrayRemove(field.key, index)}
-                      className={styles.removeButton}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
-                <button
-                  onClick={() => handleArrayAdd(field.key, field.subfields)}
-                  className={styles.addButton}
-                >
-                  + Добавить
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className={styles.actions}>
-        <button onClick={generateCode} className={styles.generateButton}>
-          Сгенерировать код
-        </button>
-      </div>
-
-      {generatedCode && (
-        <div className={styles.result}>
-          <h3>Готовый код (скопируйте и вставьте в соответствующий файл):</h3>
-          <pre className={styles.codeBlock}>{generatedCode}</pre>
-          <button onClick={copyToClipboard} className={styles.copyButton}>
-            Копировать в буфер
+        <div className={styles.actions}>
+          <button onClick={generateCode} className={styles.generateButton}>
+            Сгенерировать код
           </button>
         </div>
-      )}
+
+        {generatedCode && (
+          <div className={styles.result}>
+            <h3>Готовый код (скопируйте и вставьте в соответствующий файл):</h3>
+            <pre className={styles.codeBlock}>{generatedCode}</pre>
+            <button onClick={copyToClipboard} className={styles.copyButton}>
+              Копировать в буфер
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
