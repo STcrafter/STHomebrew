@@ -400,7 +400,7 @@ export default [
   ],
   "senses": "Темное зрение 60 фт., пассивная Внимательность 9",
   "languages": "Понимает общий и один любой другой, но не говорит",
-  "challenge_rating": 0,
+  "challenge_rating": 0.125,
   "actions": [
     {
       "name": "Короткий меч",
