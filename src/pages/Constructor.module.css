@@ -4,6 +4,12 @@
   padding: 0 1.5rem;
 }
 
+.page {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
 .constructor h1 {
   font-size: 2rem;
   margin-bottom: 1.5rem;
