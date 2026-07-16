@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Constructor.module.css';
 
@@ -77,6 +77,21 @@ export default function Constructor() {
   const [formData, setFormData] = useState({});
   const [generatedCode, setGeneratedCode] = useState('');
 
+  // Инициализация формы дефолтными значениями при смене категории
+  useEffect(() => {
+    const fields = CATEGORY_CONFIG[category].fields;
+    const initialData = {};
+    fields.forEach(f => {
+      if (f.default !== undefined) {
+        initialData[f.key] = f.default;
+      }
+      // Для массивов с одним подполем "value" инициализируем пустым массивом, но мы не хотим создавать пустой массив, чтобы он не попал в код
+      // Поэтому оставим undefined
+    });
+    setFormData(initialData);
+    setGeneratedCode(''); // очищаем предыдущий код
+  }, [category]);
+
   const handleFieldChange = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
@@ -111,6 +126,8 @@ export default function Constructor() {
 
     fields.forEach(f => {
       const val = formData[f.key];
+      // Пропускаем undefined, null, пустые строки (для текстовых полей)
+      // Но для чисел 0 и false не пропускаем
       if (val === undefined || val === null || val === '') {
         return;
       }
@@ -158,13 +175,19 @@ export default function Constructor() {
         return;
       }
 
-      // Числовые поля
+      // Числовые поля (включая 0)
       if (f.type === 'number') {
         obj[f.key] = Number(val);
         return;
       }
 
-      // Остальные поля
+      // Булевы поля (checkbox)
+      if (f.type === 'checkbox') {
+        obj[f.key] = val;
+        return;
+      }
+
+      // Остальные поля (текст, textarea)
       obj[f.key] = val;
     });
 
