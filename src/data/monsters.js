@@ -1595,7 +1595,7 @@ export default [
   "reactions": [],
   "habitat": [
   ],
-  "image":"STHomebrew/image/sporeZombie.jpg"
+  "image":"/STHomebrew/images/sporeZombie.jpg"
 },
 ];
 
