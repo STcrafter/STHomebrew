@@ -190,73 +190,66 @@ if (category === 'monsters') {
             </div>
           </div>
 
-          <div className={styles.grid}>
-            {filteredItems.map(item => (
-              <Link to={`/category/${category}/${item.id}`} key={item.id} className={styles.card}>
-                <div className={styles.cardImage}>
-                  {item.image ? (
-                    <img src={item.image} alt={item.name} />
-                  ) : (
-                    <div className={styles.placeholder}>🎲</div>
-                  )}
-                </div>
-                <h3>{item.name}</h3>
-                {/* Краткая информация для превью */}
-                {category === 'monsters' && (
-  <div className={styles.meta}>
-    {item.challenge_rating !== undefined && (
-      <span>ОП {formatChallengeRating(item.challenge_rating)}</span>
-    )}
-    {item.habitat && item.habitat.length > 0 && (
-      <span>{item.habitat.slice(0, 2).join(', ')}</span>
-    )}
-  </div>
-)}
-                {category === 'spells' && (
-                  <div className={styles.meta}>
-                    <span>{item.level} уровень</span>
-                    <span>{item.school}</span>
-                  </div>
-                )}
-                {category === 'items' && (
-                  <div className={styles.meta}>
-                    <span>{item.rarity}</span>
-                    <span>{item.type}</span>
-                  </div>
-                )}
-                {category === 'classes' && (
-  <div className={styles.meta}>
-    <span>Уровней: {
-      Array.isArray(item.features) 
-        ? new Set(item.features.map(f => f.level)).size 
-        : 0
-    }</span>
-  </div>
-)}
-                {category === 'races' && (
-                  <div className={styles.meta}>
-                    <span>Особенностей: {item.features?.length || 0}</span>
-                  </div>
-                )}
-                {category === 'feats' && (
-                  <div className={styles.meta}>
-                    <span>{item.prerequisites || 'Нет требований'}</span>
-                  </div>
-                )}
-                {category === 'subclasses' && (
-  <div className={styles.meta}>
-    <span>{item.class}</span>
-    <span>Особенностей: {item.features?.length || 0}</span>
-  </div>
-)}
-{category === 'homerules' && (
-  <div className={styles.meta}>
-    <span>{item.source}</span>
-  </div>
-)}
-              </Link>
-            ))}
-          </div>
+<div className={styles.grid}>
+  {filteredItems.map(item => (
+    <Link to={`/category/${category}/${item.id}`} key={item.id} className={styles.card}>
+      {/* Без картинки */}
+      <h3>{item.name}</h3>
+      {category === 'monsters' && (
+        <div className={styles.meta}>
+          {item.challenge_rating !== undefined && (
+            <span>ОП {formatChallengeRating(item.challenge_rating)}</span>
+          )}
+          {Array.isArray(item.habitat) && item.habitat.length > 0 && (
+            <span>{item.habitat.slice(0, 2).join(', ')}</span>
+          )}
+        </div>
+      )}
+      {category === 'spells' && (
+        <div className={styles.meta}>
+          <span>{item.level} уровень</span>
+          <span>{item.school}</span>
+        </div>
+      )}
+      {category === 'items' && (
+        <div className={styles.meta}>
+          <span>{item.rarity}</span>
+          <span>{item.type}</span>
+        </div>
+      )}
+      {category === 'classes' && (
+        <div className={styles.meta}>
+          <span>Уровней: {
+            Array.isArray(item.features) 
+              ? new Set(item.features.map(f => f.level)).size 
+              : 0
+          }</span>
+        </div>
+      )}
+      {category === 'subclasses' && (
+        <div className={styles.meta}>
+          <span>{item.class}</span>
+          <span>Особенностей: {Array.isArray(item.features) ? item.features.length : 0}</span>
+        </div>
+      )}
+      {category === 'races' && (
+        <div className={styles.meta}>
+          <span>Особенностей: {item.features?.length || 0}</span>
+        </div>
+      )}
+      {category === 'feats' && (
+        <div className={styles.meta}>
+          <span>{item.prerequisites || 'Нет требований'}</span>
+        </div>
+      )}
+      {category === 'homerules' && (
+        <div className={styles.meta}>
+          <span>{item.source}</span>
+        </div>
+      )}
+    </Link>
+  ))}
+</div>
 
           {filteredItems.length === 0 && (
             <div className={styles.empty}>Ничего не найдено</div>
