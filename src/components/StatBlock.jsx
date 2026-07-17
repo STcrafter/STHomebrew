@@ -1,6 +1,4 @@
 import styles from './StatBlock.module.css';
-import { formatChallengeRating } from '../utils/helpers';
-
 
 export default function StatBlock({ monster }) {
   const data = monster?.statblock || monster;
@@ -29,6 +27,23 @@ export default function StatBlock({ monster }) {
 
   const savingThrows = data.saving_throws || {};
   const skills = data.skills || {};
+
+  // === Вспомогательная функция для рендера списка заклинаний ===
+  const renderSpellList = (spells) => {
+    if (!spells || typeof spells !== 'object') return null;
+    return (
+      <div className={styles.spellList}>
+        {Object.entries(spells).map(([freq, spellArray]) => (
+          <div key={freq} className={styles.spellGroup}>
+            <span className={styles.spellFreq}>{freq}</span>
+            <span className={styles.spellNames}>
+              {Array.isArray(spellArray) ? spellArray.join(', ') : spellArray}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className={styles.statblock}>
@@ -70,7 +85,6 @@ export default function StatBlock({ monster }) {
           </tr>
           <tr className={styles.saveRow}>
             {statAbilities.map(ab => {
-              // Если спасбросок указан явно – используем его, иначе – модификатор характеристики
               const saveBonus = savingThrows[ab] !== undefined
                 ? savingThrows[ab]
                 : getModifier(data[ab]);
@@ -99,36 +113,36 @@ export default function StatBlock({ monster }) {
           ))}
         </div>
       )}
-{/* ===== Уязвимости, Сопротивления, Иммунитеты ===== */}
-{(data.damage_vulnerabilities?.length > 0 ||
-  data.damage_resistances?.length > 0 ||
-  data.damage_immunities?.length > 0 ||
-  data.condition_immunities?.length > 0) && (
-  <div className={styles.damageInfo}>
-    {data.damage_vulnerabilities?.length > 0 && (
-      <div><strong>Уязвимости</strong> {data.damage_vulnerabilities.join(', ')}</div>
-    )}
-    {data.damage_resistances?.length > 0 && (
-      <div><strong>Сопротивления</strong> {data.damage_resistances.join(', ')}</div>
-    )}
-    {data.damage_immunities?.length > 0 && (
-      <div><strong>Иммунитеты к урону</strong> {data.damage_immunities.join(', ')}</div>
-    )}
-    {data.condition_immunities?.length > 0 && (
-      <div><strong>Иммунитеты к состояниям</strong> {data.condition_immunities.join(', ')}</div>
-    )}
-  </div>
-)}
+
+      {/* Уязвимости, Сопротивления, Иммунитеты */}
+      {(Array.isArray(data.damage_vulnerabilities) && data.damage_vulnerabilities.length > 0 ||
+        Array.isArray(data.damage_resistances) && data.damage_resistances.length > 0 ||
+        Array.isArray(data.damage_immunities) && data.damage_immunities.length > 0 ||
+        Array.isArray(data.condition_immunities) && data.condition_immunities.length > 0) && (
+        <div className={styles.damageInfo}>
+          {Array.isArray(data.damage_vulnerabilities) && data.damage_vulnerabilities.length > 0 && (
+            <div><strong>Уязвимости</strong> {data.damage_vulnerabilities.join(', ')}</div>
+          )}
+          {Array.isArray(data.damage_resistances) && data.damage_resistances.length > 0 && (
+            <div><strong>Сопротивления</strong> {data.damage_resistances.join(', ')}</div>
+          )}
+          {Array.isArray(data.damage_immunities) && data.damage_immunities.length > 0 && (
+            <div><strong>Иммунитеты к урону</strong> {data.damage_immunities.join(', ')}</div>
+          )}
+          {Array.isArray(data.condition_immunities) && data.condition_immunities.length > 0 && (
+            <div><strong>Иммунитеты к состояниям</strong> {data.condition_immunities.join(', ')}</div>
+          )}
+        </div>
+      )}
+
       {/* Чувства, языки, ОП */}
       {data.senses && <div className={styles.senses}><strong>Чувства</strong> {data.senses}</div>}
       {data.languages && <div className={styles.languages}><strong>Языки</strong> {data.languages}</div>}
       {data.challenge_rating !== undefined && (
-  <div className={styles.cr}>
-    <strong>ОП</strong> {formatChallengeRating(data.challenge_rating)}
-  </div>
-)}
+        <div className={styles.cr}><strong>ОП</strong> {data.challenge_rating}</div>
+      )}
 
-      {/* Особенности */}
+      {/* Особенности (traits) */}
       {data.traits && data.traits.length > 0 && (
         <>
           <div className={styles.sectionDivider}>Особенности</div>
@@ -137,16 +151,7 @@ export default function StatBlock({ monster }) {
               <div key={idx} className={styles.trait}>
                 <span className={styles.traitName}>{trait.name}.</span>{' '}
                 <span className={styles.traitDesc}>{trait.description}</span>
-                {trait.spells && (
-                  <div className={styles.spellList}>
-                    {Object.entries(trait.spells).map(([freq, spells]) => (
-                      <div key={freq} className={styles.spellGroup}>
-                        <span className={styles.spellFreq}>{freq}</span>
-                        <span className={styles.spellNames}>{spells.join(', ')}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                {renderSpellList(trait.spells)}
               </div>
             ))}
           </div>
@@ -162,6 +167,7 @@ export default function StatBlock({ monster }) {
               <div key={idx} className={styles.action}>
                 <span className={styles.actionName}>{action.name}.</span>{' '}
                 <span className={styles.actionDesc}>{action.description}</span>
+                {renderSpellList(action.spells)}
               </div>
             ))}
           </div>
@@ -177,6 +183,7 @@ export default function StatBlock({ monster }) {
               <div key={idx} className={styles.action}>
                 <span className={styles.actionName}>{action.name}.</span>{' '}
                 <span className={styles.actionDesc}>{action.description}</span>
+                {renderSpellList(action.spells)}
               </div>
             ))}
           </div>
@@ -192,6 +199,7 @@ export default function StatBlock({ monster }) {
               <div key={idx} className={styles.action}>
                 <span className={styles.actionName}>{action.name}.</span>{' '}
                 <span className={styles.actionDesc}>{action.description}</span>
+                {renderSpellList(action.spells)}
               </div>
             ))}
           </div>
@@ -209,6 +217,7 @@ export default function StatBlock({ monster }) {
                 <div key={idx} className={styles.action}>
                   <span className={styles.actionName}>{action.name}.</span>{' '}
                   <span className={styles.actionDesc}>{action.description}</span>
+                  {renderSpellList(action.spells)}
                 </div>
               ))}
             </div>
@@ -227,6 +236,7 @@ export default function StatBlock({ monster }) {
                 <div key={idx} className={styles.action}>
                   <span className={styles.actionName}>{action.name}.</span>{' '}
                   <span className={styles.actionDesc}>{action.description}</span>
+                  {renderSpellList(action.spells)}
                 </div>
               ))}
             </div>
