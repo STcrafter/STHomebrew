@@ -1,4 +1,5 @@
 import styles from './StatBlock.module.css';
+import { formatCRWithDetails } from '../utils/helpers';
 
 export default function StatBlock({ monster }) {
   const data = monster?.statblock || monster;
@@ -139,7 +140,9 @@ export default function StatBlock({ monster }) {
       {data.senses && <div className={styles.senses}><strong>Чувства</strong> {data.senses}</div>}
       {data.languages && <div className={styles.languages}><strong>Языки</strong> {data.languages}</div>}
       {data.challenge_rating !== undefined && (
-        <div className={styles.cr}><strong>ОП</strong> {data.challenge_rating}</div>
+        <div className={styles.cr}>
+          <strong>ОП</strong> {formatCRWithDetails(data.challenge_rating)}
+        </div>
       )}
 
       {/* Особенности (traits) */}

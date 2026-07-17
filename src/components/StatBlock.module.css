@@ -138,16 +138,20 @@
 
 .spellGroup {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .spellFreq {
   font-weight: 600;
-  min-width: 6rem;
+  min-width: 5rem;
+  white-space: nowrap;
 }
 
 .spellNames {
   font-style: italic;
+  word-break: break-word;
 }
 
 /* Легендарные действия и логово */
