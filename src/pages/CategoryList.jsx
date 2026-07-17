@@ -225,10 +225,14 @@ if (category === 'monsters') {
                   </div>
                 )}
                 {category === 'classes' && (
-                  <div className={styles.meta}>
-                    <span>Уровней: {Object.keys(item.features_by_level).length}</span>
-                  </div>
-                )}
+  <div className={styles.meta}>
+    <span>Уровней: {
+      Array.isArray(item.features) 
+        ? new Set(item.features.map(f => f.level)).size 
+        : 0
+    }</span>
+  </div>
+)}
                 {category === 'races' && (
                   <div className={styles.meta}>
                     <span>Особенностей: {item.features?.length || 0}</span>
