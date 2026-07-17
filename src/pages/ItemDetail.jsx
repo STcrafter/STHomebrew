@@ -3,6 +3,7 @@ import { data } from '../data';
 import styles from './ItemDetail.module.css';
 import StatBlock from '../components/StatBlock';
 import ClassTable from '../components/ClassTable';
+import ClassDetail from '../components/ClassDetail';
 
 export default function ItemDetail() {
   const { category, id } = useParams();
@@ -72,32 +73,11 @@ export default function ItemDetail() {
         );
 
       case 'classes':
-        return (
-          <>
-            {item.image && (
-              <div className={styles.imageWrapper}>
-                <img src={item.image} alt={item.name} className={styles.detailImage} />
-              </div>
-            )}
-            <div className={styles.description}>
-              <h3>Описание класса</h3>
-              <p>{item.description}</p>
-            </div>
-            <ClassTable featuresByLevel={item.features_by_level} />
-            {item.subclasses && item.subclasses.length > 0 && (
-              <div className={styles.subclasses}>
-                <h3>Подклассы</h3>
-                {item.subclasses.map((sub, idx) => (
-                  <div key={idx} className={styles.subclass}>
-                    <h4>{sub.name}</h4>
-                    <p>{sub.description}</p>
-                    <ClassTable featuresByLevel={sub.features_by_level} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </>
-        );
+  return (
+    <div className={styles.classPageWrapper}>
+      <ClassDetail classData={item} />
+    </div>
+  );
 
       case 'races':
         return (
