@@ -1,0 +1,187 @@
+.classPage {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+
+.imageWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.classImage {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.className {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #0b1a3a;
+  margin-bottom: 0.5rem;
+}
+
+.classDescription {
+  background: white;
+  padding: 1.2rem;
+  border-radius: 10px;
+  border: 1px solid #eef2f6;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.classStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  background: #f8fafc;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+.classStats div {
+  font-size: 0.95rem;
+}
+
+.subclassSelector {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid #eef2f6;
+  margin-bottom: 1.5rem;
+}
+
+.subclassSelector label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.subclassSelector select {
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #dce1e8;
+  font-size: 1rem;
+  margin-right: 0.5rem;
+}
+
+.subclassDescription {
+  margin-top: 0.5rem;
+  font-style: italic;
+  color: #3a4a6a;
+}
+
+.classTable {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid #eef2f6;
+  margin-bottom: 1.5rem;
+}
+
+.classTable h3 {
+  margin: 0 0 0.5rem 0;
+}
+
+.classTable table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.classTable th {
+  text-align: left;
+  padding: 0.3rem 0.5rem;
+  border-bottom: 2px solid #eef2f6;
+  font-weight: 600;
+}
+
+.classTable td {
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.section {
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #eef2f6;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  cursor: pointer;
+  background: #fafcff;
+  transition: background 0.15s;
+}
+
+.sectionHeader:hover {
+  background: #f1f5f9;
+}
+
+.sectionHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.sectionHeader span {
+  font-size: 1.2rem;
+  font-weight: 300;
+}
+
+.sectionContent {
+  padding: 1.2rem;
+  border-top: 1px solid #eef2f6;
+}
+
+.sectionContent div {
+  margin: 0.3rem 0;
+}
+
+.featuresContainer h3 {
+  margin: 0 0 0.5rem 0;
+}
+
+.levelGroup {
+  margin-bottom: 0.5rem;
+}
+
+.levelHeader {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 0.5rem;
+  background: #f8fafc;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #1a2a4a;
+  transition: background 0.15s;
+}
+
+.levelHeader:hover {
+  background: #eef2f6;
+}
+
+.levelContent {
+  padding: 0.5rem 1rem;
+}
+
+.featureItem {
+  margin-bottom: 0.5rem;
+}
+
+.featureName {
+  font-weight: 600;
+  color: #0b1a3a;
+}
+
+.featureDescription {
+  margin-left: 0.5rem;
+  color: #3a4a6a;
+}
