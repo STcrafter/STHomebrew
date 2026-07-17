@@ -4,6 +4,12 @@
   padding: 1rem 0;
 }
 
+.emptyMessage {
+  color: #6a7a9a;
+  font-style: italic;
+  padding: 0.5rem 0;
+}
+
 .imageWrapper {
   display: flex;
   justify-content: center;
