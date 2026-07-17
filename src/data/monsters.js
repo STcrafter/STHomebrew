@@ -1676,14 +1676,14 @@ export default [
       "description":"Шайтан применяет проклятие, луч слабости или луч болезни, используя ту же характеристику что и в Использовании заклинаний."
     },
     {
-      "name":"Теневая скрытность"?
+      "name":"Теневая скрытность",
       "description":"Находясь в темноте или тусклом свете, шайтан совершает Засаду"
     }
   ],
   "reactions": [],
   "habitat": [
   ],
-  "image":"/STHomebrew/images/sporeZombie.jpg"
+  "image":"/STHomebrew/images/shaitanDeva.jpg"
 },
 ];
 
