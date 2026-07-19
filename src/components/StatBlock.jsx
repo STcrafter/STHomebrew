@@ -253,6 +253,51 @@ export default function StatBlock({ monster }) {
           <strong>Места обитания:</strong> {data.habitat.join(', ')}
         </div>
       )}
+      {/* ===== Описание логова ===== */}
+{data.lair_description && (
+  <div className={styles.lairDescription}>
+    <div className={styles.sectionDivider}>Логово</div>
+    <div className={styles.lairContent}>
+      {data.lair_description.split(/\n\n+/).map((paragraph, idx) => (
+        <p key={idx}>{paragraph}</p>
+      ))}
+    </div>
+  </div>
+)}
+
+{/* ===== Предания (лор) ===== */}
+{data.lore && (
+  <div className={styles.loreBlock}>
+    {data.lore.title && (
+      <div className={styles.sectionDivider}>{data.lore.title}</div>
+    )}
+    <div className={styles.loreContent}>
+      {Array.isArray(data.lore) ? (
+        // Обратная совместимость: старый формат — массив строк
+        data.lore.map((item, idx) => (
+          <p key={idx} className={styles.loreText}>{item}</p>
+        ))
+      ) : data.lore.items && Array.isArray(data.lore.items) ? (
+        // Новый формат
+        data.lore.items.map((item, idx) => {
+          if (item.type === 'quote') {
+            return (
+              <blockquote key={idx} className={styles.loreQuote}>
+                <span className={styles.quoteText}>«{item.content}»</span>
+                {item.author && <cite className={styles.quoteAuthor}>— {item.author}</cite>}
+              </blockquote>
+            );
+          } else {
+            // Обычный текст
+            return (
+              <p key={idx} className={styles.loreText}>{item.content}</p>
+            );
+          }
+        })
+      ) : null}
+    </div>
+  </div>
+)}
     </div>
   );
 }
