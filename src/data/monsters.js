@@ -2843,7 +2843,7 @@ export default [
   },
   "habitat": [
   ],
-  "image":"/STHomebrew/images/azerZoK.jpg"
+  "image":"/STHomebrew/images/banshee.jpg"
 },
 ];
 
