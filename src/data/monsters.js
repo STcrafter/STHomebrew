@@ -3005,3 +3005,4 @@ export default [
   "habitat": [],
   "image": "/STHomebrew/images/banshee.jpg"
 }
+]
