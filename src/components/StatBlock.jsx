@@ -253,14 +253,35 @@ export default function StatBlock({ monster }) {
           <strong>Места обитания:</strong> {data.habitat.join(', ')}
         </div>
       )}
-      {/* ===== Описание логова ===== */}
+{/* ===== Описание логова ===== */}
 {data.lair_description && (
   <div className={styles.lairDescription}>
     <div className={styles.sectionDivider}>Логово</div>
     <div className={styles.lairContent}>
-      {data.lair_description.split(/\n\n+/).map((paragraph, idx) => (
-        <p key={idx}>{paragraph}</p>
-      ))}
+      {typeof data.lair_description === 'string' ? (
+        // Обратная совместимость: простая строка
+        data.lair_description.split(/\n\n+/).map((paragraph, idx) => (
+          <p key={idx} className={styles.lairText}>{paragraph}</p>
+        ))
+      ) : data.lair_description.description && (
+        // Новый формат: объект с description и effects
+        <>
+          {data.lair_description.description.split(/\n\n+/).map((paragraph, idx) => (
+            <p key={idx} className={styles.lairText}>{paragraph}</p>
+          ))}
+          {data.lair_description.effects && data.lair_description.effects.length > 0 && (
+            <div className={styles.lairEffects}>
+              <h4 className={styles.lairEffectsTitle}>Эффекты логова</h4>
+              {data.lair_description.effects.map((effect, idx) => (
+                <div key={idx} className={styles.lairEffect}>
+                  <span className={styles.lairEffectName}>{effect.name}.</span>{' '}
+                  <span className={styles.lairEffectDesc}>{effect.description}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </div>
   </div>
 )}
