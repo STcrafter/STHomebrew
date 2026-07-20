@@ -1,5 +1,5 @@
 import styles from './StatBlock.module.css';
-import { formatCRWithDetails } from '../utils/helpers';
+import { formatChallengeRating, getProficiencyBonusForCR, getXPForCR } from '../utils/helpers';
 
 export default function StatBlock({ monster }) {
   const data = monster?.statblock || monster;
@@ -29,21 +29,70 @@ export default function StatBlock({ monster }) {
   const savingThrows = data.saving_throws || {};
   const skills = data.skills || {};
 
-  // === Вспомогательная функция для рендера списка заклинаний ===
+  // ===== Универсальная функция для рендера списка заклинаний =====
   const renderSpellList = (spells) => {
-    if (!spells || typeof spells !== 'object') return null;
+    if (!spells) return null;
+    // Если spells — массив, попробуем преобразовать в объект
+    if (Array.isArray(spells)) {
+      const combined = {};
+      spells.forEach(item => {
+        if (typeof item === 'object' && item !== null) {
+          Object.entries(item).forEach(([key, val]) => {
+            if (!combined[key]) combined[key] = [];
+            if (Array.isArray(val)) combined[key].push(...val);
+            else if (typeof val === 'string') combined[key].push(val);
+          });
+        }
+      });
+      spells = combined;
+    }
+    if (typeof spells !== 'object' || spells === null) return null;
+
     return (
       <div className={styles.spellList}>
-        {Object.entries(spells).map(([freq, spellArray]) => (
-          <div key={freq} className={styles.spellGroup}>
-            <span className={styles.spellFreq}>{freq}</span>
-            <span className={styles.spellNames}>
-              {Array.isArray(spellArray) ? spellArray.join(', ') : spellArray}
-            </span>
-          </div>
-        ))}
+        {Object.entries(spells).map(([freq, spellArray]) => {
+          let display = '';
+          if (Array.isArray(spellArray)) {
+            display = spellArray.join(', ');
+          } else if (typeof spellArray === 'string') {
+            display = spellArray;
+          } else if (typeof spellArray === 'object' && spellArray !== null) {
+            display = Object.values(spellArray).join(', ');
+          } else {
+            display = String(spellArray);
+          }
+          return (
+            <div key={freq} className={styles.spellGroup}>
+              <span className={styles.spellFreq}>{freq}</span>
+              <span className={styles.spellNames}>{display}</span>
+            </div>
+          );
+        })}
       </div>
     );
+  };
+
+  // ===== Безопасное приведение к строке =====
+  const safeString = (value) => {
+    if (value === null || value === undefined) return '';
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number') return String(value);
+    if (typeof value === 'object') return JSON.stringify(value);
+    return String(value);
+  };
+
+  // ===== Рендер текста с абзацами =====
+  const renderParagraphs = (text) => {
+    if (!text) return null;
+    const str = safeString(text);
+    if (!str) return null;
+    return str.split(/\n\n+/).map((p, idx) => <p key={idx} className={styles.lairText}>{p}</p>);
+  };
+
+  // ===== Безопасный рендер массива =====
+  const renderArray = (arr, joinStr = ', ') => {
+    if (!Array.isArray(arr) || arr.length === 0) return null;
+    return arr.join(joinStr);
   };
 
   return (
@@ -121,17 +170,17 @@ export default function StatBlock({ monster }) {
         Array.isArray(data.damage_immunities) && data.damage_immunities.length > 0 ||
         Array.isArray(data.condition_immunities) && data.condition_immunities.length > 0) && (
         <div className={styles.damageInfo}>
-          {Array.isArray(data.damage_vulnerabilities) && data.damage_vulnerabilities.length > 0 && (
-            <div><strong>Уязвимости</strong> {data.damage_vulnerabilities.join(', ')}</div>
+          {renderArray(data.damage_vulnerabilities) && (
+            <div><strong>Уязвимости</strong> {renderArray(data.damage_vulnerabilities)}</div>
           )}
-          {Array.isArray(data.damage_resistances) && data.damage_resistances.length > 0 && (
-            <div><strong>Сопротивления</strong> {data.damage_resistances.join(', ')}</div>
+          {renderArray(data.damage_resistances) && (
+            <div><strong>Сопротивления</strong> {renderArray(data.damage_resistances)}</div>
           )}
-          {Array.isArray(data.damage_immunities) && data.damage_immunities.length > 0 && (
-            <div><strong>Иммунитеты к урону</strong> {data.damage_immunities.join(', ')}</div>
+          {renderArray(data.damage_immunities) && (
+            <div><strong>Иммунитеты к урону</strong> {renderArray(data.damage_immunities)}</div>
           )}
-          {Array.isArray(data.condition_immunities) && data.condition_immunities.length > 0 && (
-            <div><strong>Иммунитеты к состояниям</strong> {data.condition_immunities.join(', ')}</div>
+          {renderArray(data.condition_immunities) && (
+            <div><strong>Иммунитеты к состояниям</strong> {renderArray(data.condition_immunities)}</div>
           )}
         </div>
       )}
@@ -141,19 +190,20 @@ export default function StatBlock({ monster }) {
       {data.languages && <div className={styles.languages}><strong>Языки</strong> {data.languages}</div>}
       {data.challenge_rating !== undefined && (
         <div className={styles.cr}>
-          <strong>ОП</strong> {formatCRWithDetails(data.challenge_rating)}
+          <strong>ОП</strong> {formatChallengeRating(data.challenge_rating)}
+          {' (+' + getProficiencyBonusForCR(data.challenge_rating) + ' БМ, ' + getXPForCR(data.challenge_rating) + ' XP)'}
         </div>
       )}
 
       {/* Особенности (traits) */}
-      {data.traits && data.traits.length > 0 && (
+      {Array.isArray(data.traits) && data.traits.length > 0 && (
         <>
           <div className={styles.sectionDivider}>Особенности</div>
           <div className={styles.traits}>
             {data.traits.map((trait, idx) => (
               <div key={idx} className={styles.trait}>
-                <span className={styles.traitName}>{trait.name}.</span>{' '}
-                <span className={styles.traitDesc}>{trait.description}</span>
+                <span className={styles.traitName}>{safeString(trait.name)}.</span>{' '}
+                <span className={styles.traitDesc}>{safeString(trait.description)}</span>
                 {renderSpellList(trait.spells)}
               </div>
             ))}
@@ -162,14 +212,14 @@ export default function StatBlock({ monster }) {
       )}
 
       {/* Действия */}
-      {data.actions && data.actions.length > 0 && (
+      {Array.isArray(data.actions) && data.actions.length > 0 && (
         <>
           <div className={styles.sectionDivider}>Действия</div>
           <div className={styles.actions}>
             {data.actions.map((action, idx) => (
               <div key={idx} className={styles.action}>
-                <span className={styles.actionName}>{action.name}.</span>{' '}
-                <span className={styles.actionDesc}>{action.description}</span>
+                <span className={styles.actionName}>{safeString(action.name)}.</span>{' '}
+                <span className={styles.actionDesc}>{safeString(action.description)}</span>
                 {renderSpellList(action.spells)}
               </div>
             ))}
@@ -178,14 +228,14 @@ export default function StatBlock({ monster }) {
       )}
 
       {/* Бонусные действия */}
-      {data.bonus_actions && data.bonus_actions.length > 0 && (
+      {Array.isArray(data.bonus_actions) && data.bonus_actions.length > 0 && (
         <>
           <div className={styles.sectionDivider}>Бонусные действия</div>
           <div className={styles.bonusActions}>
             {data.bonus_actions.map((action, idx) => (
               <div key={idx} className={styles.action}>
-                <span className={styles.actionName}>{action.name}.</span>{' '}
-                <span className={styles.actionDesc}>{action.description}</span>
+                <span className={styles.actionName}>{safeString(action.name)}.</span>{' '}
+                <span className={styles.actionDesc}>{safeString(action.description)}</span>
                 {renderSpellList(action.spells)}
               </div>
             ))}
@@ -194,14 +244,14 @@ export default function StatBlock({ monster }) {
       )}
 
       {/* Реакции */}
-      {data.reactions && data.reactions.length > 0 && (
+      {Array.isArray(data.reactions) && data.reactions.length > 0 && (
         <>
           <div className={styles.sectionDivider}>Реакции</div>
           <div className={styles.reactions}>
             {data.reactions.map((action, idx) => (
               <div key={idx} className={styles.action}>
-                <span className={styles.actionName}>{action.name}.</span>{' '}
-                <span className={styles.actionDesc}>{action.description}</span>
+                <span className={styles.actionName}>{safeString(action.name)}.</span>{' '}
+                <span className={styles.actionDesc}>{safeString(action.description)}</span>
                 {renderSpellList(action.spells)}
               </div>
             ))}
@@ -214,16 +264,18 @@ export default function StatBlock({ monster }) {
         <>
           <div className={styles.sectionDivider}>Легендарные действия</div>
           <div className={styles.legendary}>
-            <p className={styles.legendaryDesc}>{data.legendary_actions.description}</p>
-            <div className={styles.legendaryActions}>
-              {data.legendary_actions.actions.map((action, idx) => (
-                <div key={idx} className={styles.action}>
-                  <span className={styles.actionName}>{action.name}.</span>{' '}
-                  <span className={styles.actionDesc}>{action.description}</span>
-                  {renderSpellList(action.spells)}
-                </div>
-              ))}
-            </div>
+            <p className={styles.legendaryDesc}>{safeString(data.legendary_actions.description)}</p>
+            {Array.isArray(data.legendary_actions.actions) && data.legendary_actions.actions.length > 0 && (
+              <div className={styles.legendaryActions}>
+                {data.legendary_actions.actions.map((action, idx) => (
+                  <div key={idx} className={styles.action}>
+                    <span className={styles.actionName}>{safeString(action.name)}.</span>{' '}
+                    <span className={styles.actionDesc}>{safeString(action.description)}</span>
+                    {renderSpellList(action.spells)}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </>
       )}
@@ -233,92 +285,86 @@ export default function StatBlock({ monster }) {
         <>
           <div className={styles.sectionDivider}>Действия логова</div>
           <div className={styles.lair}>
-            <p className={styles.lairDesc}>{data.lair_actions.description}</p>
-            <div className={styles.lairActions}>
-              {data.lair_actions.actions.map((action, idx) => (
-                <div key={idx} className={styles.action}>
-                  <span className={styles.actionName}>{action.name}.</span>{' '}
-                  <span className={styles.actionDesc}>{action.description}</span>
-                  {renderSpellList(action.spells)}
-                </div>
-              ))}
-            </div>
+            <p className={styles.lairDesc}>{safeString(data.lair_actions.description)}</p>
+            {Array.isArray(data.lair_actions.actions) && data.lair_actions.actions.length > 0 && (
+              <div className={styles.lairActions}>
+                {data.lair_actions.actions.map((action, idx) => (
+                  <div key={idx} className={styles.action}>
+                    <span className={styles.actionName}>{safeString(action.name)}.</span>{' '}
+                    <span className={styles.actionDesc}>{safeString(action.description)}</span>
+                    {renderSpellList(action.spells)}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </>
       )}
 
+      {/* Описание логова */}
+      {data.lair_description && (
+        <div className={styles.lairDescription}>
+          <div className={styles.sectionDivider}>Логово</div>
+          <div className={styles.lairContent}>
+            {typeof data.lair_description === 'string' ? (
+              renderParagraphs(data.lair_description)
+            ) : (
+              <>
+                {data.lair_description.description && renderParagraphs(data.lair_description.description)}
+                {Array.isArray(data.lair_description.effects) && data.lair_description.effects.length > 0 && (
+                  <div className={styles.lairEffects}>
+                    <h4 className={styles.lairEffectsTitle}>Эффекты логова</h4>
+                    {data.lair_description.effects.map((effect, idx) => (
+                      <div key={idx} className={styles.lairEffect}>
+                        <span className={styles.lairEffectName}>{safeString(effect.name)}.</span>{' '}
+                        <span className={styles.lairEffectDesc}>{safeString(effect.description)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Предания (лор) */}
+      {data.lore && (
+        <div className={styles.loreBlock}>
+          {data.lore.title && <div className={styles.sectionDivider}>{safeString(data.lore.title)}</div>}
+          <div className={styles.loreContent}>
+            {(() => {
+              if (Array.isArray(data.lore)) {
+                return data.lore.map((item, idx) => (
+                  <p key={idx} className={styles.loreText}>{safeString(item)}</p>
+                ));
+              } else if (data.lore.items && Array.isArray(data.lore.items)) {
+                return data.lore.items.map((item, idx) => {
+                  if (item.type === 'quote') {
+                    return (
+                      <blockquote key={idx} className={styles.loreQuote}>
+                        <span className={styles.quoteText}>«{safeString(item.content)}»</span>
+                        {item.author && <cite className={styles.quoteAuthor}>— {safeString(item.author)}</cite>}
+                      </blockquote>
+                    );
+                  } else {
+                    return <p key={idx} className={styles.loreText}>{safeString(item.content)}</p>;
+                  }
+                });
+              } else {
+                return null;
+              }
+            })()}
+          </div>
+        </div>
+      )}
+
       {/* Места обитания */}
-      {data.habitat && data.habitat.length > 0 && (
+      {Array.isArray(data.habitat) && data.habitat.length > 0 && (
         <div className={styles.habitat}>
           <strong>Места обитания:</strong> {data.habitat.join(', ')}
         </div>
       )}
-{/* ===== Описание логова ===== */}
-{data.lair_description && (
-  <div className={styles.lairDescription}>
-    <div className={styles.sectionDivider}>Логово</div>
-    <div className={styles.lairContent}>
-      {typeof data.lair_description === 'string' ? (
-        // Обратная совместимость: простая строка
-        data.lair_description.split(/\n\n+/).map((paragraph, idx) => (
-          <p key={idx} className={styles.lairText}>{paragraph}</p>
-        ))
-      ) : data.lair_description.description && (
-        // Новый формат: объект с description и effects
-        <>
-          {data.lair_description.description.split(/\n\n+/).map((paragraph, idx) => (
-            <p key={idx} className={styles.lairText}>{paragraph}</p>
-          ))}
-          {data.lair_description.effects && data.lair_description.effects.length > 0 && (
-            <div className={styles.lairEffects}>
-              <h4 className={styles.lairEffectsTitle}>Эффекты логова</h4>
-              {data.lair_description.effects.map((effect, idx) => (
-                <div key={idx} className={styles.lairEffect}>
-                  <span className={styles.lairEffectName}>{effect.name}.</span>{' '}
-                  <span className={styles.lairEffectDesc}>{effect.description}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  </div>
-)}
-
-{/* ===== Предания (лор) ===== */}
-{data.lore && (
-  <div className={styles.loreBlock}>
-    {data.lore.title && (
-      <div className={styles.sectionDivider}>{data.lore.title}</div>
-    )}
-    <div className={styles.loreContent}>
-      {Array.isArray(data.lore) ? (
-        // Обратная совместимость: старый формат — массив строк
-        data.lore.map((item, idx) => (
-          <p key={idx} className={styles.loreText}>{item}</p>
-        ))
-      ) : data.lore.items && Array.isArray(data.lore.items) ? (
-        // Новый формат
-        data.lore.items.map((item, idx) => {
-          if (item.type === 'quote') {
-            return (
-              <blockquote key={idx} className={styles.loreQuote}>
-                <span className={styles.quoteText}>«{item.content}»</span>
-                {item.author && <cite className={styles.quoteAuthor}>— {item.author}</cite>}
-              </blockquote>
-            );
-          } else {
-            // Обычный текст
-            return (
-              <p key={idx} className={styles.loreText}>{item.content}</p>
-            );
-          }
-        })
-      ) : null}
-    </div>
-  </div>
-)}
     </div>
   );
 }
