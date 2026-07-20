@@ -3068,10 +3068,6 @@ export default [
   ],
   "reactions": [
   ],
-  "legendary_actions":{
-  },
-  "lair_description":{
-  },
   "habitat": [
     "Горы",
     "Подземье"
