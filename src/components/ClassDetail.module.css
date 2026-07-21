@@ -191,3 +191,12 @@
   margin-left: 0.5rem;
   color: #3a4a6a;
 }
+
+.tableRowClickable {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.tableRowClickable:hover {
+  background: #f1f5f9;
+}

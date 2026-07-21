@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './ClassDetail.module.css';
 
-// Словарь перевода названий колонок
 const columnLabels = {
   level: 'Уровень',
   proficiency_bonus: 'Бонус мастерства',
@@ -26,6 +25,24 @@ export default function ClassDetail({ classData }) {
   const features = Array.isArray(classData.features) ? classData.features : [];
   const subclasses = Array.isArray(classData.subclasses) ? classData.subclasses : [];
   const classTable = Array.isArray(classData.class_table) ? classData.class_table : [];
+
+  // ===== Обработчик клика по строке таблицы =====
+  const handleFeatureClick = (level) => {
+    // Разворачиваем секцию способностей, если она свёрнута
+    if (!openSections.features) {
+      setOpenSections(prev => ({ ...prev, features: true }));
+    }
+    // Разворачиваем нужный уровень
+    const levelKey = `level_${level}`;
+    setOpenSections(prev => ({ ...prev, [levelKey]: true }));
+    // Прокручиваем к заголовку уровня после обновления DOM
+    setTimeout(() => {
+      const el = document.getElementById(`level-${level}`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 150);
+  };
 
   // Группировка способностей по уровням для вкладки "Способности"
   const groupFeaturesByLevel = (featuresArray) => {
@@ -54,7 +71,7 @@ export default function ClassDetail({ classData }) {
             openSections[sectionKey] = true;
           }
           return (
-            <div key={level} className={styles.levelGroup}>
+            <div key={level} id={`level-${level}`} className={styles.levelGroup}>
               <div className={styles.levelHeader} onClick={() => toggleSection(sectionKey)}>
                 <span>{level} уровень</span>
                 <span>{openSections[sectionKey] ? '−' : '+'}</span>
@@ -90,10 +107,8 @@ export default function ClassDetail({ classData }) {
   // Получаем список уникальных уровней для таблицы
   const tableLevels = () => {
     if (classTable.length > 0) {
-      // Если есть class_table, используем уровни из неё (обычно 1–20)
       return classTable.map(row => row.level).sort((a, b) => a - b);
     } else {
-      // Иначе берём уровни из особенностей
       const levels = new Set();
       displayFeatures().forEach(f => levels.add(f.level || 0));
       return Array.from(levels).sort((a, b) => a - b);
@@ -141,7 +156,11 @@ export default function ClassDetail({ classData }) {
             const features = getFeaturesForLevel(level);
             const rowData = getTableRow(level);
             return (
-              <tr key={level}>
+              <tr 
+                key={level} 
+                onClick={() => handleFeatureClick(level)}
+                className={styles.tableRowClickable}
+              >
                 <td>{level}</td>
                 <td>
                   {features.length > 0 ? features.map(f => f.name).join(', ') : '—'}
@@ -157,11 +176,42 @@ export default function ClassDetail({ classData }) {
     );
   };
 
-  // ... остальной код (рендер владений, снаряжения и т.д.) без изменений ...
+  // Функция рендера владений
+  const renderProficiencies = () => {
+    const prof = classData.proficiencies || {};
+    if (Object.keys(prof).length === 0) {
+      return <p className={styles.emptyMessage}>Нет данных о владениях</p>;
+    }
+    return (
+      <>
+        {prof.armor && Array.isArray(prof.armor) && (
+          <div><strong>Доспехи:</strong> {prof.armor.join(', ')}</div>
+        )}
+        {prof.weapons && Array.isArray(prof.weapons) && (
+          <div><strong>Оружие:</strong> {prof.weapons.join(', ')}</div>
+        )}
+        {prof.tools && Array.isArray(prof.tools) && (
+          <div><strong>Инструменты:</strong> {prof.tools.join(', ')}</div>
+        )}
+        {prof.saving_throws && Array.isArray(prof.saving_throws) && (
+          <div><strong>Спасброски:</strong> {prof.saving_throws.join(', ')}</div>
+        )}
+        {prof.skills && (
+          <div>
+            <strong>Навыки:</strong>
+            {prof.skills.choices
+              ? ` выберите ${prof.skills.choices} из: ${prof.skills.options?.join(', ') || ''}`
+              : (Array.isArray(prof.skills) ? prof.skills.join(', ') : '—')
+            }
+          </div>
+        )}
+      </>
+    );
+  };
 
+  // Основной рендер
   return (
     <div className={styles.classPage}>
-      {/* Заголовок и картинка */}
       {classData.image && (
         <div className={styles.imageWrapper}>
           <img
@@ -177,14 +227,12 @@ export default function ClassDetail({ classData }) {
         <p>{classData.description || 'Описание отсутствует'}</p>
       </div>
 
-      {/* Основные параметры */}
       <div className={styles.classStats}>
         <div><strong>Основная характеристика:</strong> {classData.primary_ability || '—'}</div>
         <div><strong>Спасброски:</strong> {Array.isArray(classData.saving_throws) ? classData.saving_throws.join(', ') : '—'}</div>
         <div><strong>Кость хитов:</strong> {classData.hit_die || '—'}</div>
       </div>
 
-      {/* Выпадающий список подклассов */}
       {subclasses.length > 0 && (
         <div className={styles.subclassSelector}>
           <label>Подкласс:</label>
@@ -205,13 +253,11 @@ export default function ClassDetail({ classData }) {
         </div>
       )}
 
-      {/* Таблица классов */}
       <div className={styles.classTable}>
         <h3>Таблица классов</h3>
         {renderTable()}
       </div>
 
-      {/* Владения (сворачиваемая секция) */}
       <div className={styles.section}>
         <div className={styles.sectionHeader} onClick={() => toggleSection('proficiencies')}>
           <h3>Владения</h3>
@@ -224,7 +270,6 @@ export default function ClassDetail({ classData }) {
         )}
       </div>
 
-      {/* Снаряжение (сворачиваемая секция) */}
       {classData.equipment && (
         <div className={styles.section}>
           <div className={styles.sectionHeader} onClick={() => toggleSection('equipment')}>
@@ -239,7 +284,6 @@ export default function ClassDetail({ classData }) {
         </div>
       )}
 
-      {/* Способности (сворачиваемая секция) */}
       <div className={styles.section}>
         <div className={styles.sectionHeader} onClick={() => toggleSection('features')}>
           <h3>Способности</h3>
@@ -252,37 +296,5 @@ export default function ClassDetail({ classData }) {
         )}
       </div>
     </div>
-  );
-}
-
-// Функция renderProficiencies (остаётся как была)
-function renderProficiencies(proficiencies) {
-  if (!proficiencies || Object.keys(proficiencies).length === 0) {
-    return <p className={styles.emptyMessage}>Нет данных о владениях</p>;
-  }
-  return (
-    <>
-      {proficiencies.armor && Array.isArray(proficiencies.armor) && (
-        <div><strong>Доспехи:</strong> {proficiencies.armor.join(', ')}</div>
-      )}
-      {proficiencies.weapons && Array.isArray(proficiencies.weapons) && (
-        <div><strong>Оружие:</strong> {proficiencies.weapons.join(', ')}</div>
-      )}
-      {proficiencies.tools && Array.isArray(proficiencies.tools) && (
-        <div><strong>Инструменты:</strong> {proficiencies.tools.join(', ')}</div>
-      )}
-      {proficiencies.saving_throws && Array.isArray(proficiencies.saving_throws) && (
-        <div><strong>Спасброски:</strong> {proficiencies.saving_throws.join(', ')}</div>
-      )}
-      {proficiencies.skills && (
-        <div>
-          <strong>Навыки:</strong>
-          {proficiencies.skills.choices
-            ? ` выберите ${proficiencies.skills.choices} из: ${proficiencies.skills.options?.join(', ') || ''}`
-            : (Array.isArray(proficiencies.skills) ? proficiencies.skills.join(', ') : '—')
-          }
-        </div>
-      )}
-    </>
   );
 }
