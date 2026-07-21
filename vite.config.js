@@ -5,3 +5,9 @@ export default defineConfig({
   plugins: [react()],
   base: '/STHomebrew/',   // ← имя вашего репозитория
 });
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    extensions: ['.js', '.jsx', '.json'],
+  },
+});

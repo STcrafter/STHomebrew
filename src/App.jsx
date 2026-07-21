@@ -3,7 +3,7 @@ import Home from './pages/Home';
 import CategoryList from './pages/CategoryList';
 import ItemDetail from './pages/ItemDetail';
 import Constructor from './pages/Constructor';
-import { useTheme } from './context/ThemeContext';
+import { useTheme } from './context/ThemeContext.jsx';
 import './App.css';
 
 function App() {
