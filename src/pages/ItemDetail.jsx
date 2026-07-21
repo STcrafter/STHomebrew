@@ -154,8 +154,8 @@ case 'subclasses':
     </div>
   );
 
+
 case 'homerules':
-  case 'homerules':
   return (
     <>
       <div className={styles.homeruleMeta}>
