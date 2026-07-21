@@ -207,3 +207,53 @@
   color: #1a2a4a;
   margin: 0;
 }
+
+/* ===== Домашние правила — структурированные секции ===== */
+.homeruleSections {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.homeruleHeading {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0.5rem 0 0.2rem 0;
+  color: #0b1a3a;
+  border-bottom: 1px solid #eef2f6;
+  padding-bottom: 0.2rem;
+}
+
+.homeruleParagraph {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.homeruleTableWrapper {
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+
+.homeruleTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  border: 1px solid #d1c7b8;
+}
+
+.homeruleTable th {
+  background: #f1ede8;
+  font-weight: 600;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #d1c7b8;
+  text-align: left;
+}
+
+.homeruleTable td {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #d1c7b8;
+}
+
+.homeruleTable tbody tr:nth-child(even) {
+  background: #faf8f5;
+}

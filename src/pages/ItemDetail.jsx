@@ -155,6 +155,7 @@ case 'subclasses':
   );
 
 case 'homerules':
+  case 'homerules':
   return (
     <>
       <div className={styles.homeruleMeta}>
@@ -162,12 +163,52 @@ case 'homerules':
       </div>
       <div className={styles.description}>
         <h3>Описание правила</h3>
-        {item.description ? (
-          item.description.split(/\n\n+/).map((paragraph, idx) => (
-            <p key={idx}>{paragraph}</p>
-          ))
+        {item.sections ? (
+          // Новый структурированный формат
+          <div className={styles.homeruleSections}>
+            {item.sections.map((section, idx) => {
+              switch (section.type) {
+                case 'heading':
+                  return <h4 key={idx} className={styles.homeruleHeading}>{section.content}</h4>;
+                case 'paragraph':
+                  return <p key={idx} className={styles.homeruleParagraph}>{section.content}</p>;
+                case 'table':
+                  return (
+                    <div key={idx} className={styles.homeruleTableWrapper}>
+                      <table className={styles.homeruleTable}>
+                        <thead>
+                          <tr>
+                            {section.headers.map((header, i) => (
+                              <th key={i}>{header}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {section.rows.map((row, i) => (
+                            <tr key={i}>
+                              {row.map((cell, j) => (
+                                <td key={j}>{cell}</td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  );
+                default:
+                  return null;
+              }
+            })}
+          </div>
         ) : (
-          <p>Описание отсутствует</p>
+          // Старый формат — простой текст с абзацами
+          item.description ? (
+            item.description.split(/\n\n+/).map((paragraph, idx) => (
+              <p key={idx}>{paragraph}</p>
+            ))
+          ) : (
+            <p>Описание отсутствует</p>
+          )
         )}
       </div>
     </>
