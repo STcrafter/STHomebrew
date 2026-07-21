@@ -6,9 +6,10 @@
 
 body {
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  background: #f8fafc;
-  color: #0d0d0d;
+  background: var(--bg-body);
+  color: var(--text-primary);
   line-height: 1.6;
+  transition: background 0.3s, color 0.3s;
 }
 
 a {
@@ -20,4 +21,23 @@ a {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1.5rem;
+}
+
+/* Стиль для скроллбара (для красоты) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-body);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
 }

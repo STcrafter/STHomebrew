@@ -1,19 +1,19 @@
 .panel {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 1.2rem;
-  border: 1px solid #eef2f6;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
 }
 
 .panel h3 {
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
-  color: #1a2a4a;
+  color: var(--text-secondary);
 }
 
 .section {
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px solid var(--border-color);
   padding: 0.5rem 0;
 }
 
@@ -22,12 +22,12 @@
   justify-content: space-between;
   cursor: pointer;
   font-weight: 500;
-  color: #2a3a5a;
+  color: var(--text-secondary);
   padding: 0.3rem 0;
 }
 
 .sectionHeader:hover {
-  color: #4d6bfe;
+  color: var(--accent);
 }
 
 .sectionContent {
@@ -42,12 +42,17 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.9rem;
-  color: #3a4a6a;
+  color: var(--text-muted);
   cursor: pointer;
 }
 
 .checkbox input {
   width: 16px;
   height: 16px;
-  accent-color: #4d6bfe;
+  accent-color: var(--accent);
+  background: var(--bg-input);
+}
+
+.checkbox:hover {
+  color: var(--text-primary);
 }

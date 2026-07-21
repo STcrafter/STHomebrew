@@ -1,6 +1,6 @@
 .home {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f0f4ff 0%, #e6edfc 100%);
+  background: var(--bg-body);
   padding: 2rem 1rem;
 }
 
@@ -12,13 +12,13 @@
 .header h1 {
   font-size: 3rem;
   font-weight: 700;
-  color: #0b1a3a;
+  color: var(--text-primary);
   letter-spacing: -0.5px;
 }
 
 .header p {
   font-size: 1.2rem;
-  color: #4a5b7a;
+  color: var(--text-muted);
   margin-top: 0.5rem;
 }
 
@@ -31,13 +31,13 @@
 }
 
 .card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 2rem 1.5rem;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: 1px solid #eef2f6;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+  border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -45,7 +45,7 @@
 
 .card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow-hover);
 }
 
 .icon {
@@ -63,7 +63,39 @@
 .card h2 {
   font-size: 1.3rem;
   font-weight: 600;
-  color: #1a2a4a;
+  color: var(--text-secondary);
+}
+
+/* футер */
+.footer {
+  margin-top: 3rem;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.aboutButton {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.15s;
+}
+
+.aboutButton:hover {
+  color: var(--text-primary);
+}
+
+.constructorLink {
+  color: var(--text-light);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.15s;
+}
+
+.constructorLink:hover {
+  color: var(--text-primary);
 }
 
 @media (max-width: 600px) {
@@ -71,15 +103,4 @@
   .grid { gap: 1rem; }
   .card { padding: 1.5rem 1rem; }
   .icon { width: 60px; height: 60px; font-size: 2rem; }
-}
-
-.constructorLink {
-  color: #5a6a8a;
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: color 0.15s;
-}
-
-.constructorLink:hover {
-  color: #0b1a3a;
 }

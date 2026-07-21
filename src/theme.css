@@ -1,0 +1,85 @@
+/* ===== Светлая тема (по умолчанию) ===== */
+:root {
+  --bg-body: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f5f9;
+  --bg-input: #ffffff;
+  --bg-input-hover: #f8fafc;
+  --bg-header: #f0f4ff;
+  --bg-table-alt: #fafcff;
+  --bg-blockquote: #f8f5f0;
+  --bg-lair: #f8f5f0;
+  --bg-code: #f1f5f9;
+  --bg-section: #fafcff;
+  --bg-select: #ffffff;
+
+  --text-primary: #0d0d0d;
+  --text-secondary: #1a2a4a;
+  --text-muted: #3a4a6a;
+  --text-light: #5a6a8a;
+  --text-inverse: #ffffff;
+
+  --border-color: #eef2f6;
+  --border-strong: #d1c7b8;
+  --border-input: #dce1e8;
+  --border-table: #d1c7b8;
+
+  --shadow: 0 4px 12px rgba(0,0,0,0.05);
+  --shadow-hover: 0 12px 24px rgba(0,0,0,0.08);
+
+  --accent: #4d6bfe;
+  --accent-hover: #3a56d4;
+  --accent-light: #e6edfc;
+
+  --statblock-bg: #f9f6f0;
+  --statblock-border: #d1c7b8;
+  --statblock-text: #1e1a16;
+  --statblock-muted: #3a322a;
+
+  --lore-bg: #f8f5f0;
+  --lore-border: #b8a99a;
+  --lore-text: #3a322a;
+}
+
+/* ===== Тёмная тема ===== */
+[data-theme="dark"] {
+  --bg-body: #121212;
+  --bg-card: #1e1e1e;
+  --bg-card-hover: #2a2a2a;
+  --bg-input: #2a2a2a;
+  --bg-input-hover: #333333;
+  --bg-header: #1a1a2e;
+  --bg-table-alt: #1a1a1a;
+  --bg-blockquote: #2a2420;
+  --bg-lair: #2a2420;
+  --bg-code: #2a2a2a;
+  --bg-section: #1a1a1a;
+  --bg-select: #2a2a2a;
+
+  --text-primary: #e8e8e8;
+  --text-secondary: #c8d0dc;
+  --text-muted: #9aa8b8;
+  --text-light: #8a9aaa;
+  --text-inverse: #0d0d0d;
+
+  --border-color: #333333;
+  --border-strong: #4a3f3a;
+  --border-input: #444444;
+  --border-table: #4a3f3a;
+
+  --shadow: 0 4px 12px rgba(0,0,0,0.3);
+  --shadow-hover: 0 12px 24px rgba(0,0,0,0.5);
+
+  --accent: #6b87ff;
+  --accent-hover: #4d6bfe;
+  --accent-light: #1a2440;
+
+  --statblock-bg: #1c1814;
+  --statblock-border: #3a322a;
+  --statblock-text: #d4cdc4;
+  --statblock-muted: #a89888;
+
+  --lore-bg: #1c1814;
+  --lore-border: #4a3f3a;
+  --lore-text: #d4cdc4;
+}
