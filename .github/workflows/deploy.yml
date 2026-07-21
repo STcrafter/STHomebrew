@@ -2,21 +2,21 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]  # èëè master, åñëè ó âàñ òàê
+    branches: [ main ]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: write        # <-- Право на запись в репозиторий
-      pages: write           # <-- Право на деплой в GitHub Pages
+      contents: write
+      pages: write
       id-token: write
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - run: npm install   # вместо npm ci
+      - run: npm install
       - run: npm run build
       - uses: peaceiris/actions-gh-pages@v3
         with:
