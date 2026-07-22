@@ -9,7 +9,15 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 0; /* убираем нижний отступ, чтобы контент был вплотную */
+  padding: 0.8rem 0;
+  position: sticky;
+  top: 0;
+  background: var(--bg-body);
+  z-index: 10;
+  border-bottom: 2px solid var(--border-color);
+  backdrop-filter: blur(8px); /* лёгкое размытие фона */
+  transition: background 0.3s;
 }
 
 .back {
