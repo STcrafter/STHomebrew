@@ -190,10 +190,11 @@ export default function CategoryList() {
           <div className={styles.grid}>
             {filteredItems.map(item => (
               <Link to={`/category/${category}/${item.id}`} key={item.id} className={styles.card}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className={styles.cardHeader}>
                   <h3>{item.name}</h3>
                   <FavoriteButton id={item.id} />
                 </div>
+
                 {category === 'monsters' && (
                   <div className={styles.meta}>
                     {item.challenge_rating !== undefined && (

@@ -16,18 +16,17 @@ export default function Breadcrumbs() {
   const location = useLocation();
   const pathnames = location.pathname.split('/').filter(x => x);
 
-  if (pathnames.length === 0) return null;
+  // Убираем 'STHomebrew' и 'category' из пути
+  const filtered = pathnames.filter(p => p !== 'STHomebrew' && p !== 'category');
 
-  const isHomebrewBase = pathnames[0] === 'STHomebrew' && pathnames.length > 1;
-  const startIndex = isHomebrewBase ? 1 : 0;
-  const crumbs = isHomebrewBase ? pathnames.slice(1) : pathnames;
+  if (filtered.length === 0) return null;
 
   return (
     <nav className={styles.breadcrumbs}>
       <Link to="/" className={styles.crumb}>Главная</Link>
-      {crumbs.map((crumb, index) => {
-        const pathTo = `/${pathnames.slice(0, startIndex + index + 1).join('/')}`;
-        const isLast = index === crumbs.length - 1;
+      {filtered.map((crumb, index) => {
+        const pathTo = `/${pathnames.slice(0, pathnames.indexOf(crumb) + 1).join('/')}`;
+        const isLast = index === filtered.length - 1;
         const label = categoryLabels[crumb] || decodeURIComponent(crumb);
         return (
           <span key={crumb}>
