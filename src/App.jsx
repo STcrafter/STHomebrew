@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import CategoryList from './pages/CategoryList';
 import ItemDetail from './pages/ItemDetail';
@@ -16,6 +16,7 @@ function App() {
         <Route path="/category/:category" element={<CategoryList />} />
         <Route path="/category/:category/:id" element={<ItemDetail />} />
         <Route path="/constructor" element={<Constructor />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <button 
         onClick={toggleTheme} 
