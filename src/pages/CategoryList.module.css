@@ -174,3 +174,19 @@
   .header h1 { font-size: 1.8rem; }
   .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
 }
+
+.favoritesFilter {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.favoritesFilter input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}

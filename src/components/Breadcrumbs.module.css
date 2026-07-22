@@ -1,0 +1,28 @@
+.breadcrumbs {
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.crumb {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.crumb:hover {
+  text-decoration: underline;
+}
+
+.separator {
+  margin: 0 0.3rem;
+  color: var(--text-light);
+}
+
+.current {
+  color: var(--text-primary);
+  font-weight: 500;
+}

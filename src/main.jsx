@@ -4,11 +4,14 @@ import App from './App.jsx';
 import './index.css';
 import './theme.css';
 import { ThemeProvider } from './context/ThemeContext.jsx';
+import { FavoritesProvider } from './context/FavoritesContext.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider>
-      <App />
+      <FavoritesProvider>
+        <App />
+      </FavoritesProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

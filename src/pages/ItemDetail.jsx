@@ -2,13 +2,20 @@ import { useParams, Link } from 'react-router-dom';
 import { data } from '../data';
 import styles from './ItemDetail.module.css';
 import StatBlock from '../components/StatBlock';
-import ClassTable from '../components/ClassTable';
 import ClassDetail from '../components/ClassDetail';
+import FavoriteButton from '../components/FavoriteButton';
+import Breadcrumbs from '../components/Breadcrumbs';
 
 export default function ItemDetail() {
   const { category, id } = useParams();
   const items = data[category] || [];
   const item = items.find(it => it.id === id);
+
+  // Навигация Prev/Next (по алфавиту)
+  const sortedItems = [...items].sort((a, b) => a.name.localeCompare(b.name));
+  const currentIndex = sortedItems.findIndex(i => i.id === id);
+  const prevItem = currentIndex > 0 ? sortedItems[currentIndex - 1] : null;
+  const nextItem = currentIndex < sortedItems.length - 1 ? sortedItems[currentIndex + 1] : null;
 
   if (!item) {
     return (
@@ -220,12 +227,26 @@ case 'homerules':
 
   return (
     <div className={styles.page}>
+      <Breadcrumbs />
       <div className={styles.header}>
         <Link to={`/category/${category}`} className={styles.back}>← К списку</Link>
         <h1>{item.name}</h1>
+        <FavoriteButton id={item.id} className={styles.favoriteIcon} />
       </div>
       <div className={styles.content}>
         {renderDetails()}
+      </div>
+      <div className={styles.navigation}>
+        {prevItem && (
+          <Link to={`/category/${category}/${prevItem.id}`} className={styles.navLink}>
+            ← {prevItem.name}
+          </Link>
+        )}
+        {nextItem && (
+          <Link to={`/category/${category}/${nextItem.id}`} className={styles.navLink}>
+            {nextItem.name} →
+          </Link>
+        )}
       </div>
     </div>
   );

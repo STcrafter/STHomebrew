@@ -300,3 +300,30 @@
 .homeruleTable tbody tr:nth-child(even) {
   background: var(--bg-table-alt);
 }
+
+.favoriteIcon {
+  margin-left: auto;
+  font-size: 2rem;
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.navLink {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.navLink:hover {
+  background: var(--bg-card-hover);
+  text-decoration: underline;
+}
