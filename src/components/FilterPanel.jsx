@@ -13,7 +13,7 @@ const fieldLabels = {
   rarity: 'Редкость',
   type: 'Тип предмета',
   attunement: 'Настройка',
-  // можно добавить другие поля, если появятся
+  ability: 'Увеличиваемая характеристика',  // ← добавляем
 };
 
 export default function FilterPanel({ options, onFilterChange }) {

@@ -46,9 +46,11 @@ if (category === 'monsters') {
 } else if (category === 'items') {
   filterFields = ['rarity', 'type', 'attunement'];
 } else if (category === 'subclasses') {
-  filterFields = ['class']; // фильтр по классу
+  filterFields = ['class'];
+} else if (category === 'feats') {
+  filterFields = ['ability'];   // ← добавляем
 } else {
-  return {}; // для homerules и других без фильтров
+  return {};
 }
 
   const options = {};
