@@ -202,7 +202,7 @@ export default function StatBlock({ monster }) {
           <div className={styles.traits}>
             {data.traits.map((trait, idx) => (
               <div key={idx} className={styles.trait}>
-                <span className={styles.traitName}>{safeString(trait.name)}.</span>{' '}
+                <span className={styles.traitName}>{safeString(trait.name)}.</span>
                 <span className={styles.traitDesc}>{safeString(trait.description)}</span>
                 {renderSpellList(trait.spells)}
               </div>
@@ -218,7 +218,7 @@ export default function StatBlock({ monster }) {
           <div className={styles.actions}>
             {data.actions.map((action, idx) => (
               <div key={idx} className={styles.action}>
-                <span className={styles.actionName}>{safeString(action.name)}.</span>{' '}
+                <span className={styles.actionName}>{safeString(action.name)}.</span>
                 <span className={styles.actionDesc}>{safeString(action.description)}</span>
                 {renderSpellList(action.spells)}
               </div>
@@ -234,7 +234,7 @@ export default function StatBlock({ monster }) {
           <div className={styles.bonusActions}>
             {data.bonus_actions.map((action, idx) => (
               <div key={idx} className={styles.action}>
-                <span className={styles.actionName}>{safeString(action.name)}.</span>{' '}
+                <span className={styles.actionName}>{safeString(action.name)}.</span>
                 <span className={styles.actionDesc}>{safeString(action.description)}</span>
                 {renderSpellList(action.spells)}
               </div>
@@ -250,7 +250,7 @@ export default function StatBlock({ monster }) {
           <div className={styles.reactions}>
             {data.reactions.map((action, idx) => (
               <div key={idx} className={styles.action}>
-                <span className={styles.actionName}>{safeString(action.name)}.</span>{' '}
+                <span className={styles.actionName}>{safeString(action.name)}.</span>
                 <span className={styles.actionDesc}>{safeString(action.description)}</span>
                 {renderSpellList(action.spells)}
               </div>
@@ -269,7 +269,7 @@ export default function StatBlock({ monster }) {
               <div className={styles.legendaryActions}>
                 {data.legendary_actions.actions.map((action, idx) => (
                   <div key={idx} className={styles.action}>
-                    <span className={styles.actionName}>{safeString(action.name)}.</span>{' '}
+                    <span className={styles.actionName}>{safeString(action.name)}.</span>
                     <span className={styles.actionDesc}>{safeString(action.description)}</span>
                     {renderSpellList(action.spells)}
                   </div>
@@ -290,7 +290,7 @@ export default function StatBlock({ monster }) {
               <div className={styles.lairActions}>
                 {data.lair_actions.actions.map((action, idx) => (
                   <div key={idx} className={styles.action}>
-                    <span className={styles.actionName}>{safeString(action.name)}.</span>{' '}
+                    <span className={styles.actionName}>{safeString(action.name)}.</span>
                     <span className={styles.actionDesc}>{safeString(action.description)}</span>
                     {renderSpellList(action.spells)}
                   </div>
@@ -316,7 +316,7 @@ export default function StatBlock({ monster }) {
                     <h4 className={styles.lairEffectsTitle}>Эффекты логова</h4>
                     {data.lair_description.effects.map((effect, idx) => (
                       <div key={idx} className={styles.lairEffect}>
-                        <span className={styles.lairEffectName}>{safeString(effect.name)}.</span>{' '}
+                        <span className={styles.lairEffectName}>{safeString(effect.name)}.</span>
                         <span className={styles.lairEffectDesc}>{safeString(effect.description)}</span>
                       </div>
                     ))}
