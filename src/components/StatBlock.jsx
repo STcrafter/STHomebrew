@@ -1,5 +1,5 @@
 import styles from './StatBlock.module.css';
-import { formatChallengeRating, getProficiencyBonusForCR, getXPForCR } from '../utils/helpers';
+import { formatChallengeRating, getProficiencyBonusForCR, getXPForCR, getDangerLevel } from '../utils/helpers';
 
 export default function StatBlock({ monster }) {
   const data = monster?.statblock || monster;
@@ -189,11 +189,17 @@ export default function StatBlock({ monster }) {
       {data.senses && <div className={styles.senses}><strong>Чувства</strong> {data.senses}</div>}
       {data.languages && <div className={styles.languages}><strong>Языки</strong> {data.languages}</div>}
       {data.challenge_rating !== undefined && (
-        <div className={styles.cr}>
-          <strong>ОП</strong> {formatChallengeRating(data.challenge_rating)}
-          {' (+' + getProficiencyBonusForCR(data.challenge_rating) + ' БМ, ' + getXPForCR(data.challenge_rating) + ' XP)'}
-        </div>
-      )}
+  <div className={styles.cr}>
+    <strong>ОП</strong> {formatChallengeRating(data.challenge_rating)}
+    {' (+' + getProficiencyBonusForCR(data.challenge_rating) + ' БМ, ' + getXPForCR(data.challenge_rating) + ' XP)'}
+    <span className={styles.dangerBadge} style={{
+      backgroundColor: getDangerLevel(data.challenge_rating).bg,
+      color: getDangerLevel(data.challenge_rating).color,
+    }}>
+      {getDangerLevel(data.challenge_rating).label}
+    </span>
+  </div>
+)}
 
       {/* Особенности (traits) */}
       {Array.isArray(data.traits) && data.traits.length > 0 && (

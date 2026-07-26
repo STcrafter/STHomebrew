@@ -261,3 +261,21 @@
   font-style: italic;
   color: var(--statblock-text);
 }
+
+.cr {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.dangerBadge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border: 1px solid rgba(0,0,0,0.05);
+}

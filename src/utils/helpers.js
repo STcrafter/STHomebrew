@@ -91,3 +91,17 @@ export const formatCRWithDetails = (cr) => {
   const xp = getXPForCR(cr);
   return `${display} (+${pb} БМ, ${xp} XP)`;
 };
+
+/**
+ * Возвращает уровень опасности на основе Challenge Rating
+ */
+export const getDangerLevel = (cr) => {
+  const num = Number(cr);
+  if (isNaN(num)) return { label: 'Неизвестно', color: '#6c757d', bg: '#f8f9fa' };
+  if (num < 1) return { label: 'Низкая', color: '#155724', bg: '#d4edda' };
+  if (num <= 4) return { label: 'Средняя', color: '#856404', bg: '#fff3cd' };
+  if (num <= 10) return { label: 'Высокая', color: '#7c4a00', bg: '#ffedd5' };
+  if (num <= 15) return { label: 'Очень высокая', color: '#721c24', bg: '#f8d7da' };
+  if (num <= 20) return { label: 'Смертельная', color: '#4a0e4a', bg: '#e8d5f5' };
+  return { label: 'Легендарная', color: '#5a1a6a', bg: '#f3d8f8' };
+};
