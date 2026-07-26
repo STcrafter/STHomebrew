@@ -60,24 +60,38 @@ export default function ItemDetail() {
   );
 
       case 'spells':
-        return (
+  return (
+    <>
+      <div className={styles.spellMeta}>
+        <div><strong>Уровень:</strong> {item.level}</div>
+        <div><strong>Школа:</strong> {item.school}</div>
+        <div><strong>Время произнесения:</strong> {item.casting_time}</div>
+        <div><strong>Дистанция:</strong> {item.range}</div>
+        <div><strong>Длительность:</strong> {item.duration}</div>
+        <div><strong>Компоненты:</strong> {item.components}</div>
+        <div><strong>Концентрация:</strong> {item.concentration ? 'Да' : 'Нет'}</div>
+        <div><strong>Доступен классам:</strong> {item.classes.join(', ')}</div>
+      </div>
+      <div className={styles.description}>
+        <h3>Описание</h3>
+        {item.description ? (
+          item.description.split(/\n\n+/).map((paragraph, idx) => (
+            <p key={idx}>{paragraph}</p>
+          ))
+        ) : (
+          <p>Описание отсутствует</p>
+        )}
+        {item.higher_levels && (
           <>
-            <div className={styles.spellMeta}>
-              <div><strong>Уровень:</strong> {item.level}</div>
-              <div><strong>Школа:</strong> {item.school}</div>
-              <div><strong>Время произнесения:</strong> {item.casting_time}</div>
-              <div><strong>Дистанция:</strong> {item.range}</div>
-              <div><strong>Длительность:</strong> {item.duration}</div>
-              <div><strong>Компоненты:</strong> {item.components}</div>
-              <div><strong>Концентрация:</strong> {item.concentration ? 'Да' : 'Нет'}</div>
-              <div><strong>Доступен классам:</strong> {item.classes.join(', ')}</div>
-            </div>
-            <div className={styles.description}>
-              <h3>Описание</h3>
-              <p>{item.description}</p>
-            </div>
+            <h3>На более высоких уровнях</h3>
+            {item.higher_levels.split(/\n\n+/).map((paragraph, idx) => (
+              <p key={idx}>{paragraph}</p>
+            ))}
           </>
-        );
+        )}
+      </div>
+    </>
+  );
 
       case 'classes':
   return (
