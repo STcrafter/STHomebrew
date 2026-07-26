@@ -90,14 +90,17 @@ export default function CategoryList() {
     let result = items.filter(item => {
       if (search && !item.name.toLowerCase().includes(search.toLowerCase())) return false;
       for (const [key, selectedValues] of Object.entries(filters)) {
-        if (!selectedValues || selectedValues.length === 0) continue;
-        const itemVal = item[key];
-        if (Array.isArray(itemVal)) {
-          if (!itemVal.some(v => selectedValues.includes(String(v)))) return false;
-        } else {
-          if (!selectedValues.includes(String(itemVal))) return false;
-        }
-      }
+  if (!selectedValues || selectedValues.length === 0) continue;
+  const itemVal = item[key];
+  if (typeof itemVal === 'boolean') {
+    const displayVal = itemVal ? 'Да' : 'Нет';
+    if (!selectedValues.includes(displayVal)) return false;
+  } else if (Array.isArray(itemVal)) {
+    if (!itemVal.some(v => selectedValues.includes(String(v)))) return false;
+  } else {
+    if (!selectedValues.includes(String(itemVal))) return false;
+  }
+}
       if (showFavorites && !isFavorite(item.id)) return false;
       return true;
     });
