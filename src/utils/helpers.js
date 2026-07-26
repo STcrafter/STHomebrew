@@ -93,15 +93,15 @@ export const formatCRWithDetails = (cr) => {
 };
 
 /**
- * Возвращает уровень опасности на основе Challenge Rating
+ * Возвращает цвет для индикатора опасности
  */
-export const getDangerLevel = (cr) => {
+export const getDangerColor = (cr) => {
   const num = Number(cr);
-  if (isNaN(num)) return { label: 'Неизвестно', color: '#6c757d', bg: '#f8f9fa' };
-  if (num < 1) return { label: 'Низкая', color: '#155724', bg: '#d4edda' };
-  if (num <= 4) return { label: 'Средняя', color: '#856404', bg: '#fff3cd' };
-  if (num <= 10) return { label: 'Высокая', color: '#7c4a00', bg: '#ffedd5' };
-  if (num <= 15) return { label: 'Очень высокая', color: '#721c24', bg: '#f8d7da' };
-  if (num <= 20) return { label: 'Смертельная', color: '#4a0e4a', bg: '#e8d5f5' };
-  return { label: 'Легендарная', color: '#5a1a6a', bg: '#f3d8f8' };
+  if (isNaN(num)) return '#6c757d';
+  if (num < 1) return '#28a745';   // зелёный
+  if (num <= 4) return '#ffc107';  // жёлтый
+  if (num <= 10) return '#fd7e14'; // оранжевый
+  if (num <= 15) return '#dc3545'; // красный
+  if (num <= 20) return '#9b1d4c'; // тёмно-красный
+  return '#6f2da8';               // фиолетовый
 };

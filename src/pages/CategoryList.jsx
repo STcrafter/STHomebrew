@@ -7,7 +7,7 @@ import FavoriteButton from '../components/FavoriteButton';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useFavorites } from '../context/FavoritesContext';
 import styles from './CategoryList.module.css';
-import { formatChallengeRating, getDangerLevel } from '../utils/helpers';
+import { formatChallengeRating, getDangerColor } from '../utils/helpers';
 
 const categoryLabels = {
   monsters: 'Монстры',
@@ -201,13 +201,13 @@ export default function CategoryList() {
                 {category === 'monsters' && (
   <div className={styles.meta}>
     {item.challenge_rating !== undefined && (
-      <span className={styles.dangerBadge} style={{
-        backgroundColor: getDangerLevel(item.challenge_rating).bg,
-        color: getDangerLevel(item.challenge_rating).color,
-      }}>
-        {getDangerLevel(item.challenge_rating).label}
-      </span>
+      <span 
+        className={styles.dangerDot}
+        style={{ backgroundColor: getDangerColor(item.challenge_rating) }}
+        title={`ОП ${formatChallengeRating(item.challenge_rating)}`}
+      />
     )}
+    <span>ОП {formatChallengeRating(item.challenge_rating)}</span>
     {Array.isArray(item.habitat) && item.habitat.length > 0 && (
       <span>{item.habitat.slice(0, 2).join(', ')}</span>
     )}

@@ -204,15 +204,13 @@
   font-weight: 600;
   color: var(--text-secondary);
 }
-
-.dangerBadge {
+.dangerDot {
   display: inline-block;
-  padding: 0.15rem 0.6rem;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  margin-left: 0.3rem;
-  border: 1px solid rgba(0,0,0,0.05);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-right: 0.3rem;
 }

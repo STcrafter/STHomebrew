@@ -269,13 +269,13 @@
   flex-wrap: wrap;
 }
 
-.dangerBadge {
+.dangerDot {
   display: inline-block;
-  padding: 0.15rem 0.6rem;
-  border-radius: 12px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  border: 1px solid rgba(0,0,0,0.05);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  margin-right: 0.4rem;
 }
