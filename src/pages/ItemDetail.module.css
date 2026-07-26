@@ -77,6 +77,11 @@
   line-height: 1.8;
   color: var(--text-primary);
   margin: 0.5rem 0;
+  text-indent: 1.5rem;
+}
+
+.description p:last-child {
+  margin-bottom: 0;      /* убираем отступ у последнего абзаца */
 }
 
 .description h3 {
