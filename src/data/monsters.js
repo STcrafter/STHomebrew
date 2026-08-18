@@ -3726,6 +3726,7 @@ export default [
   "id": "Ancient_Blight",
   "name": "Древняя Зараза",
   "type": "Огромный Растение, нейтрально-злой",
+  "category":"Растение",
   "armor_class": "16",
   "hit_points": "200 (16d12 + 96)",
   "speed": "30 ft.",
@@ -3790,7 +3791,7 @@ export default [
   "damage_resistances": [],
   "damage_immunities": [],
   "condition_immunities": [
-    "Deafened"
+    "Оглушен"
   ]
 }
 ]
