@@ -1,5 +1,5 @@
 import styles from './StatBlock.module.css';
-import { formatChallengeRating, getProficiencyBonusForCR, getXPForCR, getDangerColor } from '../utils/helpers';
+import { formatChallengeRating, getProficiencyBonusForCR, getXPForCR, getDangerColor, generateLegendaryDescription } from '../utils/helpers';
 
 export default function StatBlock({ monster }) {
   const data = monster?.statblock || monster;
@@ -266,24 +266,38 @@ export default function StatBlock({ monster }) {
 
       {/* Легендарные действия */}
       {data.legendary_actions && (
-        <>
-          <div className={styles.sectionDivider}>Легендарные действия</div>
-          <div className={styles.legendary}>
-            <p className={styles.legendaryDesc}>{safeString(data.legendary_actions.description)}</p>
-            {Array.isArray(data.legendary_actions.actions) && data.legendary_actions.actions.length > 0 && (
-              <div className={styles.legendaryActions}>
-                {data.legendary_actions.actions.map((action, idx) => (
-                  <div key={idx} className={styles.action}>
-                    <span className={styles.actionName}>{safeString(action.name)}.</span>
-                    <span className={styles.actionDesc}>{safeString(action.description)}</span>
-                    {renderSpellList(action.spells)}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </>
+  <>
+    <div className={styles.sectionDivider}>Легендарные действия</div>
+    <div className={styles.legendary}>
+      {/* Если есть описание — используем его, иначе генерируем */}
+      {data.legendary_actions.description ? (
+        <p className={styles.legendaryDesc}>
+          {safeString(data.legendary_actions.description)}
+        </p>
+      ) : (
+        <p className={styles.legendaryDesc}>
+          {generateLegendaryDescription(
+            data.name || 'существо',
+            data.legendary_actions.uses,
+            data.legendary_actions.lair_uses
+          )}
+        </p>
       )}
+      {/* Рендер действий */}
+      {Array.isArray(data.legendary_actions.actions) && data.legendary_actions.actions.length > 0 && (
+        <div className={styles.legendaryActions}>
+          {data.legendary_actions.actions.map((action, idx) => (
+            <div key={idx} className={styles.action}>
+              <span className={styles.actionName}>{safeString(action.name)}.</span>
+              <span className={styles.actionDesc}>{safeString(action.description)}</span>
+              {renderSpellList(action.spells)}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  </>
+)}
 
       {/* Действия логова */}
       {data.lair_actions && (

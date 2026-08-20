@@ -105,3 +105,19 @@ export const getDangerColor = (cr) => {
   if (num <= 20) return '#9b1d4c'; // тёмно-красный
   return '#6f2da8';               // фиолетовый
 };
+
+/**
+ * Генерирует стандартное описание легендарных действий
+ * @param {string} name - имя существа
+ * @param {number} uses - количество использований
+ * @param {number|null} lairUses - количество использований в логове (опционально)
+ * @returns {string} полное описание
+ */
+export const generateLegendaryDescription = (name, uses, lairUses = null) => {
+  if (!uses) return '';
+  const base = `Использований легендарных действий: ${uses}`;
+  const lairPart = lairUses ? ` (${lairUses} в логове)` : '';
+  const actionPart = `Сразу после хода другого существа ${name} может потратить 1 использование, чтобы выполнить одно из следующих действий.`;
+  const restorePart = `${name} восстанавливает все потраченные использования в начале своего хода.`;
+  return `${base}${lairPart}. ${actionPart} ${restorePart}`;
+};
