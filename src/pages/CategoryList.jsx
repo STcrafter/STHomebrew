@@ -33,6 +33,7 @@ export default function CategoryList() {
   const [showFavorites, setShowFavorites] = useState(false);
 
   useEffect(() => {
+    setFilters({});
     setSortField('name');
     setSortDirection('asc');
     setShowFavorites(false);
@@ -105,18 +106,29 @@ export default function CategoryList() {
   const filteredItems = useMemo(() => {
     let result = items.filter(item => {
       if (search && !item.name.toLowerCase().includes(search.toLowerCase())) return false;
-      for (const [key, selectedValues] of Object.entries(filters)) {
-  if (!selectedValues || selectedValues.length === 0) continue;
-  const itemVal = item[key];
-  if (typeof itemVal === 'boolean') {
-    const displayVal = itemVal ? 'Да' : 'Нет';
-    if (!selectedValues.includes(displayVal)) return false;
-  } else if (Array.isArray(itemVal)) {
-    if (!itemVal.some(v => selectedValues.includes(String(v)))) return false;
-  } else {
-    if (!selectedValues.includes(String(itemVal))) return false;
-  }
-}
+
+      for (const [key, filter] of Object.entries(filters)) {
+        if (!filter) continue;
+        const { include = [], exclude = [] } = filter;
+        if (include.length === 0 && exclude.length === 0) continue;
+
+        const itemVal = item[key];
+        let values = [];
+        if (typeof itemVal === 'boolean') {
+          values = [itemVal ? 'Да' : 'Нет'];
+        } else if (Array.isArray(itemVal)) {
+          values = itemVal.map(v => String(v));
+        } else if (itemVal !== undefined && itemVal !== null) {
+          values = [String(itemVal)];
+        }
+
+        // Исключающие фильтры: если значение в списке исключений — отбрасываем
+        if (exclude.some(ex => values.includes(ex))) return false;
+
+        // Включающие фильтры: если есть список включения, значение должно в него попадать
+        if (include.length > 0 && !include.some(inc => values.includes(inc))) return false;
+      }
+
       if (showFavorites && !isFavorite(item.id)) return false;
       return true;
     });

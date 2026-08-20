@@ -23,15 +23,35 @@ export default function FilterPanel({ options, onFilterChange }) {
     setOpenSections(prev => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const handleCheckboxChange = (field, value, checked) => {
-    const current = options[field]?.selected || [];
-    const newSelected = checked
-      ? [...current, value]
-      : current.filter(v => v !== value);
-    onFilterChange(field, newSelected.length > 0 ? newSelected : null);
-    if (options[field]) {
-      options[field].selected = newSelected;
+  // Циклическое переключение: выкл → включить → исключить → выкл
+  const handleCheckboxChange = (field, value) => {
+    const current = options[field]?.selected || { include: [], exclude: [] };
+    const include = current.include || [];
+    const exclude = current.exclude || [];
+
+    let newState;
+    if (include.includes(value)) {
+      // было включено → исключаем
+      newState = { include: include.filter(v => v !== value), exclude: [...exclude, value] };
+    } else if (exclude.includes(value)) {
+      // было исключено → выключаем
+      newState = { include, exclude: exclude.filter(v => v !== value) };
+    } else {
+      // было выключено → включаем
+      newState = { include: [...include, value], exclude };
     }
+
+    const isEmpty = newState.include.length === 0 && newState.exclude.length === 0;
+    onFilterChange(field, isEmpty ? null : newState);
+    if (options[field]) {
+      options[field].selected = newState;
+    }
+  };
+  const getState = (field, val) => {
+    const selected = options[field]?.selected || { include: [], exclude: [] };
+    if ((selected.include || []).includes(val)) return 'include';
+    if ((selected.exclude || []).includes(val)) return 'exclude';
+    return 'off';
   };
 
   return (
@@ -39,7 +59,6 @@ export default function FilterPanel({ options, onFilterChange }) {
       <h3>Фильтры</h3>
       {Object.entries(options).map(([field, values]) => {
         if (typeof values === 'object' && !Array.isArray(values)) return null;
-        const selected = options[field]?.selected || [];
         const displayValues = Array.isArray(values) ? values : [];
         if (displayValues.length === 0) return null;
 
@@ -51,16 +70,22 @@ export default function FilterPanel({ options, onFilterChange }) {
             </div>
             {openSections[field] && (
               <div className={styles.sectionContent}>
-                {displayValues.map((val) => (
-                  <label key={val} className={styles.checkbox}>
-                    <input
-                      type="checkbox"
-                      checked={selected.includes(String(val))}
-                      onChange={(e) => handleCheckboxChange(field, String(val), e.target.checked)}
-                    />
-                    {val}
-                  </label>
-                ))}
+                {displayValues.map((val) => {
+                  const state = getState(field, String(val));
+                  return (
+                    <label
+                      key={val}
+                      className={`${styles.checkbox} ${styles[state]}`}
+                      onClick={() => handleCheckboxChange(field, String(val))}
+                    >
+                      <span className={styles.checkboxBox}>
+                        {state === 'include' && '✓'}
+                        {state === 'exclude' && '✕'}
+                      </span>
+                      {val}
+                    </label>
+                  );
+                })}
               </div>
             )}
           </div>
