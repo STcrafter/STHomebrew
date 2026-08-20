@@ -3792,7 +3792,6 @@ export default [
       }
     ]
   },
-  "lair_actions": {},
   "habitat": [
     "Леса",
     "Болота"
@@ -3800,7 +3799,7 @@ export default [
   "damage_vulnerabilities": [],
   "damage_resistances": [],
   "damage_immunities": [],
-  "image":"/images/ancient_blight.jpg",
+  "image":"/STHomebrew/images/ancient_blight.jpg",
   "condition_immunities": [
     "Оглушен"
   ]
