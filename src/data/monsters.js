@@ -3797,8 +3797,10 @@ export default [
   "damage_vulnerabilities": [],
   "damage_resistances": [],
   "damage_immunities": [],
+  "image":"/images/ancient_blight.jpg",
   "condition_immunities": [
     "Оглушен"
   ]
-}
+},
+
 ]
