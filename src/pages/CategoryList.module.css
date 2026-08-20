@@ -54,6 +54,11 @@
 
 .filterPanel {
   flex: 0 0 260px;
+  position: sticky;
+  top: var(--sticky-offset, 0);
+  align-self: flex-start;
+  max-height: calc(100vh - var(--sticky-offset, 0));
+  overflow-y: auto;
 }
 
 .list {
@@ -176,6 +181,9 @@
   }
   .filterPanel {
     flex: 1;
+    position: static;
+    max-height: none;
+    overflow-y: visible;
   }
   .header h1 { font-size: 1.8rem; }
   .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
