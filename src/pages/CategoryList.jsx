@@ -207,12 +207,13 @@ export default function CategoryList() {
                   )}
                 </button>
               ))}
-              <label className={styles.favoritesFilter}>
-                <input
-                  type="checkbox"
-                  checked={showFavorites}
-                  onChange={(e) => setShowFavorites(e.target.checked)}
-                />
+              <label
+                className={`${styles.favoritesFilter} ${showFavorites ? styles.favoritesActive : ''}`}
+                onClick={() => setShowFavorites(prev => !prev)}
+              >
+                <span className={styles.favoritesBox}>
+                  {showFavorites && '✓'}
+                </span>
                 ⭐ Только избранное
               </label>
             </div>

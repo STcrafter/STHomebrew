@@ -197,12 +197,38 @@
   color: var(--text-muted);
   cursor: pointer;
   user-select: none;
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
 }
 
-.favoritesFilter input {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--accent);
+.favoritesFilter:hover {
+  color: var(--text-primary);
+}
+
+.favoritesBox {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  font-size: 0.8rem;
+  line-height: 1;
+  background: var(--bg-input);
+  transition: all 0.15s;
+}
+
+.favoritesActive {
+  color: var(--text-primary);
+}
+
+.favoritesActive .favoritesBox {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
 }
 
 .cardHeader {
