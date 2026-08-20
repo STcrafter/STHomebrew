@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { data } from '../data';
 import FilterPanel from '../components/FilterPanel';
 import SearchBar from '../components/SearchBar';
@@ -24,6 +24,7 @@ export default function CategoryList() {
   const { category } = useParams();
   const items = data[category] || [];
   const { isFavorite } = useFavorites();
+  const headerRef = useRef(null);
 
   const [filters, setFilters] = useState({});
   const [search, setSearch] = useState('');
@@ -36,6 +37,21 @@ export default function CategoryList() {
     setSortDirection('asc');
     setShowFavorites(false);
   }, [category]);
+
+  // Отслеживаем высоту шапки, чтобы липкая панель поиска не перекрывала её
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    const updateOffset = () => {
+      document.documentElement.style.setProperty('--sticky-offset', `${header.offsetHeight}px`);
+    };
+
+    updateOffset();
+    const observer = new ResizeObserver(updateOffset);
+    observer.observe(header);
+    return () => observer.disconnect();
+  }, []);
 
   // Генерация опций для фильтров
   const filterOptions = useMemo(() => {
@@ -147,7 +163,7 @@ export default function CategoryList() {
   return (
     <div className={styles.page}>
       <Breadcrumbs />
-      <div className={styles.header}>
+      <div className={styles.header} ref={headerRef}>
         <Link to="/" className={styles.back}>← На главную</Link>
         <h1>{categoryLabels[category] || category}</h1>
         <span className={styles.count}>{filteredItems.length} записей</span>

@@ -66,6 +66,12 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: 0.5rem;
+  position: sticky;
+  top: var(--sticky-offset, 0);
+  background: var(--bg-body);
+  z-index: 5;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .sortControls {
