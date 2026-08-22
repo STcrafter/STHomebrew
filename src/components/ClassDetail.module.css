@@ -212,3 +212,26 @@
   font-style: italic;
   padding: 0.5rem 0;
 }
+
+.subclassFeature {
+  border-left: 4px solid #4CAF50;
+  padding-left: 0.5rem;
+  background: rgba(76, 175, 80, 0.05);
+  border-radius: 4px;
+}
+
+.subclassFeatureInTable {
+  color: #4CAF50;
+  font-weight: 500;
+}
+
+/* Если хотите другой цвет, например синий */
+/*
+.subclassFeature {
+  border-left: 4px solid #2196F3;
+  background: rgba(33, 150, 243, 0.05);
+}
+.subclassFeatureInTable {
+  color: #2196F3;
+}
+*/

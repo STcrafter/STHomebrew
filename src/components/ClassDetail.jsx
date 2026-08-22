@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import styles from './ClassDetail.module.css';
 
 const columnLabels = {
@@ -6,6 +6,7 @@ const columnLabels = {
   proficiency_bonus: 'Бонус мастерства',
   dances: 'Танцы',
   dance_die: 'Кость танца',
+  // добавляйте свои колонки по необходимости
 };
 
 export default function ClassDetail({ classData }) {
@@ -28,14 +29,11 @@ export default function ClassDetail({ classData }) {
 
   // ===== Обработчик клика по строке таблицы =====
   const handleFeatureClick = (level) => {
-    // Разворачиваем секцию способностей, если она свёрнута
     if (!openSections.features) {
       setOpenSections(prev => ({ ...prev, features: true }));
     }
-    // Разворачиваем нужный уровень
     const levelKey = `level_${level}`;
     setOpenSections(prev => ({ ...prev, [levelKey]: true }));
-    // Прокручиваем к заголовку уровня после обновления DOM
     setTimeout(() => {
       const el = document.getElementById(`level-${level}`);
       if (el) {
@@ -44,11 +42,28 @@ export default function ClassDetail({ classData }) {
     }, 150);
   };
 
-  // Группировка способностей по уровням для вкладки "Способности"
-  const groupFeaturesByLevel = (featuresArray) => {
-    if (!Array.isArray(featuresArray) || featuresArray.length === 0) return [];
+  // ===== Функция для объединения особенностей класса и подкласса с пометкой =====
+  const displayFeatures = useMemo(() => {
+    const baseFeatures = features.map(f => ({ ...f, isSubclass: false }));
+    if (!selectedSubclass) {
+      return baseFeatures;
+    }
+    const subclass = subclasses.find(s => s.name === selectedSubclass);
+    if (!subclass) return baseFeatures;
+    const subclassFeatures = (subclass.features || []).map(f => ({ ...f, isSubclass: true }));
+    const combined = [...baseFeatures, ...subclassFeatures];
+    return combined.sort((a, b) => (a.level || 0) - (b.level || 0));
+  }, [features, subclasses, selectedSubclass]);
+
+  // ===== Получение особенностей для конкретного уровня =====
+  const getFeaturesForLevel = (level) => {
+    return displayFeatures.filter(f => Number(f.level) === Number(level));
+  };
+
+  // ===== Группировка по уровням для секции способностей =====
+  const groupFeaturesByLevel = () => {
     const groups = {};
-    featuresArray.forEach(f => {
+    displayFeatures.forEach(f => {
       const level = f.level || 0;
       if (!groups[level]) groups[level] = [];
       groups[level].push(f);
@@ -56,16 +71,17 @@ export default function ClassDetail({ classData }) {
     return Object.keys(groups).sort((a, b) => Number(a) - Number(b));
   };
 
-  const renderFeatures = (featuresArray, title) => {
-    if (!Array.isArray(featuresArray) || featuresArray.length === 0) {
+  // ===== Рендер секции способностей (с выделением подкласса) =====
+  const renderFeatures = () => {
+    const levels = groupFeaturesByLevel();
+    if (levels.length === 0) {
       return <p className={styles.emptyMessage}>Нет способностей для отображения</p>;
     }
-    const levels = groupFeaturesByLevel(featuresArray);
     return (
       <div className={styles.featuresContainer}>
-        <h3>{title || 'Способности'}</h3>
+        <h3>Способности</h3>
         {levels.map(level => {
-          const levelFeatures = featuresArray.filter(f => Number(f.level) === Number(level));
+          const levelFeatures = displayFeatures.filter(f => Number(f.level) === Number(level));
           const sectionKey = `level_${level}`;
           if (openSections[sectionKey] === undefined) {
             openSections[sectionKey] = true;
@@ -79,7 +95,7 @@ export default function ClassDetail({ classData }) {
               {openSections[sectionKey] && (
                 <div className={styles.levelContent}>
                   {levelFeatures.map((feature, idx) => (
-                    <div key={idx} className={styles.featureItem}>
+                    <div key={idx} className={`${styles.featureItem} ${feature.isSubclass ? styles.subclassFeature : ''}`}>
                       <div className={styles.featureName}>{feature.name || 'Без названия'}</div>
                       <div className={styles.featureDescription}>{feature.description || 'Описание отсутствует'}</div>
                     </div>
@@ -93,86 +109,69 @@ export default function ClassDetail({ classData }) {
     );
   };
 
-  // Определяем, какие способности показывать (классовые + подклассовые, если выбран)
-  const displayFeatures = () => {
-    if (!selectedSubclass) {
-      return features;
-    }
-    const subclass = subclasses.find(s => s.name === selectedSubclass);
-    const subclassFeatures = subclass?.features || [];
-    const combined = [...features, ...subclassFeatures];
-    return combined.sort((a, b) => (a.level || 0) - (b.level || 0));
-  };
-
-  // Получаем список уникальных уровней для таблицы
-  const tableLevels = () => {
-    if (classTable.length > 0) {
-      return classTable.map(row => row.level).sort((a, b) => a - b);
-    } else {
-      const levels = new Set();
-      displayFeatures().forEach(f => levels.add(f.level || 0));
-      return Array.from(levels).sort((a, b) => a - b);
-    }
-  };
-
-  // Получаем особенности для конкретного уровня (для отображения в таблице)
-  const getFeaturesForLevel = (level) => {
-    return displayFeatures().filter(f => Number(f.level) === Number(level));
-  };
-
-  // Получаем данные из class_table для уровня
+  // ===== Получение данных из class_table для уровня =====
   const getTableRow = (level) => {
     return classTable.find(row => Number(row.level) === Number(level));
   };
 
-  // Определяем колонки для таблицы (кроме level)
+  // ===== Определяем дополнительные колонки (кроме level) =====
   const extraColumns = () => {
     if (classTable.length === 0) return [];
     const firstRow = classTable[0];
     return Object.keys(firstRow).filter(key => key !== 'level');
   };
 
+  // ===== Рендер таблицы классов =====
   const renderTable = () => {
-  const levels = tableLevels(); // теперь возвращает 1..20
-  const extraCols = extraColumns();
+    const levels = Array.from({ length: 20 }, (_, i) => i + 1);
+    const extraCols = extraColumns();
 
-  return (
-    <table key={selectedSubclass || 'base'}>
-      <thead>
-        <tr>
-          <th>Уровень</th>
-          <th>Особенности</th>
-          {extraCols.map(col => (
-            <th key={col}>{columnLabels[col] || col}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {levels.map(level => {
-          const features = getFeaturesForLevel(level);
-          const rowData = getTableRow(level);
-          return (
-            <tr 
-              key={level} 
-              onClick={() => handleFeatureClick(level)}
-              className={styles.tableRowClickable}
-            >
-              <td>{level}</td>
-              <td>
-                {features.length > 0 ? features.map(f => f.name).join(', ') : '—'}
-              </td>
-              {extraCols.map(col => (
-                <td key={col}>{rowData ? rowData[col] : '—'}</td>
-              ))}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  );
-};
+    return (
+      <table key={selectedSubclass || 'base'}>
+        <thead>
+          <tr>
+            <th>Уровень</th>
+            <th>Особенности</th>
+            {extraCols.map(col => (
+              <th key={col}>{columnLabels[col] || col}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {levels.map(level => {
+            const features = getFeaturesForLevel(level);
+            const rowData = getTableRow(level);
+            return (
+              <tr
+                key={level}
+                onClick={() => handleFeatureClick(level)}
+                className={styles.tableRowClickable}
+              >
+                <td>{level}</td>
+                <td>
+                  {features.length > 0 ? (
+                    features.map((f, idx) => (
+                      <span key={idx} className={f.isSubclass ? styles.subclassFeatureInTable : ''}>
+                        {f.name}
+                        {idx < features.length - 1 ? ', ' : ''}
+                      </span>
+                    ))
+                  ) : (
+                    '—'
+                  )}
+                </td>
+                {extraCols.map(col => (
+                  <td key={col}>{rowData ? rowData[col] : '—'}</td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    );
+  };
 
-  // Функция рендера владений
+  // ===== Рендер владений =====
   const renderProficiencies = () => {
     const prof = classData.proficiencies || {};
     if (Object.keys(prof).length === 0) {
@@ -205,7 +204,6 @@ export default function ClassDetail({ classData }) {
     );
   };
 
-  // Основной рендер
   return (
     <div className={styles.classPage}>
       {classData.image && (
@@ -287,7 +285,7 @@ export default function ClassDetail({ classData }) {
         </div>
         {openSections.features && (
           <div className={styles.sectionContent}>
-            {renderFeatures(displayFeatures(), 'Способности')}
+            {renderFeatures()}
           </div>
         )}
       </div>
