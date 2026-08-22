@@ -276,3 +276,54 @@
 .customTable tbody tr:nth-child(even) {
   background: var(--bg-table-alt);
 }
+
+/* ===== Произвольные таблицы ===== */
+.customTables {
+  margin: 1.5rem 0;
+}
+
+.customTables h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.customTable {
+  margin-top: 1rem;
+  background: var(--bg-card);
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  padding: 1rem;
+}
+
+.customTable h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.customTable table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.customTable th {
+  background: var(--bg-card-hover);
+  font-weight: 600;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border-color);
+  text-align: left;
+  color: var(--text-secondary);
+}
+
+.customTable td {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.customTable tbody tr:nth-child(even) {
+  background: var(--bg-table-alt);
+}

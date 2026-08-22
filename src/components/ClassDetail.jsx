@@ -28,7 +28,7 @@ export default function ClassDetail({ classData }) {
   const classTable = Array.isArray(classData.class_table) ? classData.class_table : [];
   const tables = Array.isArray(classData.tables) ? classData.tables : [];
 
-  // ===== Обработчик клика по строке таблицы =====
+  // ===== Обработчик клика по строке таблицы (только для стандартной) =====
   const handleFeatureClick = (level) => {
     if (!openSections.features) {
       setOpenSections(prev => ({ ...prev, features: true }));
@@ -122,7 +122,7 @@ export default function ClassDetail({ classData }) {
     return Object.keys(firstRow).filter(key => key !== 'level');
   };
 
-  // ===== Рендер таблицы классов (основной) =====
+  // ===== Рендер стандартной таблицы классов =====
   const renderTable = () => {
     const levels = Array.from({ length: 20 }, (_, i) => i + 1);
     const extraCols = extraColumns();
@@ -276,13 +276,21 @@ export default function ClassDetail({ classData }) {
         </div>
       )}
 
-      <div className={styles.classTable}>
-        <h3>Таблица классов</h3>
-        {renderTable()}
-      </div>
+      {/* Таблица классов (только если нет произвольных таблиц) */}
+      {tables.length === 0 && (
+        <div className={styles.classTable}>
+          <h3>Таблица классов</h3>
+          {renderTable()}
+        </div>
+      )}
 
       {/* Произвольные таблицы */}
-      {renderCustomTables()}
+      {tables.length > 0 && (
+        <div className={styles.customTables}>
+          <h3>Таблицы</h3>
+          {renderCustomTables()}
+        </div>
+      )}
 
       <div className={styles.section}>
         <div className={styles.sectionHeader} onClick={() => toggleSection('proficiencies')}>
