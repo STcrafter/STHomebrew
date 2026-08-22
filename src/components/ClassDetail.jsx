@@ -7,7 +7,6 @@ const columnLabels = {
   proficiency_bonus: 'Бонус мастерства',
   dances: 'Танцы',
   dance_die: 'Кость танца',
-  // добавляйте свои колонки по необходимости
 };
 
 export default function ClassDetail({ classData }) {
@@ -29,7 +28,6 @@ export default function ClassDetail({ classData }) {
   const classTable = Array.isArray(classData.class_table) ? classData.class_table : [];
   const tables = Array.isArray(classData.tables) ? classData.tables : [];
 
-  // ===== Обработчик клика по строке таблицы (только для стандартной) =====
   const handleFeatureClick = (level) => {
     if (!openSections.features) {
       setOpenSections(prev => ({ ...prev, features: true }));
@@ -44,7 +42,6 @@ export default function ClassDetail({ classData }) {
     }, 150);
   };
 
-  // ===== Функция для объединения особенностей класса и подкласса с пометкой =====
   const displayFeatures = useMemo(() => {
     const baseFeatures = features.map(f => ({ ...f, isSubclass: false }));
     if (!selectedSubclass) {
@@ -53,16 +50,13 @@ export default function ClassDetail({ classData }) {
     const subclass = subclasses.find(s => s.name === selectedSubclass);
     if (!subclass) return baseFeatures;
     const subclassFeatures = (subclass.features || []).map(f => ({ ...f, isSubclass: true }));
-    const combined = [...baseFeatures, ...subclassFeatures];
-    return combined.sort((a, b) => (a.level || 0) - (b.level || 0));
+    return [...baseFeatures, ...subclassFeatures].sort((a, b) => (a.level || 0) - (b.level || 0));
   }, [features, subclasses, selectedSubclass]);
 
-  // ===== Получение особенностей для конкретного уровня =====
   const getFeaturesForLevel = (level) => {
     return displayFeatures.filter(f => Number(f.level) === Number(level));
   };
 
-  // ===== Группировка по уровням для секции способностей =====
   const groupFeaturesByLevel = () => {
     const groups = {};
     displayFeatures.forEach(f => {
@@ -73,7 +67,6 @@ export default function ClassDetail({ classData }) {
     return Object.keys(groups).sort((a, b) => Number(a) - Number(b));
   };
 
-  // ===== Рендер секции способностей (только описания, без таблиц) =====
   const renderFeatures = () => {
     const levels = groupFeaturesByLevel();
     if (levels.length === 0) {
@@ -111,23 +104,19 @@ export default function ClassDetail({ classData }) {
     );
   };
 
-  // ===== Получение данных из class_table для уровня =====
   const getTableRow = (level) => {
     return classTable.find(row => Number(row.level) === Number(level));
   };
 
-  // ===== Определяем дополнительные колонки (кроме level) =====
   const extraColumns = () => {
     if (classTable.length === 0) return [];
     const firstRow = classTable[0];
     return Object.keys(firstRow).filter(key => key !== 'level');
   };
 
-  // ===== Рендер стандартной таблицы классов =====
-  const renderTable = () => {
+  const renderStandardTable = () => {
     const levels = Array.from({ length: 20 }, (_, i) => i + 1);
     const extraCols = extraColumns();
-
     return (
       <table key={selectedSubclass || 'base'}>
         <thead>
@@ -173,7 +162,6 @@ export default function ClassDetail({ classData }) {
     );
   };
 
-  // ===== Рендер произвольных таблиц (из поля tables) =====
   const renderCustomTables = () => {
     if (tables.length === 0) return null;
     return tables.map((table, index) => (
@@ -201,7 +189,6 @@ export default function ClassDetail({ classData }) {
     ));
   };
 
-  // ===== Рендер владений =====
   const renderProficiencies = () => {
     const prof = classData.proficiencies || {};
     if (Object.keys(prof).length === 0) {
@@ -234,38 +221,9 @@ export default function ClassDetail({ classData }) {
     );
   };
 
-  // ===== Рендер прислужников (миньонов) =====
-  const renderMinions = () => {
-    if (!Array.isArray(classData.minions) || classData.minions.length === 0) return null;
-    return (
-      <div className={styles.minionsSection}>
-        <h3>Прислужники</h3>
-        <div className={styles.minionsGrid}>
-          {classData.minions.map((minion, index) => (
-            <div key={index} className={styles.minionCard}>
-              {minion.image && (
-                <img src={minion.image} alt={minion.name} className={styles.minionImage} />
-              )}
-              <div className={styles.minionContent}>
-                <h4>{minion.name}</h4>
-                <p>{minion.description}</p>
-                {minion.statblock_id ? (
-                  <Link to={`/category/monsters/${minion.statblock_id}`} className={styles.minionLink}>
-                    → Открыть статблок
-                  </Link>
-                ) : (
-                  <span className={styles.minionNoLink}>Статблок не задан</span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className={styles.classPage}>
+      {/* Картинка, название, описание */}
       {classData.image && (
         <div className={styles.imageWrapper}>
           <img
@@ -281,12 +239,14 @@ export default function ClassDetail({ classData }) {
         <p>{classData.description || 'Описание отсутствует'}</p>
       </div>
 
+      {/* Основные параметры */}
       <div className={styles.classStats}>
         <div><strong>Основная характеристика:</strong> {classData.primary_ability || '—'}</div>
         <div><strong>Спасброски:</strong> {Array.isArray(classData.saving_throws) ? classData.saving_throws.join(', ') : '—'}</div>
         <div><strong>Кость хитов:</strong> {classData.hit_die || '—'}</div>
       </div>
 
+      {/* Подклассы */}
       {subclasses.length > 0 && (
         <div className={styles.subclassSelector}>
           <label>Подкласс:</label>
@@ -307,23 +267,20 @@ export default function ClassDetail({ classData }) {
         </div>
       )}
 
-      {/* ===== Таблицы (стандартная или произвольные) ===== */}
-      {tables.length > 0 ? (
+      {/* ===== ТАБЛИЦЫ — ТОЛЬКО ОДИН РАЗ ===== */}
+      {tables.length === 0 ? (
+        <div className={styles.classTable}>
+          <h3>Таблица классов</h3>
+          {renderStandardTable()}
+        </div>
+      ) : (
         <div className={styles.customTables}>
           <h3>Таблицы</h3>
           {renderCustomTables()}
         </div>
-      ) : (
-        <div className={styles.classTable}>
-          <h3>Таблица классов</h3>
-          {renderTable()}
-        </div>
       )}
 
-      {/* ===== Прислужники ===== */}
-      {renderMinions()}
-
-      {/* ===== Владения ===== */}
+      {/* Владения */}
       <div className={styles.section}>
         <div className={styles.sectionHeader} onClick={() => toggleSection('proficiencies')}>
           <h3>Владения</h3>
@@ -336,7 +293,7 @@ export default function ClassDetail({ classData }) {
         )}
       </div>
 
-      {/* ===== Снаряжение ===== */}
+      {/* Снаряжение */}
       {classData.equipment && (
         <div className={styles.section}>
           <div className={styles.sectionHeader} onClick={() => toggleSection('equipment')}>
@@ -351,7 +308,7 @@ export default function ClassDetail({ classData }) {
         </div>
       )}
 
-      {/* ===== Способности ===== */}
+      {/* Способности — только описания, без таблиц */}
       <div className={styles.section}>
         <div className={styles.sectionHeader} onClick={() => toggleSection('features')}>
           <h3>Способности</h3>
@@ -359,7 +316,7 @@ export default function ClassDetail({ classData }) {
         </div>
         {openSections.features && (
           <div className={styles.sectionContent}>
-            {renderFeatures()}
+            {renderFeatures()}   {/* <-- только renderFeatures(), без таблиц */}
           </div>
         )}
       </div>
