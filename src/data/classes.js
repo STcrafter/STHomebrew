@@ -1033,6 +1033,8 @@ export default [
       ]
     }
   ],
+  "multiclass_requirements": "Интеллект 13",
+  "multiclass_proficiencies": "Лёгкие доспехи, Набор травника",
   
   "tables": [
     {

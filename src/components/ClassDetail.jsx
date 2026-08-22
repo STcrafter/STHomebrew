@@ -15,6 +15,7 @@ export default function ClassDetail({ classData }) {
     features: true,
     proficiencies: false,
     equipment: false,
+    multiclass: false, // ← добавьте
   });
 
   if (!classData) return <div>Данные класса не найдены</div>;
@@ -255,6 +256,25 @@ export default function ClassDetail({ classData }) {
         <div><strong>Спасброски:</strong> {Array.isArray(classData.saving_throws) ? classData.saving_throws.join(', ') : '—'}</div>
         <div><strong>Кость хитов:</strong> {classData.hit_die || '—'}</div>
       </div>
+      {/* Блок мультиклассирования */}
+{(classData.multiclass_requirements || classData.multiclass_proficiencies) && (
+  <div className={styles.section}>
+    <div className={styles.sectionHeader} onClick={() => toggleSection('multiclass')}>
+      <h3>Мультиклассирование</h3>
+      <span>{openSections.multiclass ? '−' : '+'}</span>
+    </div>
+    {openSections.multiclass && (
+      <div className={styles.sectionContent}>
+        {classData.multiclass_requirements && (
+          <div><strong>Требования:</strong> {classData.multiclass_requirements}</div>
+        )}
+        {classData.multiclass_proficiencies && (
+          <div><strong>Владения:</strong> {classData.multiclass_proficiencies}</div>
+        )}
+      </div>
+    )}
+  </div>
+)}
 
       {subclasses.length > 0 && (
         <div className={styles.subclassSelector}>
