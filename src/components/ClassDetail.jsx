@@ -276,7 +276,7 @@ export default function ClassDetail({ classData }) {
       ) : (
         <div className={styles.customTables}>
           <h3>Таблицы</h3>
-
+          {renderCustomTables()}
         </div>
       )}
 

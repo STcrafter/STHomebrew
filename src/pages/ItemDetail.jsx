@@ -97,33 +97,6 @@ export default function ItemDetail() {
   return (
     <div className={styles.classPageWrapper}>
       <ClassDetail classData={item} />
-      {item.tables && item.tables.length > 0 && (
-        <div className={styles.customTables}>
-          <h3>Таблицы класса</h3>
-          {item.tables.map((table, idx) => (
-            <div key={idx} className={styles.homeruleTableWrapper}>
-              <table className={styles.homeruleTable}>
-                <thead>
-                  <tr>
-                    {table.headers.map((header, i) => (
-                      <th key={i}>{header}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {table.rows.map((row, i) => (
-                    <tr key={i}>
-                      {row.map((cell, j) => (
-                        <td key={j}>{cell}</td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
       case 'items':
