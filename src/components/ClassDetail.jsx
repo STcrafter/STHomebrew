@@ -133,48 +133,44 @@ export default function ClassDetail({ classData }) {
   };
 
   const renderTable = () => {
-    const levels = tableLevels();
-    if (levels.length === 0) {
-      return <p className={styles.emptyMessage}>Нет данных для таблицы</p>;
-    }
+  const levels = tableLevels(); // теперь возвращает 1..20
+  const extraCols = extraColumns();
 
-    const extraCols = extraColumns();
-
-    return (
-      <table>
-        <thead>
-          <tr>
-            <th>Уровень</th>
-            <th>Особенности</th>
-            {extraCols.map(col => (
-              <th key={col}>{columnLabels[col] || col}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {levels.map(level => {
-            const features = getFeaturesForLevel(level);
-            const rowData = getTableRow(level);
-            return (
-              <tr 
-                key={level} 
-                onClick={() => handleFeatureClick(level)}
-                className={styles.tableRowClickable}
-              >
-                <td>{level}</td>
-                <td>
-                  {features.length > 0 ? features.map(f => f.name).join(', ') : '—'}
-                </td>
-                {extraCols.map(col => (
-                  <td key={col}>{rowData ? rowData[col] : '—'}</td>
-                ))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    );
-  };
+  return (
+    <table key={selectedSubclass || 'base'}>
+      <thead>
+        <tr>
+          <th>Уровень</th>
+          <th>Особенности</th>
+          {extraCols.map(col => (
+            <th key={col}>{columnLabels[col] || col}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {levels.map(level => {
+          const features = getFeaturesForLevel(level);
+          const rowData = getTableRow(level);
+          return (
+            <tr 
+              key={level} 
+              onClick={() => handleFeatureClick(level)}
+              className={styles.tableRowClickable}
+            >
+              <td>{level}</td>
+              <td>
+                {features.length > 0 ? features.map(f => f.name).join(', ') : '—'}
+              </td>
+              {extraCols.map(col => (
+                <td key={col}>{rowData ? rowData[col] : '—'}</td>
+              ))}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+};
 
   // Функция рендера владений
   const renderProficiencies = () => {
