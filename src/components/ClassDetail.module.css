@@ -327,3 +327,85 @@
 .customTable tbody tr:nth-child(even) {
   background: var(--bg-table-alt);
 }
+
+/* ===== Прислужники ===== */
+.minionsSection {
+  margin: 1.5rem 0;
+  background: var(--bg-card);
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  padding: 1.2rem;
+}
+
+.minionsSection h3 {
+  margin: 0 0 0.8rem 0;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.minionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.minionCard {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-body);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.minionCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.minionImage {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.minionContent {
+  padding: 0.8rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.minionContent h4 {
+  margin: 0 0 0.3rem 0;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.minionContent p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.minionLink {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  align-self: flex-start;
+}
+
+.minionLink:hover {
+  text-decoration: underline;
+}
+
+.minionNoLink {
+  color: var(--text-light);
+  font-size: 0.85rem;
+  font-style: italic;
+}

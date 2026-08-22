@@ -105,6 +105,7 @@ export default function CategoryList() {
   // Фильтрация и поиск
   const filteredItems = useMemo(() => {
     let result = items.filter(item => {
+      if (category === 'monsters' && item.hidden === true) return false;
       if (search && !item.name.toLowerCase().includes(search.toLowerCase())) return false;
 
       for (const [key, filter] of Object.entries(filters)) {
@@ -147,7 +148,7 @@ export default function CategoryList() {
       });
     }
     return result;
-  }, [items, search, filters, sortField, sortDirection, showFavorites, isFavorite]);
+  }, [items, search, filters, sortField, sortDirection, showFavorites, isFavorite, category]);
 
   const handleFilterChange = (field, selected) => {
     setFilters(prev => ({ ...prev, [field]: selected }));

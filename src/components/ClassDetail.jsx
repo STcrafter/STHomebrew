@@ -295,6 +295,32 @@ export default function ClassDetail({ classData }) {
           )}
         </div>
       )}
+      {/* ===== Прислужники (миньоны) ===== */}
+{Array.isArray(classData.minions) && classData.minions.length > 0 && (
+  <div className={styles.minionsSection}>
+    <h3>Прислужники</h3>
+    <div className={styles.minionsGrid}>
+      {classData.minions.map((minion, index) => (
+        <div key={index} className={styles.minionCard}>
+          {minion.image && (
+            <img src={minion.image} alt={minion.name} className={styles.minionImage} />
+          )}
+          <div className={styles.minionContent}>
+            <h4>{minion.name}</h4>
+            <p>{minion.description}</p>
+            {minion.statblock_id ? (
+              <Link to={`/category/monsters/${minion.statblock_id}`} className={styles.minionLink}>
+                → Открыть статблок
+              </Link>
+            ) : (
+              <span className={styles.minionNoLink}>Статблок не задан</span>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
       {/* Таблица классов (только если нет произвольных таблиц) */}
       {tables.length === 0 && (
