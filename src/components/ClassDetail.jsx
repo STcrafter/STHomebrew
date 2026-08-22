@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import styles from './ClassDetail.module.css';
 
 const columnLabels = {
@@ -15,7 +16,6 @@ export default function ClassDetail({ classData }) {
     features: true,
     proficiencies: false,
     equipment: false,
-    multiclass: false, // ← добавьте
   });
 
   if (!classData) return <div>Данные класса не найдены</div>;
@@ -73,7 +73,7 @@ export default function ClassDetail({ classData }) {
     return Object.keys(groups).sort((a, b) => Number(a) - Number(b));
   };
 
-  // ===== Рендер секции способностей (без таблицы, только описания) =====
+  // ===== Рендер секции способностей (только описания, без таблиц) =====
   const renderFeatures = () => {
     const levels = groupFeaturesByLevel();
     if (levels.length === 0) {
@@ -234,6 +234,36 @@ export default function ClassDetail({ classData }) {
     );
   };
 
+  // ===== Рендер прислужников (миньонов) =====
+  const renderMinions = () => {
+    if (!Array.isArray(classData.minions) || classData.minions.length === 0) return null;
+    return (
+      <div className={styles.minionsSection}>
+        <h3>Прислужники</h3>
+        <div className={styles.minionsGrid}>
+          {classData.minions.map((minion, index) => (
+            <div key={index} className={styles.minionCard}>
+              {minion.image && (
+                <img src={minion.image} alt={minion.name} className={styles.minionImage} />
+              )}
+              <div className={styles.minionContent}>
+                <h4>{minion.name}</h4>
+                <p>{minion.description}</p>
+                {minion.statblock_id ? (
+                  <Link to={`/category/monsters/${minion.statblock_id}`} className={styles.minionLink}>
+                    → Открыть статблок
+                  </Link>
+                ) : (
+                  <span className={styles.minionNoLink}>Статблок не задан</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className={styles.classPage}>
       {classData.image && (
@@ -256,25 +286,6 @@ export default function ClassDetail({ classData }) {
         <div><strong>Спасброски:</strong> {Array.isArray(classData.saving_throws) ? classData.saving_throws.join(', ') : '—'}</div>
         <div><strong>Кость хитов:</strong> {classData.hit_die || '—'}</div>
       </div>
-      {/* Блок мультиклассирования */}
-{(classData.multiclass_requirements || classData.multiclass_proficiencies) && (
-  <div className={styles.section}>
-    <div className={styles.sectionHeader} onClick={() => toggleSection('multiclass')}>
-      <h3>Мультиклассирование</h3>
-      <span>{openSections.multiclass ? '−' : '+'}</span>
-    </div>
-    {openSections.multiclass && (
-      <div className={styles.sectionContent}>
-        {classData.multiclass_requirements && (
-          <div><strong>Требования:</strong> {classData.multiclass_requirements}</div>
-        )}
-        {classData.multiclass_proficiencies && (
-          <div><strong>Владения:</strong> {classData.multiclass_proficiencies}</div>
-        )}
-      </div>
-    )}
-  </div>
-)}
 
       {subclasses.length > 0 && (
         <div className={styles.subclassSelector}>
@@ -295,49 +306,24 @@ export default function ClassDetail({ classData }) {
           )}
         </div>
       )}
-      {/* ===== Прислужники (миньоны) ===== */}
-{Array.isArray(classData.minions) && classData.minions.length > 0 && (
-  <div className={styles.minionsSection}>
-    <h3>Прислужники</h3>
-    <div className={styles.minionsGrid}>
-      {classData.minions.map((minion, index) => (
-        <div key={index} className={styles.minionCard}>
-          {minion.image && (
-            <img src={minion.image} alt={minion.name} className={styles.minionImage} />
-          )}
-          <div className={styles.minionContent}>
-            <h4>{minion.name}</h4>
-            <p>{minion.description}</p>
-            {minion.statblock_id ? (
-              <Link to={`/category/monsters/${minion.statblock_id}`} className={styles.minionLink}>
-                → Открыть статблок
-              </Link>
-            ) : (
-              <span className={styles.minionNoLink}>Статблок не задан</span>
-            )}
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
 
-      {/* Таблица классов (только если нет произвольных таблиц) */}
-      {tables.length === 0 && (
+      {/* ===== Таблицы (стандартная или произвольные) ===== */}
+      {tables.length > 0 ? (
+        <div className={styles.customTables}>
+          <h3>Таблицы</h3>
+          {renderCustomTables()}
+        </div>
+      ) : (
         <div className={styles.classTable}>
           <h3>Таблица классов</h3>
           {renderTable()}
         </div>
       )}
 
-      {/* Произвольные таблицы */}
-      {tables.length > 0 && (
-        <div className={styles.customTables}>
-          <h3>Таблицы</h3>
-          {renderCustomTables()}
-        </div>
-      )}
+      {/* ===== Прислужники ===== */}
+      {renderMinions()}
 
+      {/* ===== Владения ===== */}
       <div className={styles.section}>
         <div className={styles.sectionHeader} onClick={() => toggleSection('proficiencies')}>
           <h3>Владения</h3>
@@ -350,6 +336,7 @@ export default function ClassDetail({ classData }) {
         )}
       </div>
 
+      {/* ===== Снаряжение ===== */}
       {classData.equipment && (
         <div className={styles.section}>
           <div className={styles.sectionHeader} onClick={() => toggleSection('equipment')}>
@@ -364,6 +351,7 @@ export default function ClassDetail({ classData }) {
         </div>
       )}
 
+      {/* ===== Способности ===== */}
       <div className={styles.section}>
         <div className={styles.sectionHeader} onClick={() => toggleSection('features')}>
           <h3>Способности</h3>
