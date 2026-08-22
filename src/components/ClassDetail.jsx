@@ -26,6 +26,7 @@ export default function ClassDetail({ classData }) {
   const features = Array.isArray(classData.features) ? classData.features : [];
   const subclasses = Array.isArray(classData.subclasses) ? classData.subclasses : [];
   const classTable = Array.isArray(classData.class_table) ? classData.class_table : [];
+  const tables = Array.isArray(classData.tables) ? classData.tables : [];
 
   // ===== Обработчик клика по строке таблицы =====
   const handleFeatureClick = (level) => {
@@ -71,7 +72,7 @@ export default function ClassDetail({ classData }) {
     return Object.keys(groups).sort((a, b) => Number(a) - Number(b));
   };
 
-  // ===== Рендер секции способностей (с выделением подкласса) =====
+  // ===== Рендер секции способностей (без таблицы, только описания) =====
   const renderFeatures = () => {
     const levels = groupFeaturesByLevel();
     if (levels.length === 0) {
@@ -121,7 +122,7 @@ export default function ClassDetail({ classData }) {
     return Object.keys(firstRow).filter(key => key !== 'level');
   };
 
-  // ===== Рендер таблицы классов =====
+  // ===== Рендер таблицы классов (основной) =====
   const renderTable = () => {
     const levels = Array.from({ length: 20 }, (_, i) => i + 1);
     const extraCols = extraColumns();
@@ -169,6 +170,34 @@ export default function ClassDetail({ classData }) {
         </tbody>
       </table>
     );
+  };
+
+  // ===== Рендер произвольных таблиц (из поля tables) =====
+  const renderCustomTables = () => {
+    if (tables.length === 0) return null;
+    return tables.map((table, index) => (
+      <div key={index} className={styles.customTable}>
+        <h4>{table.title || `Таблица ${index + 1}`}</h4>
+        <table>
+          <thead>
+            <tr>
+              {table.headers.map((header, i) => (
+                <th key={i}>{header}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {table.rows.map((row, i) => (
+              <tr key={i}>
+                {row.map((cell, j) => (
+                  <td key={j}>{cell}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    ));
   };
 
   // ===== Рендер владений =====
@@ -251,6 +280,9 @@ export default function ClassDetail({ classData }) {
         <h3>Таблица классов</h3>
         {renderTable()}
       </div>
+
+      {/* Произвольные таблицы */}
+      {renderCustomTables()}
 
       <div className={styles.section}>
         <div className={styles.sectionHeader} onClick={() => toggleSection('proficiencies')}>
