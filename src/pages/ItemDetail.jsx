@@ -133,6 +133,7 @@ case 'subclasses':
     <div className={styles.subclassPage}>
       <div className={styles.subclassDescription}>
         <h2>Описание подкласса</h2>
+        {item.subtitle && <p className={styles.subclassSubtitle}>{item.subtitle}</p>}
         <p>{item.description}</p>
       </div>
       {item.features && item.features.length > 0 && (

@@ -332,3 +332,11 @@
   background: var(--bg-card-hover);
   text-decoration: underline;
 }
+
+.subclassSubtitle {
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin: -0.2rem 0 0.8rem 0;
+  line-height: 1.4;
+}
