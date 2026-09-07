@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './ClassDetail.module.css';
+import { renderFormattedText } from '../utils/helpers';
 
 const columnLabels = {
   level: 'Уровень',
@@ -92,7 +93,9 @@ export default function ClassDetail({ classData }) {
                   {levelFeatures.map((feature, idx) => (
                     <div key={idx} className={`${styles.featureItem} ${feature.isSubclass ? styles.subclassFeature : ''}`}>
                       <div className={styles.featureName}>{feature.name || 'Без названия'}</div>
-                      <div className={styles.featureDescription}>{feature.description || 'Описание отсутствует'}</div>
+                      <div className={styles.featureDescription}>
+  {renderFormattedText(feature.description)}
+</div>
                     </div>
                   ))}
                 </div>

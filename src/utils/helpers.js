@@ -121,3 +121,24 @@ export const generateLegendaryDescription = (name, uses, lairUses = null) => {
   const restorePart = `${name} восстанавливает все потраченные использования в начале своего хода.`;
   return `${base}${lairPart}. ${actionPart} ${restorePart}`;
 };
+
+/**
+ * Преобразует текст с Markdown-подобной разметкой в React-элементы.
+ * Поддерживает:
+ * - **жирный текст** (оборачивает в <strong>)
+ * - абзацы через \n\n
+ * - переносы строк внутри абзаца через \n → <br/>
+ */
+export const renderFormattedText = (text) => {
+  if (!text) return null;
+  // Разбиваем на абзацы по двойным переносам
+  const paragraphs = text.split(/\n\n+/);
+  return paragraphs.map((p, idx) => {
+    // Заменяем **текст** на <strong>текст</strong>
+    // и \n на <br/> внутри абзаца
+    const html = p
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br/>');
+    return <p key={idx} dangerouslySetInnerHTML={{ __html: html }} />;
+  });
+};

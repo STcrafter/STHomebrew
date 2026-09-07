@@ -5,6 +5,7 @@ import StatBlock from '../components/StatBlock';
 import ClassDetail from '../components/ClassDetail';
 import FavoriteButton from '../components/FavoriteButton';
 import Breadcrumbs from '../components/Breadcrumbs';
+import { renderFormattedText } from '../utils/helpers';
 
 export default function ItemDetail() {
   const { category, id } = useParams();
