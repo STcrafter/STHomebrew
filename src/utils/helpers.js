@@ -1,3 +1,4 @@
+import React from 'react';
 /**
  * Форматирует значение Challenge Rating для отображения
  * 0.125 → 1/8
@@ -131,14 +132,14 @@ export const generateLegendaryDescription = (name, uses, lairUses = null) => {
  */
 export const renderFormattedText = (text) => {
   if (!text) return null;
-  // Разбиваем на абзацы по двойным переносам
   const paragraphs = text.split(/\n\n+/);
   return paragraphs.map((p, idx) => {
-    // Заменяем **текст** на <strong>текст</strong>
-    // и \n на <br/> внутри абзаца
     const html = p
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\n/g, '<br/>');
-    return <p key={idx} dangerouslySetInnerHTML={{ __html: html }} />;
+    return React.createElement('p', { 
+      key: idx, 
+      dangerouslySetInnerHTML: { __html: html } 
+    });
   });
 };
