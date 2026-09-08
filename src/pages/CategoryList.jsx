@@ -265,15 +265,9 @@ export default function CategoryList() {
                   </div>
                 )}
                 {category === 'subclasses' && (
-  <>
-    <div className={styles.meta}>
-      <span>{item.class}</span>
-      <span>Особенностей: {Array.isArray(item.features) ? item.features.length : 0}</span>
-    </div>
-    {item.subtitle && (
-      <div className={styles.subclassSubtitleCard}>{item.subtitle}</div>
-    )}
-  </>
+  <div className={styles.meta}>
+    <span>{item.class}</span>
+  </div>
 )}
                 {category === 'races' && (
                   <div className={styles.meta}>
