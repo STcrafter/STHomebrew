@@ -1,4 +1,5 @@
 import React from 'react';
+import { tables } from '../data/tables.js';
 /**
  * Форматирует значение Challenge Rating для отображения
  * 0.125 → 1/8
