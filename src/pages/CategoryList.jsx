@@ -66,7 +66,7 @@ export default function CategoryList() {
     } else if (category === 'items') {
       filterFields = ['rarity', 'type', 'attunement'];
     } else if (category === 'subclasses') {
-      filterFields = ['class'];
+      filterFields = ['class','tags'];
     } else if (category === 'feats') {
       filterFields = ['ability'];
     } else {
@@ -267,6 +267,9 @@ export default function CategoryList() {
                 {category === 'subclasses' && (
   <div className={styles.meta}>
     <span>{item.class}</span>
+    {item.tags && item.tags.length > 0 && (
+      <span>{item.tags.slice(0, 3).join(', ')}</span>
+    )}
   </div>
 )}
                 {category === 'races' && (

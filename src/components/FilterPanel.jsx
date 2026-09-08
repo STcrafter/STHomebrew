@@ -12,6 +12,7 @@ const fieldLabels = {
   concentration: 'Концентрация',
   rarity: 'Редкость',
   type: 'Тип предмета',
+  tags:'Теги',
   attunement: 'Настройка',
   class: 'Класс',
   ability: 'Увеличиваемая характеристика',  // ← добавляем
