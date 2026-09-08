@@ -17,6 +17,7 @@ jobs:
         with:
           node-version: 18
       - run: npm install
+      - run: npm run generate-tables
       - run: npm run build
       - run: cp dist/index.html dist/404.html   # ← добавляем эту строку
       - uses: peaceiris/actions-gh-pages@v3
