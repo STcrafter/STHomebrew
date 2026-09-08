@@ -44,7 +44,6 @@ a {
 
 .formatted-paragraph {
   text-indent: 1.5rem;    /* красная строка */
-  margin: 0 0 0.8rem 0;   /* отступ между абзацами */
   line-height: 1.8;
 }
 
