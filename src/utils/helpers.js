@@ -130,7 +130,7 @@ export const generateLegendaryDescription = (name, uses, lairUses = null) => {
  * - абзацы через \n\n
  * - переносы строк внутри абзаца через \n → <br/>
  */
-export const renderFormattedText = (text) => {
+const renderPlainText = (text) => {
   if (!text) return null;
   const paragraphs = text.split(/\n\n+/);
   return paragraphs.map((p, idx) => {
@@ -138,9 +138,91 @@ export const renderFormattedText = (text) => {
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\n/g, '<br/>');
     return React.createElement('p', {
-      key: idx,
+      key: `p-${idx}`,
       className: 'formatted-paragraph',
       dangerouslySetInnerHTML: { __html: html }
     });
+  });
+};
+
+const renderTable = (headers, rows, idx) => {
+  const table = React.createElement(
+    'table',
+    { key: `table-${idx}`, className: 'formatted-table' },
+    [
+      React.createElement(
+        'thead',
+        { key: 'thead' },
+        React.createElement(
+          'tr',
+          {},
+          headers.map((header, i) =>
+            React.createElement('th', { key: i }, header)
+          )
+        )
+      ),
+      React.createElement(
+        'tbody',
+        { key: 'tbody' },
+        rows.map((row, i) =>
+          React.createElement(
+            'tr',
+            { key: i },
+            row.map((cell, j) =>
+              React.createElement('td', { key: j }, cell)
+            )
+          )
+        )
+      )
+    ]
+  );
+  return React.createElement('div', {
+    key: `table-wrapper-${idx}`,
+    className: 'formatted-table-wrapper',
+  }, table);
+};
+
+export const renderFormattedText = (text) => {
+  if (!text) return null;
+
+  const tableRefRegex = /\[table:([^\]]+)\]/g;
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = tableRefRegex.exec(text)) !== null) {
+    const tableId = match[1].trim();
+    const before = text.slice(lastIndex, match.index);
+    if (before.trim()) {
+      parts.push({ type: 'text', content: before });
+    }
+    parts.push({ type: 'table-ref', id: tableId });
+    lastIndex = match.index + match[0].length;
+  }
+
+  const after = text.slice(lastIndex);
+  if (after.trim()) {
+    parts.push({ type: 'text', content: after });
+  }
+
+  if (parts.every(p => p.type === 'text')) {
+    return renderPlainText(text);
+  }
+
+  return parts.map((part, idx) => {
+    if (part.type === 'table-ref') {
+      const tableData = tables[part.id];
+      if (tableData && tableData.headers && tableData.rows) {
+        return renderTable(tableData.headers, tableData.rows, idx);
+      } else {
+        return React.createElement(
+          'p',
+          { key: `error-${idx}`, className: 'table-error' },
+          `⚠️ Таблица "${part.id}" не найдена`
+        );
+      }
+    } else {
+      return renderPlainText(part.content);
+    }
   });
 };

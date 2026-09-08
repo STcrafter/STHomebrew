@@ -4,8 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "generate-tables": "node scripts/generateTables.js",
+    "dev": "npm run generate-tables && vite dev",
+    "build": "npm run generate-tables && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
