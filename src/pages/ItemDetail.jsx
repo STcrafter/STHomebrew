@@ -27,79 +27,86 @@ export default function ItemDetail() {
     );
   }
 
-  // Рендер содержимого в зависимости от категории
   const renderDetails = () => {
     switch (category) {
       case 'monsters':
-  return (
-    <>
-      {item.image && (
-        <div className={styles.imageWrapper}>
-          <img src={item.image} alt={item.name} className={styles.detailImage} />
-        </div>
-      )}
-      <div className={styles.description}>
-        <h3>Описание</h3>
-        {item.description ? (
-          item.description.split(/\n\n+/).map((paragraph, idx) => (
-            <p key={idx}>{paragraph}</p>
-          ))
-        ) : (
-          <p>Описание отсутствует</p>
-        )}
-      </div>
-      <StatBlock monster={item} />
-      {item.tags && (
-        <div className={styles.tags}>
-          <h3>Теги</h3>
-          <div className={styles.tagList}>
-            {item.tags.map((tag, i) => <span key={i}>{tag}</span>)}
-          </div>
-        </div>
-      )}
-    </>
-  );
+        return (
+          <>
+            {item.image && (
+              <div className={styles.imageWrapper}>
+                <img src={item.image} alt={item.name} className={styles.detailImage} />
+              </div>
+            )}
+            <div className={styles.description}>
+              <h3>Описание</h3>
+              {renderFormattedText(item.description)}
+            </div>
+            <StatBlock monster={item} />
+            {item.tags && (
+              <div className={styles.tags}>
+                <h3>Теги</h3>
+                <div className={styles.tagList}>
+                  {item.tags.map((tag, i) => <span key={i}>{tag}</span>)}
+                </div>
+              </div>
+            )}
+          </>
+        );
 
       case 'spells':
-  return (
-    <>
-      <div className={styles.spellMeta}>
-        <div><strong>Уровень:</strong> {item.level}</div>
-        <div><strong>Школа:</strong> {item.school}</div>
-        <div><strong>Время произнесения:</strong> {item.casting_time}</div>
-        <div><strong>Дистанция:</strong> {item.range}</div>
-        <div><strong>Длительность:</strong> {item.duration}</div>
-        <div><strong>Компоненты:</strong> {item.components}</div>
-        <div><strong>Концентрация:</strong> {item.concentration ? 'Да' : 'Нет'}</div>
-        <div><strong>Доступен классам:</strong> {item.classes.join(', ')}</div>
-      </div>
-      <div className={styles.description}>
-        <h3>Описание</h3>
-        {item.description ? (
-          item.description.split(/\n\n+/).map((paragraph, idx) => (
-            <p key={idx}>{paragraph}</p>
-          ))
-        ) : (
-          <p>Описание отсутствует</p>
-        )}
-        {item.higher_levels && (
+        return (
           <>
-            <h3>На более высоких уровнях</h3>
-            {item.higher_levels.split(/\n\n+/).map((paragraph, idx) => (
-              <p key={idx}>{paragraph}</p>
-            ))}
+            <div className={styles.spellMeta}>
+              <div><strong>Уровень:</strong> {item.level}</div>
+              <div><strong>Школа:</strong> {item.school}</div>
+              <div><strong>Время произнесения:</strong> {item.casting_time}</div>
+              <div><strong>Дистанция:</strong> {item.range}</div>
+              <div><strong>Длительность:</strong> {item.duration}</div>
+              <div><strong>Компоненты:</strong> {item.components}</div>
+              <div><strong>Концентрация:</strong> {item.concentration ? 'Да' : 'Нет'}</div>
+              <div><strong>Доступен классам:</strong> {item.classes.join(', ')}</div>
+            </div>
+            <div className={styles.description}>
+              <h3>Описание</h3>
+              {renderFormattedText(item.description)}
+              {item.higher_levels && (
+                <>
+                  <h3>На более высоких уровнях</h3>
+                  {renderFormattedText(item.higher_levels)}
+                </>
+              )}
+            </div>
           </>
-        )}
-      </div>
-    </>
-  );
+        );
 
-  case 'classes':
-  return (
-    <div className={styles.classPageWrapper}>
-      <ClassDetail classData={item} />
-    </div>
-  );
+      case 'classes':
+        return (
+          <div className={styles.classPageWrapper}>
+            <ClassDetail classData={item} />
+          </div>
+        );
+
+      case 'races':
+        return (
+          <>
+            {item.image && (
+              <div className={styles.imageWrapper}>
+                <img src={item.image} alt={item.name} className={styles.detailImage} />
+              </div>
+            )}
+            <div className={styles.description}>
+              <h3>Описание</h3>
+              {renderFormattedText(item.description)}
+            </div>
+            <div className={styles.features}>
+              <h3>Особенности</h3>
+              <ul>
+                {item.features.map((feat, i) => <li key={i}>{feat}</li>)}
+              </ul>
+            </div>
+          </>
+        );
+
       case 'items':
         return (
           <>
@@ -112,7 +119,7 @@ export default function ItemDetail() {
             </div>
             <div className={styles.description}>
               <h3>Описание</h3>
-              <p>{item.description}</p>
+              {renderFormattedText(item.description)}
             </div>
           </>
         );
@@ -125,95 +132,90 @@ export default function ItemDetail() {
             </div>
             <div className={styles.description}>
               <h3>Описание</h3>
-              <p>{item.description}</p>
+              {renderFormattedText(item.description)}
             </div>
           </>
         );
-case 'subclasses':
-  return (
-    <div className={styles.subclassPage}>
-      <div className={styles.subclassDescription}>
-        <h2>Описание подкласса</h2>
-        {item.subtitle && <p className={styles.subclassSubtitle}>{item.subtitle}</p>}
-        <p>{item.description}</p>
-      </div>
-      {item.features && item.features.length > 0 && (
-        <div className={styles.subclassFeatures}>
-          <h2>Особенности</h2>
-          {item.features.map((feature, idx) => (
-            <div key={idx} className={styles.subclassFeature}>
-              <h3 className={styles.featureTitle}>{feature.name}</h3>
-              <div className={styles.featureLevel}>
-                {feature.level} уровень {item.name}
-              </div>
-              <hr className={styles.featureDivider} />
-              <p className={styles.featureDescription}>{feature.description}</p>
+
+      case 'subclasses':
+        return (
+          <div className={styles.subclassPage}>
+            <div className={styles.subclassDescription}>
+              <h2>Описание подкласса</h2>
+              {item.subtitle && <p className={styles.subclassSubtitle}>{item.subtitle}</p>}
+              {renderFormattedText(item.description)}
             </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-
-
-case 'homerules':
-  return (
-    <>
-      <div className={styles.homeruleMeta}>
-        <div><strong>Источник:</strong> {item.source}</div>
-      </div>
-      <div className={styles.description}>
-        <h3>Описание правила</h3>
-        {item.sections ? (
-          // Новый структурированный формат
-          <div className={styles.homeruleSections}>
-            {item.sections.map((section, idx) => {
-              switch (section.type) {
-                case 'heading':
-                  return <h4 key={idx} className={styles.homeruleHeading}>{section.content}</h4>;
-                case 'paragraph':
-                  return <p key={idx} className={styles.homeruleParagraph}>{section.content}</p>;
-                case 'table':
-                  return (
-                    <div key={idx} className={styles.homeruleTableWrapper}>
-                      <table className={styles.homeruleTable}>
-                        <thead>
-                          <tr>
-                            {section.headers.map((header, i) => (
-                              <th key={i}>{header}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {section.rows.map((row, i) => (
-                            <tr key={i}>
-                              {row.map((cell, j) => (
-                                <td key={j}>{cell}</td>
-                              ))}
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+            {item.features && item.features.length > 0 && (
+              <div className={styles.subclassFeatures}>
+                <h2>Особенности</h2>
+                {item.features.map((feature, idx) => (
+                  <div key={idx} className={styles.subclassFeature}>
+                    <h3 className={styles.featureTitle}>{feature.name}</h3>
+                    <div className={styles.featureLevel}>
+                      {feature.level} уровень {item.name}
                     </div>
-                  );
-                default:
-                  return null;
-              }
-            })}
+                    <hr className={styles.featureDivider} />
+                    <div className={styles.featureDescription}>
+                      {renderFormattedText(feature.description)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        ) : (
-          // Старый формат — простой текст с абзацами
-          item.description ? (
-            item.description.split(/\n\n+/).map((paragraph, idx) => (
-              <p key={idx}>{paragraph}</p>
-            ))
-          ) : (
-            <p>Описание отсутствует</p>
-          )
-        )}
-      </div>
-    </>
-  );
+        );
+
+      case 'homerules':
+        return (
+          <>
+            <div className={styles.homeruleMeta}>
+              <div><strong>Источник:</strong> {item.source}</div>
+            </div>
+            <div className={styles.description}>
+              <h3>Описание правила</h3>
+              {item.sections ? (
+                <div className={styles.homeruleSections}>
+                  {item.sections.map((section, idx) => {
+                    switch (section.type) {
+                      case 'heading':
+                        return <h4 key={idx} className={styles.homeruleHeading}>{section.content}</h4>;
+                      case 'paragraph':
+                        return <p key={idx} className={styles.homeruleParagraph}>{section.content}</p>;
+                      case 'table':
+                        return (
+                          <div key={idx} className={styles.homeruleTableWrapper}>
+                            <table className={styles.homeruleTable}>
+                              <thead>
+                                <tr>
+                                  {section.headers.map((header, i) => (
+                                    <th key={i}>{header}</th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {section.rows.map((row, i) => (
+                                  <tr key={i}>
+                                    {row.map((cell, j) => (
+                                      <td key={j}>{cell}</td>
+                                    ))}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        );
+                      default:
+                        return null;
+                    }
+                  })}
+                </div>
+              ) : (
+                renderFormattedText(item.description)
+              )}
+            </div>
+          </>
+        );
+
       default:
         return <p>Нет данных для этой категории</p>;
     }

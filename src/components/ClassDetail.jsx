@@ -94,8 +94,8 @@ export default function ClassDetail({ classData }) {
                     <div key={idx} className={`${styles.featureItem} ${feature.isSubclass ? styles.subclassFeature : ''}`}>
                       <div className={styles.featureName}>{feature.name || 'Без названия'}</div>
                       <div className={styles.featureDescription}>
-  {renderFormattedText(feature.description)}
-</div>
+                        {renderFormattedText(feature.description)}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -226,7 +226,6 @@ export default function ClassDetail({ classData }) {
 
   return (
     <div className={styles.classPage}>
-      {/* Картинка, название, описание */}
       {classData.image && (
         <div className={styles.imageWrapper}>
           <img
@@ -239,17 +238,15 @@ export default function ClassDetail({ classData }) {
       )}
       <h1 className={styles.className}>{classData.name || 'Без названия'}</h1>
       <div className={styles.classDescription}>
-        <p>{classData.description || 'Описание отсутствует'}</p>
+        {renderFormattedText(classData.description)}
       </div>
 
-      {/* Основные параметры */}
       <div className={styles.classStats}>
         <div><strong>Основная характеристика:</strong> {classData.primary_ability || '—'}</div>
         <div><strong>Спасброски:</strong> {Array.isArray(classData.saving_throws) ? classData.saving_throws.join(', ') : '—'}</div>
         <div><strong>Кость хитов:</strong> {classData.hit_die || '—'}</div>
       </div>
 
-      {/* Подклассы */}
       {subclasses.length > 0 && (
         <div className={styles.subclassSelector}>
           <label>Подкласс:</label>
@@ -270,7 +267,7 @@ export default function ClassDetail({ classData }) {
         </div>
       )}
 
-      {/* ===== ТАБЛИЦЫ — ТОЛЬКО ОДИН РАЗ ===== */}
+      {/* Таблицы: если есть кастомные, показываем только их, иначе стандартную */}
       {tables.length === 0 ? (
         <div className={styles.classTable}>
           <h3>Таблица классов</h3>
@@ -282,33 +279,34 @@ export default function ClassDetail({ classData }) {
           {renderCustomTables()}
         </div>
       )}
-      {/* ===== Прислужники (миньоны) ===== */}
-{Array.isArray(classData.minions) && classData.minions.length > 0 && (
-  <div className={styles.minionsSection}>
-    <h3>Прислужники</h3>
-    <div className={styles.minionsGrid}>
-      {classData.minions.map((minion, index) => (
-        <div key={index} className={styles.minionCard}>
-          {minion.image && (
-            <img src={minion.image} alt={minion.name} className={styles.minionImage} />
-          )}
-          <div className={styles.minionContent}>
-            <h4>{minion.name}</h4>
-            <p>{minion.description}</p>
-            {minion.statblock_id ? (
-              <Link to={`/category/monsters/${minion.statblock_id}`} className={styles.minionLink}>
-                → Открыть статблок
-              </Link>
-            ) : (
-              <span className={styles.minionNoLink}>Статблок не задан</span>
-            )}
+
+      {/* Миньоны (прислужники) */}
+      {Array.isArray(classData.minions) && classData.minions.length > 0 && (
+        <div className={styles.minionsSection}>
+          <h3>Прислужники</h3>
+          <div className={styles.minionsGrid}>
+            {classData.minions.map((minion, index) => (
+              <div key={index} className={styles.minionCard}>
+                {minion.image && (
+                  <img src={minion.image} alt={minion.name} className={styles.minionImage} />
+                )}
+                <div className={styles.minionContent}>
+                  <h4>{minion.name}</h4>
+                  <p>{minion.description}</p>
+                  {minion.statblock_id ? (
+                    <Link to={`/category/monsters/${minion.statblock_id}`} className={styles.minionLink}>
+                      → Открыть статблок
+                    </Link>
+                  ) : (
+                    <span className={styles.minionNoLink}>Статблок не задан</span>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
-  </div>
-)}
-      {/* Владения */}
+      )}
+
       <div className={styles.section}>
         <div className={styles.sectionHeader} onClick={() => toggleSection('proficiencies')}>
           <h3>Владения</h3>
@@ -321,7 +319,6 @@ export default function ClassDetail({ classData }) {
         )}
       </div>
 
-      {/* Снаряжение */}
       {classData.equipment && (
         <div className={styles.section}>
           <div className={styles.sectionHeader} onClick={() => toggleSection('equipment')}>
@@ -336,7 +333,6 @@ export default function ClassDetail({ classData }) {
         </div>
       )}
 
-      {/* Способности — только описания, без таблиц */}
       <div className={styles.section}>
         <div className={styles.sectionHeader} onClick={() => toggleSection('features')}>
           <h3>Способности</h3>
@@ -344,7 +340,7 @@ export default function ClassDetail({ classData }) {
         </div>
         {openSections.features && (
           <div className={styles.sectionContent}>
-            {renderFeatures()}   {/* <-- только renderFeatures(), без таблиц */}
+            {renderFeatures()}
           </div>
         )}
       </div>
