@@ -137,9 +137,10 @@ export const renderFormattedText = (text) => {
     const html = p
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\n/g, '<br/>');
-    return React.createElement('p', { 
-      key: idx, 
-      dangerouslySetInnerHTML: { __html: html } 
+    return React.createElement('p', {
+      key: idx,
+      className: 'formatted-paragraph',
+      dangerouslySetInnerHTML: { __html: html }
     });
   });
 };
