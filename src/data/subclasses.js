@@ -110,6 +110,7 @@ export default [
     ]
   },
   {
+    id:'cle_mind',
     name:'Домен разума',
     class:'Жрец',
     tags:['Псионик'],
@@ -144,6 +145,7 @@ export default [
     ]
   },
   {
+    id:'dru_forged',
     name:'Круг кованых',
     class:'Друид',
     subtitle:'Превращайтесь в зверей из металла и дерева',
@@ -177,6 +179,7 @@ export default [
     ]
   },
   {
+    id:'mon_living_weapon',
     name:'Воин живого оружия',
     class:'Монах',
     subtitle:'Измените своё тело для боя',
