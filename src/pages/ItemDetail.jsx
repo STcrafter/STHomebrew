@@ -164,7 +164,63 @@ export default function ItemDetail() {
             )}
           </div>
         );
+      case 'backgrounds':
+  return (
+    <>
+      {/* Характеристики */}
+      {Array.isArray(item.abilities) && item.abilities.length > 0 && (
+        <div className={styles.backgroundBlock}>
+          <h3>Характеристики</h3>
+          <div className={styles.abilityChips}>
+            {item.abilities.map((ab, i) => (
+              <span key={i} className={styles.abilityChip}>{ab}</span>
+            ))}
+          </div>
+        </div>
+      )}
 
+      {/* Черта */}
+      {item.feat && (
+        <div className={styles.backgroundBlock}>
+          <h3>Черта</h3>
+          <p>
+            <strong>{item.feat.name}.</strong> {item.feat.description}
+          </p>
+        </div>
+      )}
+
+      {/* Владения */}
+      {item.proficiencies && (
+        <div className={styles.backgroundBlock}>
+          <h3>Владения</h3>
+          {Array.isArray(item.proficiencies.skills) && item.proficiencies.skills.length > 0 && (
+            <div><strong>Навыки:</strong> {item.proficiencies.skills.join(', ')}</div>
+          )}
+          {Array.isArray(item.proficiencies.tools) && item.proficiencies.tools.length > 0 && (
+            <div><strong>Инструменты:</strong> {item.proficiencies.tools.join(', ')}</div>
+          )}
+        </div>
+      )}
+
+      {/* Снаряжение */}
+      {Array.isArray(item.equipment) && item.equipment.length > 0 && (
+        <div className={styles.backgroundBlock}>
+          <h3>Снаряжение</h3>
+          <ul className={styles.equipmentList}>
+            {item.equipment.map((eq, i) => (
+              <li key={i}>{eq}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Описание */}
+      <div className={styles.description}>
+        <h3>Описание</h3>
+        {renderFormattedText(item.description)}
+      </div>
+    </>
+  );
       case 'homerules':
         return (
           <>

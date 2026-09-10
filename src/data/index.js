@@ -6,12 +6,14 @@ import items from './items.js';
 import feats from './feats.js';
 import subclasses from './subclasses.js';
 import homerules from './homerules.js';
+import backgrounds from './backgrounds.js';
 
 export const data = {
   monsters,
   spells,
   classes,
   races,
+  backgrounds,
   items,
   feats,
   subclasses,

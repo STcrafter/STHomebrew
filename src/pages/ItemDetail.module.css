@@ -340,3 +340,50 @@
   margin: -0.2rem 0 0.8rem 0;
   line-height: 1.4;
 }
+
+/* ===== Предыстории ===== */
+.backgroundBlock {
+  background: var(--bg-card);
+  padding: 1.2rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.backgroundBlock h3 {
+  margin: 0 0 0.6rem 0;
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.backgroundBlock p {
+  margin: 0;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+
+.abilityChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.abilityChip {
+  background: var(--bg-card-hover);
+  padding: 0.3rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  font-weight: 500;
+}
+
+.equipmentList {
+  margin: 0;
+  padding-left: 1.2rem;
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+.equipmentList li {
+  margin-bottom: 0.3rem;
+}

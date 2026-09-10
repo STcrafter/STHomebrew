@@ -15,6 +15,7 @@ const categoryLabels = {
   classes: 'Классы',
   subclasses: 'Подклассы',
   races: 'Расы',
+  backgrounds: 'Предыстории',   // ← добавлено
   items: 'Предметы',
   feats: 'Черты',
   homerules: 'Домашние правила',
@@ -69,6 +70,8 @@ export default function CategoryList() {
       filterFields = ['class','tags'];
     } else if (category === 'feats') {
       filterFields = ['ability'];
+    } else if (category === 'backgrounds') {
+      filterFields = ['abilities'];
     } else {
       return {};
     }
@@ -277,6 +280,13 @@ export default function CategoryList() {
                     <span>Особенностей: {item.features?.length || 0}</span>
                   </div>
                 )}
+                {category === 'backgrounds' && (
+  <div className={styles.meta}>
+    {Array.isArray(item.abilities) && item.abilities.map((ab, i) => (
+      <span key={i}>{ab}</span>
+    ))}
+  </div>
+)}
                 {category === 'feats' && (
                   <div className={styles.meta}>
                     <span>{item.prerequisites || 'Нет требований'}</span>

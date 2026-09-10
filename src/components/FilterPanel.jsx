@@ -11,6 +11,7 @@ const fieldLabels = {
   school: 'Школа магии',
   concentration: 'Концентрация',
   rarity: 'Редкость',
+  abilities: 'Характеристики',
   type: 'Тип предмета',
   tags:'Теги',
   attunement: 'Настройка',

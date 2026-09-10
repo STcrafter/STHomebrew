@@ -9,6 +9,7 @@ const categoryLabels = {
   subclasses: 'Подклассы',
   races: 'Расы',
   items: 'Предметы',
+  backgrounds: 'Предыстории',
   feats: 'Черты',
   homerules: 'Домашние правила',
 };
