@@ -397,3 +397,83 @@
 .equipmentOption {
   color: var(--text-primary);
 }
+
+/* ===== Расы с вариантами ===== */
+.racePage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.raceFeatures {
+  background: var(--bg-card);
+  padding: 1.2rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.raceFeatures h3,
+.raceFeatures h4 {
+  margin: 0 0 0.6rem 0;
+  color: var(--text-secondary);
+}
+
+.raceFeature {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.raceFeature:last-child {
+  margin-bottom: 0;
+}
+
+.raceFeatureName {
+  font-weight: 700;
+  font-style: italic;
+  color: var(--text-primary);
+}
+
+.raceFeatureDesc {
+  color: var(--text-primary);
+}
+
+.variantSelector {
+  background: var(--bg-card);
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.variantSelector label {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.variantSelector select {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-input);
+  font-size: 1rem;
+  background: var(--bg-input);
+  color: var(--text-primary);
+}
+
+.variantContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.2rem;
+  background: var(--bg-card);
+  border-radius: 10px;
+  border: 2px solid var(--accent);
+}
+
+.variantContent h3 {
+  margin: 0;
+  color: var(--accent);
+  font-size: 1.3rem;
+}

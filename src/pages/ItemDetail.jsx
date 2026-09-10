@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { data } from '../data';
+import { useState } from 'react';
 import styles from './ItemDetail.module.css';
 import StatBlock from '../components/StatBlock';
 import ClassDetail from '../components/ClassDetail';
@@ -11,7 +12,7 @@ export default function ItemDetail() {
   const { category, id } = useParams();
   const items = data[category] || [];
   const item = items.find(it => it.id === id);
-
+  const [selectedVariant, setSelectedVariant] = useState(null);
   // Навигация Prev/Next (по алфавиту)
   const sortedItems = [...items].sort((a, b) => a.name.localeCompare(b.name));
   const currentIndex = sortedItems.findIndex(i => i.id === id);
@@ -87,25 +88,78 @@ export default function ItemDetail() {
         );
 
       case 'races':
+  return (
+    <div className={styles.racePage}>
+      {/* Картинка */}
+      {item.image && (
+        <div className={styles.imageWrapper}>
+          <img src={item.image} alt={item.name} className={styles.detailImage} />
+        </div>
+      )}
+
+      {/* Общее описание */}
+      <div className={styles.description}>
+        <h3>Описание</h3>
+        {renderFormattedText(item.description)}
+      </div>
+
+      {/* Общие особенности */}
+      {Array.isArray(item.commonFeatures) && item.commonFeatures.length > 0 && (
+        <div className={styles.raceFeatures}>
+          <h3>Общие особенности</h3>
+          {item.commonFeatures.map((feat, i) => (
+            <div key={i} className={styles.raceFeature}>
+              <span className={styles.raceFeatureName}>{feat.name}.</span>{' '}
+              <span className={styles.raceFeatureDesc}>{feat.description}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Выбор варианта (подрасы) */}
+      {Array.isArray(item.variants) && item.variants.length > 0 && (
+        <div className={styles.variantSelector}>
+          <label>Вариант:</label>
+          <select
+            value={selectedVariant || ''}
+            onChange={(e) => setSelectedVariant(e.target.value || null)}
+          >
+            <option value="">Выберите вариант</option>
+            {item.variants.map((v, i) => (
+              <option key={i} value={v.id}>{v.name}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Выбранный вариант */}
+      {selectedVariant && (() => {
+        const variant = item.variants.find(v => v.id === selectedVariant);
+        if (!variant) return null;
         return (
-          <>
-            {item.image && (
-              <div className={styles.imageWrapper}>
-                <img src={item.image} alt={item.name} className={styles.detailImage} />
+          <div className={styles.variantContent}>
+            <h3>{variant.name}</h3>
+            {variant.description && (
+              <div className={styles.description}>
+                {renderFormattedText(variant.description)}
               </div>
             )}
-            <div className={styles.description}>
-              <h3>Описание</h3>
-              {renderFormattedText(item.description)}
-            </div>
-            <div className={styles.features}>
-              <h3>Особенности</h3>
-              <ul>
-                {item.features.map((feat, i) => <li key={i}>{feat}</li>)}
-              </ul>
-            </div>
-          </>
+            {Array.isArray(variant.features) && variant.features.length > 0 && (
+              <div className={styles.raceFeatures}>
+                <h4>Особенности варианта</h4>
+                {variant.features.map((feat, i) => (
+                  <div key={i} className={styles.raceFeature}>
+                    <span className={styles.raceFeatureName}>{feat.name}.</span>{' '}
+                    <span className={styles.raceFeatureDesc}>{feat.description}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         );
+      })()}
+    </div>
+  );
 
       case 'items':
         return (
