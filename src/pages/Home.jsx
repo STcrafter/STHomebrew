@@ -31,9 +31,6 @@ export default function Home() {
           </Link>
         ))}
         <footer className={styles.footer}>
-  <Link to="/constructor" className={styles.constructorLink}>
-    🛠️ Конструктор объектов
-  </Link>
 </footer>
       </div>
     </div>
