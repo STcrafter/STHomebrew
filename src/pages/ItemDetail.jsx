@@ -184,7 +184,7 @@ export default function ItemDetail() {
         <div className={styles.backgroundBlock}>
           <h3>Черта</h3>
           <p>
-            <strong>{item.feat.name}.</strong> {item.feat.description}
+            <strong>{typeof item.feat === 'string' ? item.feat : item.feat.name}</strong>
           </p>
         </div>
       )}
@@ -203,16 +203,29 @@ export default function ItemDetail() {
       )}
 
       {/* Снаряжение */}
-      {Array.isArray(item.equipment) && item.equipment.length > 0 && (
-        <div className={styles.backgroundBlock}>
-          <h3>Снаряжение</h3>
-          <ul className={styles.equipmentList}>
-            {item.equipment.map((eq, i) => (
-              <li key={i}>{eq}</li>
-            ))}
-          </ul>
-        </div>
+{item.equipment && (
+  <div className={styles.backgroundBlock}>
+    <h3>Снаряжение</h3>
+    <p className={styles.equipmentLine}>
+      <strong>Выберите А или Б:</strong>{' '}
+      <span className={styles.equipmentOption}>
+        А) {Array.isArray(item.equipment.optionA)
+          ? item.equipment.optionA.join(', ')
+          : item.equipment.optionA}
+      </span>
+      {item.equipment.optionB && (
+        <>
+          {' '}или{' '}
+          <span className={styles.equipmentOption}>
+            Б) {Array.isArray(item.equipment.optionB)
+              ? item.equipment.optionB.join(', ')
+              : item.equipment.optionB}
+          </span>
+        </>
       )}
+    </p>
+  </div>
+)}
 
       {/* Описание */}
       <div className={styles.description}>

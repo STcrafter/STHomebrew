@@ -387,3 +387,13 @@
 .equipmentList li {
   margin-bottom: 0.3rem;
 }
+
+.equipmentLine {
+  margin: 0;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+
+.equipmentOption {
+  color: var(--text-primary);
+}
