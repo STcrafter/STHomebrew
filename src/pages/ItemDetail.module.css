@@ -438,46 +438,92 @@
   color: var(--text-primary);
 }
 
-.variantSelector {
-  background: var(--bg-card);
-  padding: 1rem;
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
+/* ===== Варианты рас ===== */
+.variantsSection {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.8rem;
 }
 
-.variantSelector label {
-  font-weight: 600;
+.variantsSection > h3 {
+  margin: 0 0 0.5rem 0;
   color: var(--text-secondary);
+  font-size: 1.2rem;
 }
 
-.variantSelector select {
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  border: 1px solid var(--border-input);
-  font-size: 1rem;
-  background: var(--bg-input);
+.variantGroup {
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.variantGroup:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow);
+}
+
+.variantHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.4rem;
+  cursor: pointer;
+  background: linear-gradient(90deg, var(--bg-card-hover) 0%, var(--bg-card) 100%);
+  font-weight: 700;
+  font-size: 1.1rem;
   color: var(--text-primary);
+  transition: background 0.2s, padding-left 0.2s;
+  border-left: 4px solid var(--accent);
 }
 
-.variantContent {
+.variantHeader:hover {
+  background: var(--bg-card-hover);
+  padding-left: 1.6rem;
+}
+
+.variantHeader span:first-child {
+  position: relative;
+}
+
+.variantHeader span:last-child {
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: var(--accent);
+  transition: transform 0.2s;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--bg-card);
+}
+
+.variantGroup:hover .variantHeader span:last-child {
+  transform: scale(1.15);
+}
+
+.variantBody {
+  padding: 1.4rem;
+  border-top: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 1.2rem;
-  background: var(--bg-card);
-  border-radius: 10px;
-  border: 2px solid var(--accent);
+  animation: fadeSlideIn 0.25s ease;
 }
 
-.variantContent h3 {
-  margin: 0;
-  color: var(--accent);
-  font-size: 1.3rem;
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
 /* ===== Параметры расы ===== */
 .raceStats {
   display: grid;
