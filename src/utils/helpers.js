@@ -227,3 +227,32 @@ export const renderFormattedText = (text) => {
     }
   });
 };
+
+/**
+ * Рендерит особенность: название жирным курсивом + форматированное описание.
+ * Название подставляется в первый абзац описания.
+ */
+export const renderFormattedFeature = (name, description) => {
+  if (!name && !description) return null;
+
+  // Если описания нет — выводим только название
+  if (!description) {
+    const html = `<em><strong>${name}.</strong></em>`;
+    return React.createElement('div', {
+      className: 'formatted-feature',
+      dangerouslySetInnerHTML: { __html: html },
+    });
+  }
+
+  // Разделяем описание на абзацы, в первый подставляем название
+  const paragraphs = description.split(/\n\n+/);
+  const firstParagraph = `<em><strong>${name}.</strong></em> ${paragraphs[0]}`;
+  const rest = paragraphs.slice(1);
+  const combined = [firstParagraph, ...rest].join('\n\n');
+
+  return React.createElement(
+    'div',
+    { className: 'formatted-feature' },
+    ...renderFormattedText(combined)
+  );
+};

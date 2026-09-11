@@ -6,7 +6,7 @@ import StatBlock from '../components/StatBlock';
 import ClassDetail from '../components/ClassDetail';
 import FavoriteButton from '../components/FavoriteButton';
 import Breadcrumbs from '../components/Breadcrumbs';
-import { renderFormattedText } from '../utils/helpers';
+import { renderFormattedText, renderFormattedFeature } from '../utils/helpers';
 
 export default function ItemDetail() {
   const { category, id } = useParams();
@@ -99,18 +99,10 @@ export default function ItemDetail() {
 
       {/* Базовые параметры расы */}
       <div className={styles.raceStats}>
-        {item.creatureType && (
-          <div><strong>Тип:</strong> {item.creatureType}</div>
-        )}
-        {item.size && (
-          <div><strong>Размер:</strong> {item.size}</div>
-        )}
-        {item.speed && (
-          <div><strong>Скорость:</strong> {item.speed}</div>
-        )}
-        {item.vision && (
-          <div><strong>Зрение:</strong> {item.vision}</div>
-        )}
+        {item.creatureType && <div><strong>Тип:</strong> {item.creatureType}</div>}
+        {item.size && <div><strong>Размер:</strong> {item.size}</div>}
+        {item.speed && <div><strong>Скорость:</strong> {item.speed}</div>}
+        {item.vision && <div><strong>Зрение:</strong> {item.vision}</div>}
       </div>
 
       {/* Общее описание */}
@@ -125,55 +117,54 @@ export default function ItemDetail() {
           <h3>Общие особенности</h3>
           {item.commonFeatures.map((feat, i) => (
             <div key={i} className={styles.raceFeature}>
-              <span className={styles.raceFeatureName}>{feat.name}.</span>{' '}
-              <span className={styles.raceFeatureDesc}>{feat.description}</span>
+              {renderFormattedFeature(feat.name, feat.description)}
             </div>
           ))}
         </div>
       )}
 
-      {/* Выбор варианта (подрасы) */}
+      {/* Варианты (подрасы) — раскрывающиеся блоки */}
       {Array.isArray(item.variants) && item.variants.length > 0 && (
-        <div className={styles.variantSelector}>
-          <label>Вариант:</label>
-          <select
-            value={selectedVariant || ''}
-            onChange={(e) => setSelectedVariant(e.target.value || null)}
-          >
-            <option value="">Выберите вариант</option>
-            {item.variants.map((v, i) => (
-              <option key={i} value={v.id}>{v.name}</option>
-            ))}
-          </select>
+        <div className={styles.variantsSection}>
+          <h3>Варианты</h3>
+          {item.variants.map((variant, i) => {
+            const sectionKey = `variant_${variant.id || i}`;
+            const isOpen = openVariants[sectionKey] === true;
+            return (
+              <div key={i} className={styles.variantGroup}>
+                <div
+                  className={styles.variantHeader}
+                  onClick={() =>
+                    setOpenVariants(prev => ({ ...prev, [sectionKey]: !prev[sectionKey] }))
+                  }
+                >
+                  <span>{variant.name}</span>
+                  <span>{isOpen ? '−' : '+'}</span>
+                </div>
+                {isOpen && (
+                  <div className={styles.variantBody}>
+                    {variant.description && (
+                      <div className={styles.description}>
+                        {renderFormattedText(variant.description)}
+                      </div>
+                    )}
+                    {Array.isArray(variant.features) && variant.features.length > 0 && (
+                      <div className={styles.raceFeatures}>
+                        <h4>Особенности варианта</h4>
+                        {variant.features.map((feat, j) => (
+                          <div key={j} className={styles.raceFeature}>
+                            {renderFormattedFeature(feat.name, feat.description)}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
-
-      {/* Выбранный вариант */}
-      {selectedVariant && (() => {
-        const variant = item.variants.find(v => v.id === selectedVariant);
-        if (!variant) return null;
-        return (
-          <div className={styles.variantContent}>
-            <h3>{variant.name}</h3>
-            {variant.description && (
-              <div className={styles.description}>
-                {renderFormattedText(variant.description)}
-              </div>
-            )}
-            {Array.isArray(variant.features) && variant.features.length > 0 && (
-              <div className={styles.raceFeatures}>
-                <h4>Особенности варианта</h4>
-                {variant.features.map((feat, i) => (
-                  <div key={i} className={styles.raceFeature}>
-                    <span className={styles.raceFeatureName}>{feat.name}.</span>{' '}
-                    <span className={styles.raceFeatureDesc}>{feat.description}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        );
-      })()}
     </div>
   );
 

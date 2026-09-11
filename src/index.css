@@ -98,3 +98,20 @@ a {
   color: var(--danger, #e5484d);
   font-style: italic;
 }
+
+.formatted-feature {
+  margin-bottom: 0.6rem;
+  line-height: 1.7;
+}
+
+.formatted-feature:last-child {
+  margin-bottom: 0;
+}
+
+.formatted-feature p {
+  margin: 0 0 0.5rem 0;
+}
+
+.formatted-feature p:last-child {
+  margin-bottom: 0;
+}
