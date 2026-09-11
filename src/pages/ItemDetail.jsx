@@ -12,7 +12,7 @@ export default function ItemDetail() {
   const { category, id } = useParams();
   const items = data[category] || [];
   const item = items.find(it => it.id === id);
-  const [selectedVariant, setSelectedVariant] = useState(null);
+  const [openVariants, setOpenVariants] = useState({});
   // Навигация Prev/Next (по алфавиту)
   const sortedItems = [...items].sort((a, b) => a.name.localeCompare(b.name));
   const currentIndex = sortedItems.findIndex(i => i.id === id);
