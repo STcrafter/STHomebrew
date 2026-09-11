@@ -477,3 +477,24 @@
   color: var(--accent);
   font-size: 1.3rem;
 }
+
+/* ===== Параметры расы ===== */
+.raceStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.8rem 1.5rem;
+  background: var(--bg-card);
+  padding: 1.2rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.raceStats div {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.raceStats strong {
+  color: var(--text-secondary);
+  margin-right: 0.3rem;
+}

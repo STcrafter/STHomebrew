@@ -97,6 +97,22 @@ export default function ItemDetail() {
         </div>
       )}
 
+      {/* Базовые параметры расы */}
+      <div className={styles.raceStats}>
+        {item.creatureType && (
+          <div><strong>Тип:</strong> {item.creatureType}</div>
+        )}
+        {item.size && (
+          <div><strong>Размер:</strong> {item.size}</div>
+        )}
+        {item.speed && (
+          <div><strong>Скорость:</strong> {item.speed}</div>
+        )}
+        {item.vision && (
+          <div><strong>Зрение:</strong> {item.vision}</div>
+        )}
+      </div>
+
       {/* Общее описание */}
       <div className={styles.description}>
         <h3>Описание</h3>
