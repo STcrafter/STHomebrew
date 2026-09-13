@@ -21,6 +21,7 @@ const fieldLabels = {
 
 export default function FilterPanel({ options, onFilterChange }) {
   const [openSections, setOpenSections] = useState({});
+  const mergedLabels = { ...fieldLabels, ...labels }; 
 
   const toggleSection = (field) => {
     setOpenSections(prev => ({ ...prev, [field]: !prev[field] }));
@@ -68,7 +69,7 @@ export default function FilterPanel({ options, onFilterChange }) {
         return (
           <div key={field} className={styles.section}>
             <div className={styles.sectionHeader} onClick={() => toggleSection(field)}>
-              <span>{fieldLabels[field] || field}</span>
+              <span>{mergedLabels[field] || field}</span>
               <span>{openSections[field] ? '−' : '+'}</span>
             </div>
             {openSections[field] && (

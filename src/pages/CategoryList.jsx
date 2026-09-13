@@ -69,7 +69,7 @@ export default function CategoryList() {
     } else if (category === 'subclasses') {
       filterFields = ['class','tags'];
     } else if (category === 'feats') {
-      filterFields = ['ability'];
+      filterFields = ['category','ability'];
     } else if (category === 'backgrounds') {
       filterFields = ['abilities'];
     } else {
@@ -188,7 +188,7 @@ export default function CategoryList() {
       <div className={styles.content}>
         {Object.keys(filterOptions).length > 0 && (
           <aside className={styles.filterPanel}>
-            <FilterPanel options={filterOptions} onFilterChange={handleFilterChange} />
+            <FilterPanel options={filterOptions} onFilterChange={handleFilterChange} labels={category === 'feats' ? { category: 'Категория' } : {}}/>
           </aside>
         )}
 
@@ -288,10 +288,11 @@ export default function CategoryList() {
   </div>
 )}
                 {category === 'feats' && (
-                  <div className={styles.meta}>
-                    <span>{item.prerequisites || 'Нет требований'}</span>
-                  </div>
-                )}
+  <div className={styles.meta}>
+    {item.category && <span>{item.category}</span>}
+    <span>{item.prerequisites || 'Нет требований'}</span>
+  </div>
+)}
                 {category === 'homerules' && (
                   <div className={styles.meta}>
                     <span>{item.source}</span>
