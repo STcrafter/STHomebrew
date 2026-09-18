@@ -137,7 +137,6 @@ const renderPlainText = (text) => {
   return paragraphs.map((p, idx) => {
    const html = p
      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-     .replace(/{{([^}]+)}}/g, '<span class="tooltip">$1</span>')
      .replace(/\n/g, '<br/>');
     return React.createElement('p', {
       key: `p-${idx}`,

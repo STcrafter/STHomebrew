@@ -334,8 +334,20 @@ export default function ItemDetail() {
                               </table>
                             </div>
                           );
-                        case 'tooltip':
-                          return <span key={idx} className={styles.tooltip}>{section.content}</span>;
+                        case 'tooltip': {
+                          const tip = String(section.content || '').trim();
+                          if (!tip) return null;
+                          return (
+                            <span
+                              key={idx}
+                              className={styles.tooltip}
+                              tabIndex={0}
+                              data-tip={tip}
+                            >
+                              ℹ️ Примечание
+                            </span>
+                          );
+                        }
                         default:
                           return null;
                       }
