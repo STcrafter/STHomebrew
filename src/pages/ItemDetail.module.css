@@ -540,7 +540,29 @@
   color: var(--text-primary);
 }
 
-.raceStats strong {
-  color: var(--text-secondary);
-  margin-right: 0.3rem;
+  .raceStats strong {
+    color: var(--text-secondary);
+    margin-right: 0.3rem;
+  }
+
+/* Tooltip styling for homerules sections */
+.tooltip {
+  background-color: var(--tooltip-bg-color, #fffbcc);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  white-space: nowrap;
+  cursor: help;
+  display: inline-block;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tooltip {
+    background-color: var(--tooltip-bg-color-dark, #f0f0f0);
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
 }
