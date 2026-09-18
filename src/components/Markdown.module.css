@@ -1,0 +1,194 @@
+/* ===== Markdown-документ (страницы хоумрулов) =====
+   Селекторы идут парами классов (.markdown .x), чтобы гарантированно
+   перекрывать общие правила страницы вида .description p / .description h3 */
+
+.markdown {
+  display: block;
+}
+
+/* ----- Заголовки: # → h2, ## → h3, ### → h4 ----- */
+.markdown .heading1 {
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-primary);
+  margin: 1.6rem 0 0.8rem 0;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.markdown .heading2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-secondary);
+  margin: 1.4rem 0 0.6rem 0;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.markdown .heading3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  margin: 1.1rem 0 0.45rem 0;
+}
+
+.markdown .heading1:first-child,
+.markdown .heading2:first-child,
+.markdown .heading3:first-child {
+  margin-top: 0;
+}
+
+/* ----- Абзацы ----- */
+.markdown .paragraph {
+  margin: 0 0 0.9rem 0;
+  line-height: 1.8;
+  color: var(--text-primary);
+  text-indent: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.markdown .paragraph:last-child {
+  margin-bottom: 0;
+}
+
+/* ----- Таблицы ----- */
+.markdown .tableWrapper {
+  overflow-x: auto;
+  margin: 1rem 0;
+  border-radius: 8px;
+  border: 1px solid var(--border-table);
+}
+
+.markdown .table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.markdown .table th {
+  background: var(--bg-card-hover);
+  font-weight: 600;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border-table);
+  text-align: left;
+  color: var(--text-secondary);
+}
+
+.markdown .table td {
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--border-table);
+  color: var(--text-primary);
+  vertical-align: top;
+}
+
+.markdown .table tbody tr:nth-child(even) {
+  background: var(--bg-table-alt);
+}
+
+.markdown .table tbody tr:hover {
+  background: var(--bg-card-hover);
+}
+
+.markdown .tableError {
+  margin: 0.8rem 0;
+  color: var(--danger, #e5484d);
+  font-style: italic;
+  text-indent: 0;
+}
+
+/* ----- Тултип: [tooltip: текст] ----- */
+.markdown .tooltip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin: 0 3px;
+  vertical-align: -4px;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--accent-light);
+  color: var(--accent);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.75rem;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1;
+  cursor: help;
+  user-select: none;
+  outline: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.markdown .tooltip:hover,
+.markdown .tooltip:focus {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-inverse);
+}
+
+/* Всплывающая подсказка */
+.markdown .tooltip::after {
+  content: attr(data-tip);
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  width: max-content;
+  max-width: min(340px, calc(100vw - 2rem));
+  padding: 0.6rem 0.8rem;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  box-shadow: var(--shadow-hover);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+  text-indent: 0;
+  white-space: normal;
+  word-wrap: break-word;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+  z-index: 1000;
+}
+
+/* Стрелочка к подсказке */
+.markdown .tooltip::before {
+  content: '';
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--border-strong);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s ease, visibility 0.15s;
+  z-index: 1001;
+}
+
+.markdown .tooltip:hover::after,
+.markdown .tooltip:focus::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.markdown .tooltip:hover::before,
+.markdown .tooltip:focus::before {
+  opacity: 1;
+  visibility: visible;
+}

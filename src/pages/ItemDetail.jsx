@@ -6,6 +6,7 @@ import StatBlock from '../components/StatBlock';
 import ClassDetail from '../components/ClassDetail';
 import FavoriteButton from '../components/FavoriteButton';
 import Breadcrumbs from '../components/Breadcrumbs';
+import Markdown from '../components/Markdown';
 import { renderFormattedText, renderFormattedFeature } from '../utils/helpers';
 
 export default function ItemDetail() {
@@ -302,60 +303,7 @@ export default function ItemDetail() {
                 <div><strong>Источник:</strong> {item.source}</div>
               </div>
               <div className={styles.description}>
-                <h3>Описание правила</h3>
-                {item.sections ? (
-                  <div className={styles.homeruleSections}>
-                    {item.sections.map((section, idx) => {
-                      switch (section.type) {
-                        case 'heading':
-                          return <h4 key={idx} className={styles.homeruleHeading}>{section.content}</h4>;
-                        case 'paragraph':
-                          return <p key={idx} className={styles.homeruleParagraph}>{section.content}</p>;
-                        case 'table':
-                          return (
-                            <div key={idx} className={styles.homeruleTableWrapper}>
-                              <table className={styles.homeruleTable}>
-                                <thead>
-                                  <tr>
-                                    {section.headers.map((header, i) => (
-                                      <th key={i}>{header}</th>
-                                    ))}
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {section.rows.map((row, i) => (
-                                    <tr key={i}>
-                                      {row.map((cell, j) => (
-                                        <td key={j}>{cell}</td>
-                                      ))}
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                          );
-                        case 'tooltip': {
-                          const tip = String(section.content || '').trim();
-                          if (!tip) return null;
-                          return (
-                            <span
-                              key={idx}
-                              className={styles.tooltip}
-                              tabIndex={0}
-                              data-tip={tip}
-                            >
-                              ℹ️ Примечание
-                            </span>
-                          );
-                        }
-                        default:
-                          return null;
-                      }
-                    })}
-                  </div>
-                ) : (
-                  renderFormattedText(item.description)
-                )}
+                <Markdown content={item.content || item.description} />
               </div>
             </>
           );
