@@ -19,7 +19,7 @@ const fieldLabels = {
   ability: 'Увеличиваемая характеристика',  // ← добавляем
 };
 
-export default function FilterPanel({ options, onFilterChange }) {
+export default function FilterPanel({ options, onFilterChange, labels = {} }) {
   const [openSections, setOpenSections] = useState({});
   const mergedLabels = { ...fieldLabels, ...labels }; 
 
