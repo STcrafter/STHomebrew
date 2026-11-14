@@ -213,7 +213,7 @@ export default [
     ]
   },
   {
-    ID:'barb_abomination',
+    id:'barb_abomination',
     name:'Путь чудища',
     class:'Варвар',
     subtitle:'Станьте монстром',
@@ -242,7 +242,7 @@ export default [
     ]
   },
   {
-    ID:'barb_battlemind',
+    id:'barb_battlemind',
     name:'Путь боевого разума',
     class:'Варвар',
     subtitle:'Сокрушите врагов псионической мощью',
