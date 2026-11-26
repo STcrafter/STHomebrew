@@ -1,6 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { resolveStatblocks, compactStatblock } from '../src/utils/statblocks.js';
+import spells from '../src/data/spells.js';
+
+test('spg_conj_3 exposes an inline statblock that compacts', () => {
+  const spell = spells.find((entry) => entry.id === 'spg_conj_3');
+  const [block] = resolveStatblocks(spell.statblocks);
+  assert.equal(block.missing, undefined);
+  assert.equal(block.name, 'Мгновенная баррикада');
+  const compact = compactStatblock(block);
+  assert.equal(compact.actions[0].name, 'Взрывная разборка');
+  assert.equal('description' in compact, false);
+});
 
 test('resolveStatblocks returns [] when spell has no statblocks', () => {
   assert.deepEqual(resolveStatblocks(undefined), []);

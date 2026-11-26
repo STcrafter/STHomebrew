@@ -8,6 +8,7 @@ import FavoriteButton from '../components/FavoriteButton';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Markdown from '../components/Markdown';
 import { renderFormattedText, renderFormattedFeature } from '../utils/helpers';
+import { resolveStatblocks } from '../utils/statblocks';
 
 export default function ItemDetail() {
   const { category, id } = useParams();
@@ -28,6 +29,8 @@ export default function ItemDetail() {
       </div>
     );
   }
+
+  const statblocks = category === 'spells' ? resolveStatblocks(item.statblocks) : [];
 
   const renderDetails = () => {
     switch (category) {
@@ -78,6 +81,19 @@ export default function ItemDetail() {
                 </>
               )}
             </div>
+            {statblocks.length > 0 && (
+              <div className={styles.statblocks}>
+                {statblocks.map((block, index) => (
+                  <div key={block.id ?? index} className={styles.statblockItem}>
+                    {block.missing ? (
+                      <p className={styles.statblockError}>⚠️ Статблок "{block.id}" не найден</p>
+                    ) : (
+                      <StatBlock monster={block} compact />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </>
         );
 

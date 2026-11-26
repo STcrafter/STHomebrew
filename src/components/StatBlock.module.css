@@ -23,6 +23,12 @@
   color: var(--statblock-muted);
 }
 
+.compactName {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--statblock-text);
+}
+
 .basics {
   display: flex;
   flex-wrap: wrap;

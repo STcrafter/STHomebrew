@@ -88,6 +88,22 @@
   margin-top: 0;
 }
 
+.statblocks {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.statblockItem {
+  min-width: 0;
+}
+
+.statblockError {
+  margin: 0;
+  color: var(--danger, #e5484d);
+  font-style: italic;
+}
+
 .spellMeta,
 .itemMeta,
 .featMeta {

@@ -1,9 +1,11 @@
 import styles from './StatBlock.module.css';
 import { formatChallengeRating, getProficiencyBonusForCR, getXPForCR, getDangerColor, generateLegendaryDescription } from '../utils/helpers';
+import { compactStatblock } from '../utils/statblocks';
 
-export default function StatBlock({ monster }) {
-  const data = monster?.statblock || monster;
-  if (!data || typeof data !== 'object') return null;
+export default function StatBlock({ monster, compact = false }) {
+  const source = monster?.statblock || monster;
+  if (!source || typeof source !== 'object') return null;
+  const data = compact ? compactStatblock(source) : source;
 
   const getModifier = (score) => {
     if (score === undefined || score === null) return null;
@@ -98,9 +100,10 @@ export default function StatBlock({ monster }) {
   return (
     <div className={styles.statblock}>
       {/* Шапка */}
-      {data.type && (
+      {(data.type || (compact && data.name)) && (
         <div className={styles.header}>
-          <div className={styles.type}>{data.type}</div>
+          {compact && data.name && <div className={styles.compactName}>{data.name}</div>}
+          {data.type && <div className={styles.type}>{data.type}</div>}
         </div>
       )}
 
