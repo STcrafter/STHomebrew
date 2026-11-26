@@ -78,7 +78,7 @@ export default [
         id: 'fugitive',
         name: 'Беглец',
         abilities: ['Сила', 'Интеллект', 'Харизма'],
-        feat: 'Трактирный драчун',
+        feat: 'Драчун',
         proficiencies: {
             skills: ['Атлетика', 'Скрытность'],
             tools: ['Набор для грима'],
