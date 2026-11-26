@@ -86,7 +86,7 @@ export default function ItemDetail() {
                 {statblocks.map((block, index) => (
                   <div key={block.id ?? index} className={styles.statblockItem}>
                     {block.missing ? (
-                      <p className={styles.statblockError}>⚠️ Статблок "{block.id}" не найден</p>
+                      <p className={styles.statblockError} role="alert">⚠️ Статблок "{block.id}" не найден</p>
                     ) : (
                       <StatBlock monster={block} compact />
                     )}

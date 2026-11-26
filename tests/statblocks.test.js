@@ -9,8 +9,12 @@ test('spg_conj_3 exposes an inline statblock that compacts', () => {
   assert.equal(block.missing, undefined);
   assert.equal(block.name, 'Мгновенная баррикада');
   const compact = compactStatblock(block);
+  assert.equal(compact.name, 'Мгновенная баррикада');
+  assert.equal(compact.type, 'Предмет переменного размера');
+  assert.equal(compact.armor_class, '12 + уровень заклинания');
+  assert.equal(compact.hit_points, '10 × уровень заклинания');
+  assert.deepEqual(compact.damage_immunities, ['Яд', 'Психика']);
   assert.equal(compact.actions[0].name, 'Взрывная разборка');
-  assert.equal('description' in compact, false);
 });
 
 test('resolveStatblocks returns [] when spell has no statblocks', () => {
@@ -40,6 +44,12 @@ test('resolveStatblocks preserves mixed order', () => {
 
 test('resolveStatblocks marks unknown ids as missing', () => {
   assert.deepEqual(resolveStatblocks(['nope'], {}), [{ id: 'nope', missing: true }]);
+});
+
+test('resolveStatblocks marks prototype-key ids as missing', () => {
+  assert.deepEqual(resolveStatblocks(['toString'], {}), [
+    { id: 'toString', missing: true },
+  ]);
 });
 
 test('compactStatblock removes story sections and keeps combat fields', () => {

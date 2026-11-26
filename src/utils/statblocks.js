@@ -11,7 +11,7 @@ export function resolveStatblocks(entries = [], registry = statblocks) {
   return entries.flatMap((entry) => {
     if (entry && typeof entry === 'object') return [{ ...entry }];
     if (typeof entry === 'string') {
-      const found = registry[entry];
+      const found = Object.hasOwn(registry, entry) ? registry[entry] : undefined;
       return [found ? { ...found, id: entry } : { id: entry, missing: true }];
     }
     return [];
