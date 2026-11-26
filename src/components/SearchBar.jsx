@@ -1,13 +1,8 @@
-import { useState } from 'react';
 import styles from './SearchBar.module.css';
 
-export default function SearchBar({ onSearch, placeholder = 'Поиск...' }) {
-  const [query, setQuery] = useState('');
-
+export default function SearchBar({ value = '', onSearch, placeholder = 'Поиск...' }) {
   const handleChange = (e) => {
-    const value = e.target.value;
-    setQuery(value);
-    onSearch(value);
+    onSearch(e.target.value);
   };
 
   return (
@@ -15,7 +10,7 @@ export default function SearchBar({ onSearch, placeholder = 'Поиск...' }) {
       <input
         type="text"
         placeholder={placeholder}
-        value={query}
+        value={value}
         onChange={handleChange}
         className={styles.input}
       />

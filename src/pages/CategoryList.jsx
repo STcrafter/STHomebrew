@@ -9,6 +9,7 @@ import { useFavorites } from '../context/FavoritesContext';
 import styles from './CategoryList.module.css';
 import { formatChallengeRating, getDangerColor } from '../utils/helpers';
 import { getSortOptions, sortItems, toggleSortDirection } from '../utils/sorting';
+import { defaultListViewState, loadListViewPreferences, saveListViewPreferences } from '../utils/listViewPreferences';
 
 const categoryLabels = {
   monsters: 'Монстры',
@@ -28,18 +29,20 @@ export default function CategoryList() {
   const { isFavorite } = useFavorites();
   const headerRef = useRef(null);
 
-  const [filters, setFilters] = useState({});
-  const [search, setSearch] = useState('');
-  const [sortField, setSortField] = useState('name');
-  const [sortDirection, setSortDirection] = useState('asc');
-  const [showFavorites, setShowFavorites] = useState(false);
+  const [preferences, setPreferences] = useState(() => loadListViewPreferences());
+  const view = preferences[category] ?? defaultListViewState;
+  const { search, filters, sortField, sortDirection, showFavorites } = view;
+
+  const updateCurrentView = (updater) => {
+    setPreferences(prev => ({
+      ...prev,
+      [category]: updater(prev[category] ?? defaultListViewState),
+    }));
+  };
 
   useEffect(() => {
-    setFilters({});
-    setSortField('name');
-    setSortDirection('asc');
-    setShowFavorites(false);
-  }, [category]);
+    saveListViewPreferences(preferences);
+  }, [preferences]);
 
   // Отслеживаем высоту шапки, чтобы липкая панель поиска не перекрывала её
   useEffect(() => {
@@ -142,11 +145,16 @@ export default function CategoryList() {
   }, [items, search, filters, sortField, sortDirection, showFavorites, isFavorite, category]);
 
   const handleFilterChange = (field, selected) => {
-    setFilters(prev => ({ ...prev, [field]: selected }));
+    updateCurrentView((current) => {
+      const nextFilters = { ...current.filters };
+      if (selected === null) delete nextFilters[field];
+      else nextFilters[field] = selected;
+      return { ...current, filters: nextFilters };
+    });
   };
 
   const handleSearch = (query) => {
-    setSearch(query);
+    updateCurrentView(current => ({ ...current, search: query }));
   };
 
   return (
@@ -161,21 +169,21 @@ export default function CategoryList() {
       <div className={styles.content}>
         {Object.keys(filterOptions).length > 0 && (
           <aside className={styles.filterPanel}>
-            <FilterPanel options={filterOptions} onFilterChange={handleFilterChange} labels={category === 'feats' ? { category: 'Категория' } : {}}/>
+            <FilterPanel options={filterOptions} selected={filters} onFilterChange={handleFilterChange} labels={category === 'feats' ? { category: 'Категория' } : {}}/>
           </aside>
         )}
 
         <main className={styles.list}>
           <div className={styles.toolbar}>
-            <SearchBar onSearch={handleSearch} placeholder="Поиск по названию..." />
+            <SearchBar value={search} onSearch={handleSearch} placeholder="Поиск по названию..." />
             <div className={styles.sortControls}>
               <span className={styles.sortLabel}>Сортировать:</span>
               <select
                 className={styles.sortSelect}
                 value={sortField}
                 onChange={(e) => {
-                  setSortField(e.target.value);
-                  setSortDirection('asc');
+                  const sortField = e.target.value;
+                  updateCurrentView(current => ({ ...current, sortField, sortDirection: 'asc' }));
                 }}
                 aria-label="Тип сортировки"
               >
@@ -186,7 +194,10 @@ export default function CategoryList() {
               <button
                 type="button"
                 className={styles.directionButton}
-                onClick={() => setSortDirection(prev => toggleSortDirection(prev))}
+                onClick={() => updateCurrentView(current => ({
+                  ...current,
+                  sortDirection: toggleSortDirection(current.sortDirection),
+                }))}
                 title={sortDirection === 'asc' ? 'По убыванию' : 'По возрастанию'}
                 aria-label={sortDirection === 'asc' ? 'Сортировать по убыванию' : 'Сортировать по возрастанию'}
               >
@@ -194,7 +205,10 @@ export default function CategoryList() {
               </button>
               <label
                 className={`${styles.favoritesFilter} ${showFavorites ? styles.favoritesActive : ''}`}
-                onClick={() => setShowFavorites(prev => !prev)}
+                onClick={() => updateCurrentView(current => ({
+                  ...current,
+                  showFavorites: !current.showFavorites,
+                }))}
               >
                 <span className={styles.favoritesBox}>
                   {showFavorites && '✓'}

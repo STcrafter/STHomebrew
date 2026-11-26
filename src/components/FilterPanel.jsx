@@ -19,7 +19,7 @@ const fieldLabels = {
   ability: 'Увеличиваемая характеристика',  // ← добавляем
 };
 
-export default function FilterPanel({ options, onFilterChange, labels = {} }) {
+export default function FilterPanel({ options, selected = {}, onFilterChange, labels = {} }) {
   const [openSections, setOpenSections] = useState({});
   const mergedLabels = { ...fieldLabels, ...labels }; 
 
@@ -29,7 +29,7 @@ export default function FilterPanel({ options, onFilterChange, labels = {} }) {
 
   // Циклическое переключение: выкл → включить → исключить → выкл
   const handleCheckboxChange = (field, value) => {
-    const current = options[field]?.selected || { include: [], exclude: [] };
+    const current = selected[field] || { include: [], exclude: [] };
     const include = current.include || [];
     const exclude = current.exclude || [];
 
@@ -47,14 +47,11 @@ export default function FilterPanel({ options, onFilterChange, labels = {} }) {
 
     const isEmpty = newState.include.length === 0 && newState.exclude.length === 0;
     onFilterChange(field, isEmpty ? null : newState);
-    if (options[field]) {
-      options[field].selected = newState;
-    }
   };
   const getState = (field, val) => {
-    const selected = options[field]?.selected || { include: [], exclude: [] };
-    if ((selected.include || []).includes(val)) return 'include';
-    if ((selected.exclude || []).includes(val)) return 'exclude';
+    const state = selected[field] || { include: [], exclude: [] };
+    if ((state.include || []).includes(val)) return 'include';
+    if ((state.exclude || []).includes(val)) return 'exclude';
     return 'off';
   };
 
