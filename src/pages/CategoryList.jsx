@@ -8,6 +8,7 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import { useFavorites } from '../context/FavoritesContext';
 import styles from './CategoryList.module.css';
 import { formatChallengeRating, getDangerColor } from '../utils/helpers';
+import { getSortOptions, sortItems, toggleSortDirection } from '../utils/sorting';
 
 const categoryLabels = {
   monsters: 'Монстры',
@@ -137,20 +138,7 @@ export default function CategoryList() {
       return true;
     });
 
-    if (sortField === 'name') {
-      result.sort((a, b) => {
-        const nameA = a.name.toLowerCase();
-        const nameB = b.name.toLowerCase();
-        return sortDirection === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
-      });
-    } else if (sortField === 'challenge_rating') {
-      result.sort((a, b) => {
-        const crA = a.challenge_rating ?? 0;
-        const crB = b.challenge_rating ?? 0;
-        return sortDirection === 'asc' ? crA - crB : crB - crA;
-      });
-    }
-    return result;
+    return sortItems(result, sortField, sortDirection);
   }, [items, search, filters, sortField, sortDirection, showFavorites, isFavorite, category]);
 
   const handleFilterChange = (field, selected) => {
@@ -160,21 +148,6 @@ export default function CategoryList() {
   const handleSearch = (query) => {
     setSearch(query);
   };
-
-  const handleSortFieldChange = (field) => {
-    if (sortField === field) {
-      setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
-
-  const sortOptions = [];
-  sortOptions.push({ field: 'name', label: 'По алфавиту' });
-  if (category === 'monsters') {
-    sortOptions.push({ field: 'challenge_rating', label: 'По опасности' });
-  }
 
   return (
     <div className={styles.page}>
@@ -197,20 +170,28 @@ export default function CategoryList() {
             <SearchBar onSearch={handleSearch} placeholder="Поиск по названию..." />
             <div className={styles.sortControls}>
               <span className={styles.sortLabel}>Сортировать:</span>
-              {sortOptions.map(opt => (
-                <button
-                  key={opt.field}
-                  className={`${styles.sortButton} ${sortField === opt.field ? styles.active : ''}`}
-                  onClick={() => handleSortFieldChange(opt.field)}
-                >
-                  {opt.label}
-                  {sortField === opt.field && (
-                    <span className={styles.sortArrow}>
-                      {sortDirection === 'asc' ? ' ↑' : ' ↓'}
-                    </span>
-                  )}
-                </button>
-              ))}
+              <select
+                className={styles.sortSelect}
+                value={sortField}
+                onChange={(e) => {
+                  setSortField(e.target.value);
+                  setSortDirection('asc');
+                }}
+                aria-label="Тип сортировки"
+              >
+                {getSortOptions(category).map(opt => (
+                  <option key={opt.field} value={opt.field}>{opt.label}</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className={styles.directionButton}
+                onClick={() => setSortDirection(prev => toggleSortDirection(prev))}
+                title={sortDirection === 'asc' ? 'По убыванию' : 'По возрастанию'}
+                aria-label={sortDirection === 'asc' ? 'Сортировать по убыванию' : 'Сортировать по возрастанию'}
+              >
+                {sortDirection === 'asc' ? '↑' : '↓'}
+              </button>
               <label
                 className={`${styles.favoritesFilter} ${showFavorites ? styles.favoritesActive : ''}`}
                 onClick={() => setShowFavorites(prev => !prev)}

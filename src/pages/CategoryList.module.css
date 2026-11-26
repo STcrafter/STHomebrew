@@ -96,30 +96,33 @@
   margin-right: 0.3rem;
 }
 
-.sortButton {
+.sortSelect {
   padding: 0.3rem 0.8rem;
-  border: 1px solid transparent;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  background: transparent;
+  background: var(--bg-card);
   font-size: 0.9rem;
-  color: var(--text-muted);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.sortButton:hover {
-  background: var(--bg-card-hover);
-}
-
-.sortButton.active {
-  background: var(--bg-card-hover);
-  border-color: var(--border-color);
-  font-weight: 500;
   color: var(--text-primary);
+  cursor: pointer;
 }
 
-.sortArrow {
-  margin-left: 2px;
+.directionButton {
+  min-width: 2.2rem;
+  padding: 0.3rem 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-card);
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.directionButton:hover {
+  background: var(--bg-card-hover);
 }
 
 .grid {
