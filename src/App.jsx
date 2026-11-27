@@ -10,7 +10,7 @@ function App() {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <BrowserRouter basename="/STHomebrew">
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/category/:category" element={<CategoryList />} />

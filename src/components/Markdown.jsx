@@ -88,7 +88,7 @@ const renderBlock = (block, index) => {
       if (!tableData || !tableData.headers || !tableData.rows) {
         return (
           <p key={key} className={styles.tableError}>
-            {`⚠️ Таблица "${block.id}" не найдена`}
+            {`⚠️ Таблица «${block.id}» не найдена`}
           </p>
         );
       }

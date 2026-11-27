@@ -1,5 +1,6 @@
 /* ===== Светлая тема (по умолчанию) ===== */
 :root {
+  color-scheme: light;
   --bg-body: #f8fafc;
   --bg-card: #ffffff;
   --bg-card-hover: #f1f5f9;
@@ -43,6 +44,7 @@
 
 /* ===== Тёмная тема ===== */
 [data-theme="dark"] {
+  color-scheme: dark;
   --bg-body: #121212;
   --bg-card: #1e1e1e;
   --bg-card-hover: #2a2a2a;

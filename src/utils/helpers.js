@@ -1,5 +1,25 @@
 import React from 'react';
 import { tables } from '../data/tables.js';
+
+/**
+ * Русские склонения: ['запись', 'записи', 'записей'].
+ */
+export const pluralizeRu = (count, forms) => {
+  const n = Math.abs(Number(count)) % 100;
+  const last = n % 10;
+  if (n > 10 && n < 20) return forms[2];
+  if (last > 1 && last < 5) return forms[1];
+  if (last === 1) return forms[0];
+  return forms[2];
+};
+
+const escapeHtml = (value) => String(value)
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;');
+
 /**
  * Форматирует значение Challenge Rating для отображения
  * 0.125 → 1/8
@@ -135,7 +155,7 @@ const renderPlainText = (text) => {
   if (!text) return null;
   const paragraphs = text.split(/\n\n+/);
   return paragraphs.map((p, idx) => {
-   const html = p
+   const html = escapeHtml(p)
      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
      .replace(/\n/g, '<br/>');
     return React.createElement('p', {
@@ -219,7 +239,7 @@ export const renderFormattedText = (text) => {
         return React.createElement(
           'p',
           { key: `error-${idx}`, className: 'table-error' },
-          `⚠️ Таблица "${part.id}" не найдена`
+          `⚠️ Таблица «${part.id}» не найдена`
         );
       }
     } else {
@@ -235,13 +255,13 @@ export const renderFormattedText = (text) => {
 export const renderFormattedFeature = (name, description) => {
   if (!name && !description) return null;
 
-  // Если описания нет — выводим только название
+  // Если описания нет — выводим только название (React экранирует текст сам)
   if (!description) {
-    const html = `<em><strong>${name}.</strong></em>`;
     return React.createElement('div', {
       className: 'formatted-feature',
-      dangerouslySetInnerHTML: { __html: html },
-    });
+    }, React.createElement('em', null,
+      React.createElement('strong', null, `${name}.`)
+    ));
   }
 
   // Разделяем описание на абзацы, в первый подставляем название

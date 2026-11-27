@@ -65,7 +65,7 @@ test('saved search and sort direction are restored in the spell list', async () 
 
     assert.match(html, /value="Мгновенная"/);
     assert.match(html, /aria-label="Сортировать по возрастанию"/);
-    assert.match(html, /1 записей/);
+    assert.match(html, /1 запись<\/span>/);
   });
 });
 

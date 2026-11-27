@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './ClassDetail.module.css';
-import { renderFormattedText } from '../utils/helpers';
+import { renderFormattedText, pluralizeRu } from '../utils/helpers';
 
 const columnLabels = {
   level: 'Уровень',
@@ -12,6 +12,8 @@ const columnLabels = {
 
 export default function ClassDetail({ classData }) {
   const [selectedSubclass, setSelectedSubclass] = useState(null);
+  const scrollTimer = useRef(null);
+  useEffect(() => () => clearTimeout(scrollTimer.current), []);
   const [openSections, setOpenSections] = useState({
     features: true,
     proficiencies: false,
@@ -35,10 +37,12 @@ export default function ClassDetail({ classData }) {
     }
     const levelKey = `level_${level}`;
     setOpenSections(prev => ({ ...prev, [levelKey]: true }));
-    setTimeout(() => {
+    clearTimeout(scrollTimer.current);
+    scrollTimer.current = setTimeout(() => {
       const el = document.getElementById(`level-${level}`);
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
       }
     }, 150);
   };
@@ -79,17 +83,21 @@ export default function ClassDetail({ classData }) {
         {levels.map(level => {
           const levelFeatures = displayFeatures.filter(f => Number(f.level) === Number(level));
           const sectionKey = `level_${level}`;
-          if (openSections[sectionKey] === undefined) {
-            openSections[sectionKey] = true;
-          }
+          const isLevelOpen = openSections[sectionKey] !== false;
           return (
             <div key={level} id={`level-${level}`} className={styles.levelGroup}>
-              <div className={styles.levelHeader} onClick={() => toggleSection(sectionKey)}>
-                <span>{level} уровень</span>
-                <span>{openSections[sectionKey] ? '−' : '+'}</span>
-              </div>
-              {openSections[sectionKey] && (
-                <div className={styles.levelContent}>
+              <button
+                type="button"
+                className={styles.levelHeader}
+                aria-expanded={isLevelOpen}
+                aria-controls={`level-${level}-content`}
+                onClick={() => toggleSection(sectionKey)}
+              >
+                <span>{level} {pluralizeRu(level, ['уровень', 'уровня', 'уровней'])}</span>
+                <span aria-hidden="true">{isLevelOpen ? '−' : '+'}</span>
+              </button>
+              {isLevelOpen && (
+                <div id={`level-${level}-content`} className={styles.levelContent}>
                   {levelFeatures.map((feature, idx) => (
                     <div key={idx} className={`${styles.featureItem} ${feature.isSubclass ? styles.subclassFeature : ''}`}>
                       <div className={styles.featureName}>{feature.name || 'Без названия'}</div>
@@ -136,12 +144,17 @@ export default function ClassDetail({ classData }) {
             const features = getFeaturesForLevel(level);
             const rowData = getTableRow(level);
             return (
-              <tr
-                key={level}
-                onClick={() => handleFeatureClick(level)}
-                className={styles.tableRowClickable}
-              >
-                <td>{level}</td>
+              <tr key={level} className={styles.tableRowClickable}>
+                <td>
+                  <button
+                    type="button"
+                    className={styles.levelLink}
+                    aria-label={`Показать особенности ${level} уровня`}
+                    onClick={() => handleFeatureClick(level)}
+                  >
+                    {level}
+                  </button>
+                </td>
                 <td>
                   {features.length > 0 ? (
                     features.map((f, idx) => (
@@ -232,11 +245,12 @@ export default function ClassDetail({ classData }) {
             src={classData.image}
             alt={classData.name || 'Класс'}
             className={styles.classImage}
+            width="600"
+            height="400"
             onError={(e) => { e.target.style.display = 'none'; }}
           />
         </div>
       )}
-      <h1 className={styles.className}>{classData.name || 'Без названия'}</h1>
       <div className={styles.classDescription}>
         {renderFormattedText(classData.description)}
       </div>
@@ -249,8 +263,9 @@ export default function ClassDetail({ classData }) {
 
       {subclasses.length > 0 && (
         <div className={styles.subclassSelector}>
-          <label>Подкласс:</label>
+          <label htmlFor="subclass-select">Подкласс:</label>
           <select
+            id="subclass-select"
             value={selectedSubclass || ''}
             onChange={(e) => setSelectedSubclass(e.target.value || null)}
           >
@@ -288,7 +303,7 @@ export default function ClassDetail({ classData }) {
             {classData.minions.map((minion, index) => (
               <div key={index} className={styles.minionCard}>
                 {minion.image && (
-                  <img src={minion.image} alt={minion.name} className={styles.minionImage} />
+                  <img src={minion.image} alt={minion.name} className={styles.minionImage} width="300" height="200" loading="lazy" />
                 )}
                 <div className={styles.minionContent}>
                   <h4>{minion.name}</h4>
@@ -308,12 +323,18 @@ export default function ClassDetail({ classData }) {
       )}
 
       <div className={styles.section}>
-        <div className={styles.sectionHeader} onClick={() => toggleSection('proficiencies')}>
-          <h3>Владения</h3>
-          <span>{openSections.proficiencies ? '−' : '+'}</span>
-        </div>
+        <button
+          type="button"
+          className={styles.sectionHeader}
+          aria-expanded={Boolean(openSections.proficiencies)}
+          aria-controls="class-proficiencies"
+          onClick={() => toggleSection('proficiencies')}
+        >
+          <span className={styles.sectionTitle}>Владения</span>
+          <span aria-hidden="true">{openSections.proficiencies ? '−' : '+'}</span>
+        </button>
         {openSections.proficiencies && (
-          <div className={styles.sectionContent}>
+          <div id="class-proficiencies" className={styles.sectionContent}>
             {renderProficiencies()}
           </div>
         )}
@@ -321,12 +342,18 @@ export default function ClassDetail({ classData }) {
 
       {classData.equipment && (
         <div className={styles.section}>
-          <div className={styles.sectionHeader} onClick={() => toggleSection('equipment')}>
-            <h3>Снаряжение</h3>
-            <span>{openSections.equipment ? '−' : '+'}</span>
-          </div>
+          <button
+            type="button"
+            className={styles.sectionHeader}
+            aria-expanded={Boolean(openSections.equipment)}
+            aria-controls="class-equipment"
+            onClick={() => toggleSection('equipment')}
+          >
+            <span className={styles.sectionTitle}>Снаряжение</span>
+            <span aria-hidden="true">{openSections.equipment ? '−' : '+'}</span>
+          </button>
           {openSections.equipment && (
-            <div className={styles.sectionContent}>
+            <div id="class-equipment" className={styles.sectionContent}>
               <p>{classData.equipment}</p>
             </div>
           )}
@@ -334,12 +361,18 @@ export default function ClassDetail({ classData }) {
       )}
 
       <div className={styles.section}>
-        <div className={styles.sectionHeader} onClick={() => toggleSection('features')}>
-          <h3>Способности</h3>
-          <span>{openSections.features ? '−' : '+'}</span>
-        </div>
+        <button
+          type="button"
+          className={styles.sectionHeader}
+          aria-expanded={Boolean(openSections.features)}
+          aria-controls="class-features"
+          onClick={() => toggleSection('features')}
+        >
+          <span className={styles.sectionTitle}>Способности</span>
+          <span aria-hidden="true">{openSections.features ? '−' : '+'}</span>
+        </button>
         {openSections.features && (
-          <div className={styles.sectionContent}>
+          <div id="class-features" className={styles.sectionContent}>
             {renderFeatures()}
           </div>
         )}

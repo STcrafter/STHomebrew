@@ -133,9 +133,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
   padding: 0.8rem 1.2rem;
   cursor: pointer;
   background: var(--bg-section);
+  border: none;
+  font: inherit;
+  text-align: left;
   transition: background 0.15s;
   color: var(--text-secondary);
 }
@@ -144,14 +148,25 @@
   background: var(--bg-card-hover);
 }
 
-.sectionHeader h3 {
+.sectionTitle {
   margin: 0;
   font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .sectionHeader span {
   font-size: 1.2rem;
   font-weight: 300;
+}
+
+.levelLink {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-decoration: underline;
 }
 
 .sectionContent {
@@ -176,11 +191,15 @@
 .levelHeader {
   display: flex;
   justify-content: space-between;
+  width: 100%;
   padding: 0.3rem 0.5rem;
   background: var(--bg-card-hover);
+  border: none;
   border-radius: 6px;
   cursor: pointer;
+  font: inherit;
   font-weight: 600;
+  text-align: left;
   color: var(--text-secondary);
   transition: background 0.15s;
 }

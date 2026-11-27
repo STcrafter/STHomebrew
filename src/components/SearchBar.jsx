@@ -9,10 +9,12 @@ export default function SearchBar({ value = '', onSearch, placeholder = 'Пои�
     <div className={styles.search}>
       <input
         type="text"
+        aria-label={placeholder}
         placeholder={placeholder}
         value={value}
         onChange={handleChange}
         className={styles.input}
+        autoComplete="off"
       />
     </div>
   );

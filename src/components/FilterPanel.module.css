@@ -20,8 +20,13 @@
 .sectionHeader {
   display: flex;
   justify-content: space-between;
-  cursor: pointer;
+  width: 100%;
+  background: none;
+  border: none;
+  font: inherit;
   font-weight: 500;
+  text-align: left;
+  cursor: pointer;
   color: var(--text-secondary);
   padding: 0.3rem 0;
 }
@@ -41,7 +46,12 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  width: 100%;
+  background: none;
+  border: none;
+  font: inherit;
   font-size: 0.9rem;
+  text-align: left;
   color: var(--text-muted);
   cursor: pointer;
   user-select: none;
@@ -66,7 +76,7 @@
   font-size: 0.8rem;
   line-height: 1;
   background: var(--bg-input);
-  transition: all 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .checkbox.include {

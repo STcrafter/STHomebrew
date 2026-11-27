@@ -63,8 +63,12 @@
 }
 
 .fieldInput:focus {
-  outline: none;
-  border-color: #4d6bfe;
+  border-color: var(--accent);
+}
+
+.fieldInput:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
 .fieldTextarea {
@@ -78,8 +82,12 @@
 }
 
 .fieldTextarea:focus {
-  outline: none;
-  border-color: #4d6bfe;
+  border-color: var(--accent);
+}
+
+.fieldTextarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
 .fieldCheckbox {
@@ -144,7 +152,7 @@
   cursor: pointer;
   font-size: 0.9rem;
   color: #3a4a6a;
-  transition: all 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .addButton:hover {
@@ -201,7 +209,7 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
-  transition: all 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .copyButton:hover {
@@ -220,4 +228,20 @@
 
 .backLink:hover {
   text-decoration: underline;
+}
+
+.error {
+  margin-top: 1rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid #e5484d;
+  color: #e5484d;
+}
+
+.copyStatus {
+  min-height: 1.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
 }

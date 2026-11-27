@@ -16,7 +16,7 @@ const categories = [
 
 export default function Home() {
   return (
-    <div className={styles.home}>
+    <div className={styles.home} id="main-content">
       <header className={styles.header}>
         <h1>🏰 Homebrew D&D</h1>
         <p>Выберите категорию для просмотра</p>
@@ -30,9 +30,12 @@ export default function Home() {
             <h2>{cat.label}</h2>
           </Link>
         ))}
-        <footer className={styles.footer}>
-</footer>
       </div>
+      <footer className={styles.footer}>
+        <Link to="/constructor" className={styles.constructorLink}>
+          Конструктор объектов →
+        </Link>
+      </footer>
     </div>
   );
 }

@@ -69,13 +69,115 @@ const CATEGORY_CONFIG = {
       { key: 'components', label: 'Компоненты', type: 'text', placeholder: 'В, С, М (щепотка серы)' },
     ],
   },
-  // Добавьте остальные категории по аналогии, если нужно
+  classes: {
+    label: 'Классы',
+    fields: [
+      { key: 'id', label: 'ID (уникальный)', type: 'text', required: true, placeholder: 'class-1' },
+      { key: 'name', label: 'Название', type: 'text', required: true },
+      { key: 'description', label: 'Описание', type: 'textarea', rows: 4 },
+      { key: 'image', label: 'Путь к картинке', type: 'text', placeholder: '/STHomebrew/images/class.jpg' },
+      { key: 'primary_ability', label: 'Основная характеристика', type: 'text' },
+      { key: 'saving_throws', label: 'Спасброски (массив строк)', type: 'array', subfields: [{ key: 'value', label: 'Характеристика', type: 'text' }] },
+      { key: 'hit_die', label: 'Кость хитов', type: 'text', placeholder: 'к8' },
+      { key: 'proficiencies', label: 'Владения (JSON)', type: 'json', placeholder: '{"armor": ["Лёгкая броня"]}' },
+      { key: 'equipment', label: 'Снаряжение', type: 'textarea', rows: 2 },
+      { key: 'class_table', label: 'Таблица классов (JSON)', type: 'json', placeholder: '[{"level": 1, "proficiency_bonus": 2}]' },
+      { key: 'features', label: 'Способности (массив)', type: 'array', subfields: [
+        { key: 'level', label: 'Уровень', type: 'number' },
+        { key: 'name', label: 'Название', type: 'text' },
+        { key: 'description', label: 'Описание', type: 'textarea', rows: 2 },
+      ] },
+      { key: 'subclasses', label: 'Подклассы (JSON)', type: 'json', placeholder: '[{"name": "...", "features": []}]' },
+      { key: 'tables', label: 'Дополнительные таблицы (JSON)', type: 'json', placeholder: '[{"title": "...", "headers": [], "rows": []}]' },
+    ],
+  },
+  subclasses: {
+    label: 'Подклассы',
+    fields: [
+      { key: 'id', label: 'ID (уникальный)', type: 'text', required: true, placeholder: 'subclass-1' },
+      { key: 'name', label: 'Название', type: 'text', required: true },
+      { key: 'class', label: 'Класс', type: 'text', placeholder: 'Изначальник' },
+      { key: 'subtitle', label: 'Подзаголовок', type: 'text' },
+      { key: 'description', label: 'Описание', type: 'textarea', rows: 4 },
+      { key: 'tags', label: 'Теги (массив строк)', type: 'array', subfields: [{ key: 'value', label: 'Тег', type: 'text' }] },
+      { key: 'features', label: 'Особенности (массив)', type: 'array', subfields: [
+        { key: 'level', label: 'Уровень', type: 'number' },
+        { key: 'name', label: 'Название', type: 'text' },
+        { key: 'description', label: 'Описание', type: 'textarea', rows: 2 },
+      ] },
+    ],
+  },
+  races: {
+    label: 'Расы',
+    fields: [
+      { key: 'id', label: 'ID (уникальный)', type: 'text', required: true, placeholder: 'race-1' },
+      { key: 'name', label: 'Название', type: 'text', required: true },
+      { key: 'description', label: 'Описание', type: 'textarea', rows: 4 },
+      { key: 'image', label: 'Путь к картинке', type: 'text', placeholder: '/STHomebrew/images/race.jpg' },
+      { key: 'creatureType', label: 'Тип существа', type: 'text' },
+      { key: 'size', label: 'Размер', type: 'text' },
+      { key: 'speed', label: 'Скорость', type: 'text' },
+      { key: 'vision', label: 'Зрение', type: 'text' },
+      { key: 'features', label: 'Особенности (массив)', type: 'array', subfields: [
+        { key: 'name', label: 'Название', type: 'text' },
+        { key: 'description', label: 'Описание', type: 'textarea', rows: 2 },
+      ] },
+      { key: 'variants', label: 'Варианты (JSON)', type: 'json', placeholder: '[{"name": "...", "features": []}]' },
+    ],
+  },
+  backgrounds: {
+    label: 'Предыстории',
+    fields: [
+      { key: 'id', label: 'ID (уникальный)', type: 'text', required: true, placeholder: 'background-1' },
+      { key: 'name', label: 'Название', type: 'text', required: true },
+      { key: 'description', label: 'Описание', type: 'textarea', rows: 4 },
+      { key: 'abilities', label: 'Характеристики (массив строк)', type: 'array', subfields: [{ key: 'value', label: 'Характеристика', type: 'text' }] },
+      { key: 'feat', label: 'Черта (JSON или название)', type: 'json', placeholder: '{"name": "..."}' },
+      { key: 'proficiencies', label: 'Владения (JSON)', type: 'json', placeholder: '{"skills": [], "tools": []}' },
+      { key: 'equipment', label: 'Снаряжение (JSON)', type: 'json', placeholder: '{"optionA": [], "optionB": []}' },
+    ],
+  },
+  items: {
+    label: 'Предметы',
+    fields: [
+      { key: 'id', label: 'ID (уникальный)', type: 'text', required: true, placeholder: 'item-1' },
+      { key: 'name', label: 'Название', type: 'text', required: true },
+      { key: 'description', label: 'Описание', type: 'textarea', rows: 4 },
+      { key: 'rarity', label: 'Редкость', type: 'text', placeholder: 'Редкий' },
+      { key: 'type', label: 'Тип предмета', type: 'text' },
+      { key: 'attunement', label: 'Требует настройки', type: 'checkbox' },
+      { key: 'cost', label: 'Стоимость', type: 'text' },
+      { key: 'recommended_price', label: 'Рекомендуемая цена', type: 'text' },
+    ],
+  },
+  feats: {
+    label: 'Черты',
+    fields: [
+      { key: 'id', label: 'ID (уникальный)', type: 'text', required: true, placeholder: 'feat-1' },
+      { key: 'name', label: 'Название', type: 'text', required: true },
+      { key: 'description', label: 'Описание', type: 'textarea', rows: 4 },
+      { key: 'category', label: 'Категория', type: 'text' },
+      { key: 'prerequisites', label: 'Требования', type: 'text' },
+      { key: 'ability', label: 'Увеличиваемая характеристика', type: 'text' },
+    ],
+  },
+  homerules: {
+    label: 'Домашние правила',
+    fields: [
+      { key: 'id', label: 'ID (уникальный)', type: 'text', required: true, placeholder: 'rule-1' },
+      { key: 'name', label: 'Название', type: 'text', required: true },
+      { key: 'source', label: 'Источник', type: 'text' },
+      { key: 'content', label: 'Содержимое (Markdown)', type: 'textarea', rows: 8 },
+    ],
+  },
 };
 
 export default function Constructor() {
   const [category, setCategory] = useState('monsters');
   const [formData, setFormData] = useState({});
   const [generatedCode, setGeneratedCode] = useState('');
+  const [error, setError] = useState('');
+  const [copyStatus, setCopyStatus] = useState('');
 
   // Инициализация формы дефолтными значениями при смене категории
   useEffect(() => {
@@ -90,6 +192,8 @@ export default function Constructor() {
     });
     setFormData(initialData);
     setGeneratedCode(''); // очищаем предыдущий код
+    setError('');
+    setCopyStatus('');
   }, [category]);
 
   const handleFieldChange = (key, value) => {
@@ -123,6 +227,17 @@ export default function Constructor() {
   const generateCode = () => {
     const fields = CATEGORY_CONFIG[category].fields;
     const obj = {};
+    const invalidJson = [];
+
+    const missing = fields
+      .filter(f => f.required && String(formData[f.key] ?? '').trim() === '')
+      .map(f => f.label);
+    if (missing.length > 0) {
+      setError(`Заполните обязательные поля: ${missing.join(', ')}`);
+      setGeneratedCode('');
+      return;
+    }
+    setError('');
 
     fields.forEach(f => {
       const val = formData[f.key];
@@ -151,7 +266,8 @@ export default function Constructor() {
               if (sub.type === 'json' && typeof subVal === 'string' && subVal.trim()) {
                 try {
                   newItem[sub.key] = JSON.parse(subVal);
-                } catch (e) {
+                } catch {
+                  invalidJson.push(sub.label);
                   newItem[sub.key] = subVal;
                 }
               } else {
@@ -169,7 +285,8 @@ export default function Constructor() {
       if (f.type === 'json' && typeof val === 'string' && val.trim()) {
         try {
           obj[f.key] = JSON.parse(val);
-        } catch (e) {
+        } catch {
+          invalidJson.push(f.label);
           obj[f.key] = val;
         }
         return;
@@ -191,25 +308,40 @@ export default function Constructor() {
       obj[f.key] = val;
     });
 
+    if (invalidJson.length > 0) {
+      setError(`Проверьте JSON в полях: ${invalidJson.join(', ')}`);
+    }
     const code = JSON.stringify(obj, null, 2);
     setGeneratedCode(code);
+    setCopyStatus('');
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard?.writeText(generatedCode);
-    alert('Код скопирован в буфер обмена!');
+  const copyToClipboard = async () => {
+    try {
+      if (!navigator.clipboard?.writeText) {
+        throw new Error('Clipboard API недоступен');
+      }
+      await navigator.clipboard.writeText(generatedCode);
+      setCopyStatus('Код скопирован в буфер обмена');
+    } catch {
+      setCopyStatus('Не удалось скопировать — выделите код вручную');
+    }
   };
 
   const fields = CATEGORY_CONFIG[category].fields;
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} id="main-content">
       <Link to="/" className={styles.backLink}>← На главную</Link>
       <div className={styles.constructor}>
         <h1>Конструктор объектов</h1>
         <div className={styles.categorySelector}>
-          <label>Выберите категорию:</label>
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          <label htmlFor="category-select">Выберите категорию:</label>
+          <select
+            id="category-select"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
             {Object.entries(CATEGORY_CONFIG).map(([key, config]) => (
               <option key={key} value={key}>{config.label}</option>
             ))}
@@ -219,26 +351,29 @@ export default function Constructor() {
         <div className={styles.form}>
           {fields.map((field) => (
             <div key={field.key} className={styles.fieldGroup}>
-              <label className={styles.fieldLabel}>
+              <label className={styles.fieldLabel} htmlFor={`field-${field.key}`}>
                 {field.label}
                 {field.required && <span className={styles.required}>*</span>}
               </label>
 
               {field.type === 'text' && (
                 <input
+                  id={`field-${field.key}`}
                   type="text"
                   value={formData[field.key] || ''}
                   onChange={(e) => handleFieldChange(field.key, e.target.value)}
                   placeholder={field.placeholder || ''}
                   className={styles.fieldInput}
+                  required={field.required}
                 />
               )}
 
               {field.type === 'number' && (
                 <input
+                  id={`field-${field.key}`}
                   type="number"
                   value={formData[field.key] ?? field.default ?? 0}
-                  onChange={(e) => handleFieldChange(field.key, Number(e.target.value))}
+                  onChange={(e) => handleFieldChange(field.key, e.target.value === '' ? '' : Number(e.target.value))}
                   step={field.step || 1}
                   className={styles.fieldInput}
                 />
@@ -246,6 +381,7 @@ export default function Constructor() {
 
               {field.type === 'textarea' && (
                 <textarea
+                  id={`field-${field.key}`}
                   value={formData[field.key] || ''}
                   onChange={(e) => handleFieldChange(field.key, e.target.value)}
                   placeholder={field.placeholder || ''}
@@ -256,6 +392,7 @@ export default function Constructor() {
 
               {field.type === 'checkbox' && (
                 <input
+                  id={`field-${field.key}`}
                   type="checkbox"
                   checked={formData[field.key] || false}
                   onChange={(e) => handleFieldChange(field.key, e.target.checked)}
@@ -265,6 +402,7 @@ export default function Constructor() {
 
               {field.type === 'json' && (
                 <textarea
+                  id={`field-${field.key}`}
                   value={formData[field.key] || ''}
                   onChange={(e) => handleFieldChange(field.key, e.target.value)}
                   placeholder={field.placeholder || 'Введите JSON'}
@@ -279,9 +417,27 @@ export default function Constructor() {
                     <div key={index} className={styles.arrayItem}>
                       {field.subfields.map((sub) => (
                         <div key={sub.key} className={styles.arraySubfield}>
-                          <label>{sub.label}</label>
-                          {sub.type === 'text' && (
+                          <label htmlFor={`array-${field.key}-${index}-${sub.key}`}>{sub.label}</label>
+                          {sub.type === 'number' ? (
                             <input
+                              id={`array-${field.key}-${index}-${sub.key}`}
+                              type="number"
+                              value={item[sub.key] ?? 0}
+                              onChange={(e) => handleArrayItemChange(field.key, index, sub.key, e.target.value === '' ? '' : Number(e.target.value))}
+                              className={styles.fieldInput}
+                            />
+                          ) : sub.type === 'textarea' || sub.type === 'json' ? (
+                            <textarea
+                              id={`array-${field.key}-${index}-${sub.key}`}
+                              value={item[sub.key] || ''}
+                              onChange={(e) => handleArrayItemChange(field.key, index, sub.key, e.target.value)}
+                              placeholder={sub.placeholder || (sub.type === 'json' ? 'Введите JSON' : '')}
+                              rows={sub.rows || 3}
+                              className={styles.fieldTextarea}
+                            />
+                          ) : (
+                            <input
+                              id={`array-${field.key}-${index}-${sub.key}`}
                               type="text"
                               value={item[sub.key] || ''}
                               onChange={(e) => handleArrayItemChange(field.key, index, sub.key, e.target.value)}
@@ -289,35 +445,20 @@ export default function Constructor() {
                               className={styles.fieldInput}
                             />
                           )}
-                          {sub.type === 'textarea' && (
-                            <textarea
-                              value={item[sub.key] || ''}
-                              onChange={(e) => handleArrayItemChange(field.key, index, sub.key, e.target.value)}
-                              placeholder={sub.placeholder || ''}
-                              rows={sub.rows || 2}
-                              className={styles.fieldTextarea}
-                            />
-                          )}
-                          {sub.type === 'json' && (
-                            <textarea
-                              value={item[sub.key] || ''}
-                              onChange={(e) => handleArrayItemChange(field.key, index, sub.key, e.target.value)}
-                              placeholder={sub.placeholder || 'Введите JSON'}
-                              rows={3}
-                              className={styles.fieldTextarea}
-                            />
-                          )}
                         </div>
                       ))}
                       <button
+                        type="button"
                         onClick={() => handleArrayRemove(field.key, index)}
                         className={styles.removeButton}
+                        aria-label={`Удалить элемент ${index + 1}`}
                       >
                         ✕
                       </button>
                     </div>
                   ))}
                   <button
+                    type="button"
                     onClick={() => handleArrayAdd(field.key, field.subfields)}
                     className={styles.addButton}
                   >
@@ -329,8 +470,10 @@ export default function Constructor() {
           ))}
         </div>
 
+        {error && <p className={styles.error} role="alert">{error}</p>}
+
         <div className={styles.actions}>
-          <button onClick={generateCode} className={styles.generateButton}>
+          <button type="button" onClick={generateCode} className={styles.generateButton}>
             Сгенерировать код
           </button>
         </div>
@@ -339,11 +482,12 @@ export default function Constructor() {
           <div className={styles.result}>
             <h3>Готовый код (скопируйте и вставьте в соответствующий файл):</h3>
             <pre className={styles.codeBlock}>{generatedCode}</pre>
-            <button onClick={copyToClipboard} className={styles.copyButton}>
+            <button type="button" onClick={copyToClipboard} className={styles.copyButton}>
               Копировать в буфер
             </button>
           </div>
         )}
+        <p className={styles.copyStatus} role="status" aria-live="polite">{copyStatus}</p>
       </div>
     </div>
   );

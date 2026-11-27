@@ -65,26 +65,35 @@ export default function FilterPanel({ options, selected = {}, onFilterChange, la
 
         return (
           <div key={field} className={styles.section}>
-            <div className={styles.sectionHeader} onClick={() => toggleSection(field)}>
+            <button
+              type="button"
+              className={styles.sectionHeader}
+              aria-expanded={Boolean(openSections[field])}
+              aria-controls={`filter-${field}`}
+              onClick={() => toggleSection(field)}
+            >
               <span>{mergedLabels[field] || field}</span>
-              <span>{openSections[field] ? '−' : '+'}</span>
-            </div>
+              <span aria-hidden="true">{openSections[field] ? '−' : '+'}</span>
+            </button>
             {openSections[field] && (
-              <div className={styles.sectionContent}>
+              <div id={`filter-${field}`} className={styles.sectionContent}>
                 {displayValues.map((val) => {
                   const state = getState(field, String(val));
+                  const stateLabel = state === 'include' ? 'включено' : state === 'exclude' ? 'исключено' : 'не выбрано';
                   return (
-                    <label
+                    <button
                       key={val}
+                      type="button"
                       className={`${styles.checkbox} ${styles[state]}`}
+                      aria-label={`${val}: ${stateLabel}`}
                       onClick={() => handleCheckboxChange(field, String(val))}
                     >
-                      <span className={styles.checkboxBox}>
+                      <span className={styles.checkboxBox} aria-hidden="true">
                         {state === 'include' && '✓'}
                         {state === 'exclude' && '✕'}
                       </span>
                       {val}
-                    </label>
+                    </button>
                   );
                 })}
               </div>

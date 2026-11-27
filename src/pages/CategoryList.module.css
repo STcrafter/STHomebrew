@@ -132,6 +132,10 @@
   margin-top: 1.5rem;
 }
 
+.gridItem {
+  min-width: 0;
+}
+
 .card {
   background: var(--bg-card);
   border-radius: 12px;
@@ -193,6 +197,7 @@
 }
 
 .favoritesFilter {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -209,6 +214,18 @@
   color: var(--text-primary);
 }
 
+.favoritesInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.favoritesFilter:focus-within .favoritesBox {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .favoritesBox {
   display: inline-flex;
   align-items: center;
@@ -221,7 +238,7 @@
   font-size: 0.8rem;
   line-height: 1;
   background: var(--bg-input);
-  transition: all 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 
 .favoritesActive {
@@ -238,7 +255,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
   margin-bottom: 0.3rem;
+}
+
+.cardLink {
+  min-width: 0;
+}
+
+.cardLink:hover h3 {
+  color: var(--accent);
 }
 
 .cardHeader h3 {

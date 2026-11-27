@@ -1,13 +1,14 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { data } from '../data';
+import { VirtuosoGrid } from 'react-virtuoso';
 import FilterPanel from '../components/FilterPanel';
 import SearchBar from '../components/SearchBar';
 import FavoriteButton from '../components/FavoriteButton';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { useFavorites } from '../context/FavoritesContext';
 import styles from './CategoryList.module.css';
-import { formatChallengeRating, getDangerColor } from '../utils/helpers';
+import { formatChallengeRating, getDangerColor, pluralizeRu } from '../utils/helpers';
 import { getSortOptions, sortItems, toggleSortDirection } from '../utils/sorting';
 import { defaultListViewState, loadListViewPreferences, saveListViewPreferences } from '../utils/listViewPreferences';
 
@@ -28,6 +29,7 @@ export default function CategoryList() {
   const items = data[category] || [];
   const { isFavorite } = useFavorites();
   const headerRef = useRef(null);
+  const gridRef = useRef(null);
 
   const [preferences, setPreferences] = useState(() => loadListViewPreferences());
   const view = preferences[category] ?? defaultListViewState;
@@ -144,6 +146,16 @@ export default function CategoryList() {
     return sortItems(result, sortField, sortDirection);
   }, [items, search, filters, sortField, sortDirection, showFavorites, isFavorite, category]);
 
+  const [initialItemCount, setInitialItemCount] = useState(filteredItems.length);
+
+  useEffect(() => {
+    setInitialItemCount(undefined);
+  }, []);
+
+  useEffect(() => {
+    gridRef.current?.scrollToIndex({ index: 0, align: 'start' });
+  }, [category, search, filters, sortField, sortDirection, showFavorites]);
+
   const handleFilterChange = (field, selected) => {
     updateCurrentView((current) => {
       const nextFilters = { ...current.filters };
@@ -157,13 +169,97 @@ export default function CategoryList() {
     updateCurrentView(current => ({ ...current, search: query }));
   };
 
+  const renderItem = (item) => {
+    const levelCount = Array.isArray(item.features)
+      ? new Set(item.features.map(f => f.level)).size
+      : 0;
+    return (
+      <div className={styles.card}>
+        <div className={styles.cardHeader}>
+          <Link to={`/category/${category}/${item.id}`} className={styles.cardLink}>
+            <h3>{item.name}</h3>
+          </Link>
+          <FavoriteButton id={item.id} />
+        </div>
+
+        {category === 'monsters' && (
+          <div className={styles.meta}>
+            {item.challenge_rating !== undefined && (
+              <span
+                className={styles.dangerDot}
+                style={{ backgroundColor: getDangerColor(item.challenge_rating) }}
+                title={`ОП ${formatChallengeRating(item.challenge_rating)}`}
+              />
+            )}
+            <span>ОП {formatChallengeRating(item.challenge_rating)}</span>
+            {Array.isArray(item.habitat) && item.habitat.length > 0 && (
+              <span>{item.habitat.slice(0, 2).join(', ')}</span>
+            )}
+          </div>
+        )}
+        {category === 'spells' && (
+          <div className={styles.meta}>
+            <span>{item.level} {pluralizeRu(item.level, ['уровень', 'уровня', 'уровней'])}</span>
+            <span>{item.school}</span>
+          </div>
+        )}
+        {category === 'items' && (
+          <div className={styles.meta}>
+            <span>{item.rarity}</span>
+            <span>{item.type}</span>
+          </div>
+        )}
+        {category === 'classes' && (
+          <div className={styles.meta}>
+            <span>
+              {pluralizeRu(levelCount, ['Уровень', 'Уровня', 'Уровней'])}: {levelCount}
+            </span>
+          </div>
+        )}
+        {category === 'subclasses' && (
+          <div className={styles.meta}>
+            <span>{item.class}</span>
+            {item.tags && item.tags.length > 0 && (
+              <span>{item.tags.slice(0, 3).join(', ')}</span>
+            )}
+          </div>
+        )}
+        {category === 'races' && (
+          <div className={styles.meta}>
+            <span>Особенностей: {item.features?.length || 0}</span>
+          </div>
+        )}
+        {category === 'backgrounds' && (
+          <div className={styles.meta}>
+            {Array.isArray(item.abilities) && item.abilities.map((ab, i) => (
+              <span key={i}>{ab}</span>
+            ))}
+          </div>
+        )}
+        {category === 'feats' && (
+          <div className={styles.meta}>
+            {item.category && <span>{item.category}</span>}
+            <span>{item.prerequisites || 'Нет требований'}</span>
+          </div>
+        )}
+        {category === 'homerules' && (
+          <div className={styles.meta}>
+            <span>{item.source}</span>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
-    <div className={styles.page}>
+    <div className={styles.page} id="main-content">
       <Breadcrumbs />
       <div className={styles.header} ref={headerRef}>
         <Link to="/" className={styles.back}>← На главную</Link>
         <h1>{categoryLabels[category] || category}</h1>
-        <span className={styles.count}>{filteredItems.length} записей</span>
+        <span className={styles.count} aria-live="polite">
+          {filteredItems.length} {pluralizeRu(filteredItems.length, ['запись', 'записи', 'записей'])}
+        </span>
       </div>
 
       <div className={styles.content}>
@@ -175,7 +271,7 @@ export default function CategoryList() {
 
         <main className={styles.list}>
           <div className={styles.toolbar}>
-            <SearchBar value={search} onSearch={handleSearch} placeholder="Поиск по названию..." />
+            <SearchBar value={search} onSearch={handleSearch} placeholder="Поиск по названию…" />
             <div className={styles.sortControls}>
               <span className={styles.sortLabel}>Сортировать:</span>
               <select
@@ -205,12 +301,17 @@ export default function CategoryList() {
               </button>
               <label
                 className={`${styles.favoritesFilter} ${showFavorites ? styles.favoritesActive : ''}`}
-                onClick={() => updateCurrentView(current => ({
-                  ...current,
-                  showFavorites: !current.showFavorites,
-                }))}
               >
-                <span className={styles.favoritesBox}>
+                <input
+                  type="checkbox"
+                  className={styles.favoritesInput}
+                  checked={showFavorites}
+                  onChange={() => updateCurrentView(current => ({
+                    ...current,
+                    showFavorites: !current.showFavorites,
+                  }))}
+                />
+                <span className={styles.favoritesBox} aria-hidden="true">
                   {showFavorites && '✓'}
                 </span>
                 ⭐ Только избранное
@@ -218,84 +319,17 @@ export default function CategoryList() {
             </div>
           </div>
 
-          <div className={styles.grid}>
-            {filteredItems.map(item => (
-              <Link to={`/category/${category}/${item.id}`} key={item.id} className={styles.card}>
-                <div className={styles.cardHeader}>
-                  <h3>{item.name}</h3>
-                  <FavoriteButton id={item.id} />
-                </div>
-
-                {category === 'monsters' && (
-  <div className={styles.meta}>
-    {item.challenge_rating !== undefined && (
-      <span 
-        className={styles.dangerDot}
-        style={{ backgroundColor: getDangerColor(item.challenge_rating) }}
-        title={`ОП ${formatChallengeRating(item.challenge_rating)}`}
-      />
-    )}
-    <span>ОП {formatChallengeRating(item.challenge_rating)}</span>
-    {Array.isArray(item.habitat) && item.habitat.length > 0 && (
-      <span>{item.habitat.slice(0, 2).join(', ')}</span>
-    )}
-  </div>
-)}
-                {category === 'spells' && (
-                  <div className={styles.meta}>
-                    <span>{item.level} уровень</span>
-                    <span>{item.school}</span>
-                  </div>
-                )}
-                {category === 'items' && (
-                  <div className={styles.meta}>
-                    <span>{item.rarity}</span>
-                    <span>{item.type}</span>
-                  </div>
-                )}
-                {category === 'classes' && (
-                  <div className={styles.meta}>
-                    <span>Уровней: {
-                      Array.isArray(item.features) 
-                        ? new Set(item.features.map(f => f.level)).size 
-                        : 0
-                    }</span>
-                  </div>
-                )}
-                {category === 'subclasses' && (
-  <div className={styles.meta}>
-    <span>{item.class}</span>
-    {item.tags && item.tags.length > 0 && (
-      <span>{item.tags.slice(0, 3).join(', ')}</span>
-    )}
-  </div>
-)}
-                {category === 'races' && (
-                  <div className={styles.meta}>
-                    <span>Особенностей: {item.features?.length || 0}</span>
-                  </div>
-                )}
-                {category === 'backgrounds' && (
-  <div className={styles.meta}>
-    {Array.isArray(item.abilities) && item.abilities.map((ab, i) => (
-      <span key={i}>{ab}</span>
-    ))}
-  </div>
-)}
-                {category === 'feats' && (
-  <div className={styles.meta}>
-    {item.category && <span>{item.category}</span>}
-    <span>{item.prerequisites || 'Нет требований'}</span>
-  </div>
-)}
-                {category === 'homerules' && (
-                  <div className={styles.meta}>
-                    <span>{item.source}</span>
-                  </div>
-                )}
-              </Link>
-            ))}
-          </div>
+          <VirtuosoGrid
+            ref={gridRef}
+            useWindowScroll
+            data={filteredItems}
+            initialItemCount={initialItemCount}
+            style={{ height: '100vh' }}
+            computeItemKey={(_, item) => item.id}
+            itemContent={(_, item) => renderItem(item)}
+            listClassName={styles.grid}
+            itemClassName={styles.gridItem}
+          />
 
           {filteredItems.length === 0 && (
             <div className={styles.empty}>Ничего не найдено</div>

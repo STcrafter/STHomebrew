@@ -7,7 +7,7 @@ import ClassDetail from '../components/ClassDetail';
 import FavoriteButton from '../components/FavoriteButton';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Markdown from '../components/Markdown';
-import { renderFormattedText, renderFormattedFeature } from '../utils/helpers';
+import { renderFormattedText, renderFormattedFeature, pluralizeRu } from '../utils/helpers';
 import { resolveStatblocks } from '../utils/statblocks';
 
 export default function ItemDetail() {
@@ -16,7 +16,9 @@ export default function ItemDetail() {
   const item = items.find(it => it.id === id);
   const [openVariants, setOpenVariants] = useState({});
   // Навигация Prev/Next (по алфавиту)
-  const sortedItems = [...items].sort((a, b) => a.name.localeCompare(b.name));
+  const sortedItems = [...items]
+    .filter(entry => entry.hidden !== true)
+    .sort((a, b) => a.name.localeCompare(b.name));
   const currentIndex = sortedItems.findIndex(i => i.id === id);
   const prevItem = currentIndex > 0 ? sortedItems[currentIndex - 1] : null;
   const nextItem = currentIndex < sortedItems.length - 1 ? sortedItems[currentIndex + 1] : null;
@@ -39,7 +41,7 @@ export default function ItemDetail() {
           <>
             {item.image && (
               <div className={styles.imageWrapper}>
-                <img src={item.image} alt={item.name} className={styles.detailImage} />
+                <img src={item.image} alt={item.name} className={styles.detailImage} width="600" height="400" />
               </div>
             )}
             <div className={styles.description}>
@@ -86,7 +88,7 @@ export default function ItemDetail() {
                 {statblocks.map((block, index) => (
                   <div key={block.id ?? index} className={styles.statblockItem}>
                     {block.missing ? (
-                      <p className={styles.statblockError} role="alert">⚠️ Статблок "{block.id}" не найден</p>
+                      <p className={styles.statblockError} role="alert">⚠️ Статблок «{block.id}» не найден</p>
                     ) : (
                       <StatBlock monster={block} compact />
                     )}
@@ -110,7 +112,7 @@ export default function ItemDetail() {
       {/* Картинка */}
       {item.image && (
         <div className={styles.imageWrapper}>
-          <img src={item.image} alt={item.name} className={styles.detailImage} />
+          <img src={item.image} alt={item.name} className={styles.detailImage} width="600" height="400" />
         </div>
       )}
 
@@ -149,17 +151,20 @@ export default function ItemDetail() {
             const isOpen = openVariants[sectionKey] === true;
             return (
               <div key={i} className={styles.variantGroup}>
-                <div
+                <button
+                  type="button"
                   className={styles.variantHeader}
+                  aria-expanded={isOpen}
+                  aria-controls={`${sectionKey}-body`}
                   onClick={() =>
                     setOpenVariants(prev => ({ ...prev, [sectionKey]: !prev[sectionKey] }))
                   }
                 >
                   <span>{variant.name}</span>
-                  <span>{isOpen ? '−' : '+'}</span>
-                </div>
+                  <span aria-hidden="true">{isOpen ? '−' : '+'}</span>
+                </button>
                 {isOpen && (
-                  <div className={styles.variantBody}>
+                  <div id={`${sectionKey}-body`} className={styles.variantBody}>
                     {variant.description && (
                       <div className={styles.description}>
                         {renderFormattedText(variant.description)}
@@ -230,7 +235,7 @@ export default function ItemDetail() {
                   <div key={idx} className={styles.subclassFeature}>
                     <h3 className={styles.featureTitle}>{feature.name}</h3>
                     <div className={styles.featureLevel}>
-                      {feature.level} уровень {item.name}
+                      {feature.level} {pluralizeRu(feature.level, ['уровень', 'уровня', 'уровней'])} {item.name}
                     </div>
                     <hr className={styles.featureDivider} />
                     <div className={styles.featureDescription}>
@@ -330,7 +335,7 @@ export default function ItemDetail() {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} id="main-content">
       <Breadcrumbs />
       <div className={styles.header}>
         <Link to={`/category/${category}`} className={styles.back}>← К списку</Link>

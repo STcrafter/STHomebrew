@@ -7,7 +7,6 @@ export default [
   id: 'class-dancer',
   name: 'Dancer',
   description: 'Masters of movement, Dancers leverage their unearthly grace and charm to glide unfettered through the battlefield. Dance isn\'t merely a combination of rhythm and footwork—it is a Dancer\'s intrinsic expression, embodying a magic all its own. When a Dancer enters their flow state, they bound past lethal strikes and strike with a dramatic flourish, felling foes with a tempo that is at once elegant and fearsome.',
-  image: '/images/dancer.jpg', // можете заменить на свою картинку
 
   primary_ability: 'Dexterity and Charisma',
   saving_throws: ['Dexterity', 'Charisma'],
@@ -693,7 +692,6 @@ export default [
   "id": "necromancer",
   "name": "Некромант(WIP)",
   "description": "Некромант — полный заклинатель, повелевающий мёртвой плотью. Он не просто создаёт нежить: он выстраивает постоянный отряд прислужников, параметры которых зависят от того, чей труп поднят и в какой форме.\n\nКласс балансирует между боевым контролем, тактическим управлением миньонами и нарративным взаимодействием со смертью.",
-  "image": "/images/necromancer.jpg",
   
   "primary_ability": "Интеллект",
   "saving_throws": ["Интеллект", "Мудрость"],

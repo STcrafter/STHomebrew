@@ -7,6 +7,7 @@ export default function FavoriteButton({ id, className }) {
 
   return (
     <button
+      type="button"
       className={`${styles.favoriteButton} ${favorite ? styles.active : ''} ${className || ''}`}
       onClick={(e) => {
         e.preventDefault();
