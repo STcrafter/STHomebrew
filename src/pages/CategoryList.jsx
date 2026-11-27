@@ -146,11 +146,10 @@ export default function CategoryList() {
     return sortItems(result, sortField, sortDirection);
   }, [items, search, filters, sortField, sortDirection, showFavorites, isFavorite, category]);
 
-  const [initialItemCount, setInitialItemCount] = useState(filteredItems.length);
-
-  useEffect(() => {
-    setInitialItemCount(undefined);
-  }, []);
+  // initialItemCount нужен только серверному рендеру. В браузере он переводит
+  // Virtuoso в режим ожидания прокрутки: короткие списки остаются пустыми,
+  // если пользователь не прокрутил страницу.
+  const initialItemCount = typeof window === 'undefined' ? filteredItems.length : undefined;
 
   useEffect(() => {
     gridRef.current?.scrollToIndex({ index: 0, align: 'start' });
@@ -323,7 +322,7 @@ export default function CategoryList() {
             ref={gridRef}
             useWindowScroll
             data={filteredItems}
-            initialItemCount={initialItemCount}
+            {...(initialItemCount === undefined ? {} : { initialItemCount })}
             style={{ height: '100vh' }}
             computeItemKey={(_, item) => item.id}
             itemContent={(_, item) => renderItem(item)}

@@ -10,13 +10,14 @@ import { data } from '../src/data/index.js';
 
 const visibleMonsterCount = data.monsters.filter((item) => item.hidden !== true).length;
 
-async function withServer(fn) {
+async function withServer(fn, config = {}) {
   const savedStorage = globalThis.localStorage;
   globalThis.localStorage = { getItem: () => null, setItem: () => {} };
   const server = await createServer({
     appType: 'custom',
     logLevel: 'silent',
-    server: { middlewareMode: true },
+    server: { middlewareMode: true, watch: null },
+    ...config,
   });
   try {
     return await fn(server);
@@ -272,4 +273,67 @@ test('server rendering still includes every monster card', async () => {
     );
     assert.equal(countMonsterLinks(html), visibleMonsterCount);
   });
+});
+
+test('browser render omits initialItemCount so Virtuoso renders immediately', async () => {
+  const virtuosoStub = {
+    name: 'virtuoso-stub',
+    enforce: 'pre',
+    resolveId(id) {
+      if (id === 'react-virtuoso') return '\0virtuoso-stub';
+    },
+    load(id) {
+      if (id !== '\0virtuoso-stub') return null;
+      return `
+        import React from 'react';
+        export function VirtuosoGrid(props) {
+          const { data, initialItemCount, itemContent } = props;
+          const items = typeof initialItemCount === 'number' ? data.slice(0, initialItemCount) : [];
+          return React.createElement(
+            'div',
+            {
+              'data-testid': 'virtuoso-stub',
+              'data-has-initial-count': String(Object.prototype.hasOwnProperty.call(props, 'initialItemCount')),
+            },
+            items.map((item, index) => React.createElement('span', { key: item.id }, itemContent(index, item)))
+          );
+        }
+      `;
+    },
+  };
+
+  const dom = new JSDOM('<!doctype html><html><body></body></html>', {
+    url: 'http://localhost/category/items',
+  });
+  const savedWindow = globalThis.window;
+  globalThis.window = dom.window;
+  try {
+    await withServer(async (server) => {
+      const { default: CategoryList } = await server.ssrLoadModule('/src/pages/CategoryList.jsx');
+      const { FavoritesProvider } = await server.ssrLoadModule('/src/context/FavoritesContext.jsx');
+      const html = renderToStaticMarkup(
+        React.createElement(
+          StaticRouter,
+          { location: '/category/items' },
+          React.createElement(
+            FavoritesProvider,
+            null,
+            React.createElement(
+              Routes,
+              null,
+              React.createElement(Route, {
+                path: '/category/:category',
+                element: React.createElement(CategoryList),
+              })
+            )
+          )
+        )
+      );
+      assert.match(html, /data-has-initial-count="false"/);
+    }, { plugins: [virtuosoStub], ssr: { noExternal: ['react-virtuoso'] } });
+  } finally {
+    if (savedWindow === undefined) delete globalThis.window;
+    else globalThis.window = savedWindow;
+    dom.window.close();
+  }
 });
