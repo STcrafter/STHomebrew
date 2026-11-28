@@ -58,7 +58,9 @@ test('formatted text renders bold text next to a tooltip', async () => {
 test('tooltip text escapes HTML', async () => {
   const html = await renderFormatted('[tooltip:<img src=x onerror=alert(1)>]');
   assert.ok(!html.includes('<img'));
-  assert.match(html, /&lt;img/);
+  assert.match(html, /formatted-tooltip/);
+  assert.match(html, /data-tip="&lt;img/);
+  assert.ok(!html.includes('[tooltip:'));
 });
 
 test('formatted text keeps inline table references', async () => {
@@ -96,6 +98,27 @@ test('feature description renders a tooltip', async () => {
     assert.match(html, /<em><strong>Название\.<\/strong><\/em>/);
     assert.match(html, /data-tip="Подсказка"/);
     assert.ok(!html.includes('[tooltip:'));
+  } finally {
+    await server.close();
+  }
+});
+
+test('feature name survives a leading table reference', async () => {
+  const server = await createServer({ appType: 'custom', logLevel: 'silent', server: { middlewareMode: true } });
+  try {
+    const { renderFormattedFeature } = await server.ssrLoadModule('/src/utils/helpers.js');
+    const render = (description) => renderToStaticMarkup(
+      React.createElement('div', null, renderFormattedFeature('Название', description))
+    );
+
+    const onlyTable = render('[table:ruinbound_mutations]');
+    assert.match(onlyTable, /<em><strong>Название\.<\/strong><\/em>/);
+    assert.match(onlyTable, /formatted-table/);
+    assert.ok(onlyTable.indexOf('Название.') < onlyTable.indexOf('formatted-table'));
+
+    const tableThenText = render('[table:ruinbound_mutations]\n\nПосле');
+    assert.ok(tableThenText.indexOf('<em><strong>Название.</strong></em>') < tableThenText.indexOf('formatted-table'));
+    assert.match(tableThenText, /После/);
   } finally {
     await server.close();
   }

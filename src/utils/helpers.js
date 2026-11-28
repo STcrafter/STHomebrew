@@ -286,15 +286,27 @@ export const renderFormattedText = (text, prefixNode = null) => {
   return parts.flatMap((part, idx) => {
     if (part.type === 'table-ref') {
       const tableData = tables[part.id];
-      if (tableData && tableData.headers && tableData.rows) {
-        return renderTable(tableData.headers, tableData.rows, idx);
-      } else {
-        return React.createElement(
+      const tableNode = tableData && tableData.headers && tableData.rows
+        ? renderTable(tableData.headers, tableData.rows, idx)
+        : React.createElement(
           'p',
           { key: `error-${idx}`, className: 'table-error' },
           `⚠️ Таблица «${part.id}» не найдена`
         );
+
+      // Название особенности не должно теряться, если описание начинается с таблицы
+      if (!prefixUsed && prefixNode) {
+        prefixUsed = true;
+        return [
+          React.createElement(
+            'p',
+            { key: `prefix-${idx}`, className: 'formatted-paragraph' },
+            prefixNode
+          ),
+          tableNode,
+        ];
       }
+      return tableNode;
     } else {
       const prefix = prefixUsed ? null : prefixNode;
       prefixUsed = true;
