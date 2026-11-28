@@ -24,9 +24,11 @@ const categoryLabels = {
   homerules: 'Домашние правила',
 };
 
+const EMPTY_ITEMS = [];
+
 export default function CategoryList() {
   const { category } = useParams();
-  const items = data[category] || [];
+  const items = data[category] ?? EMPTY_ITEMS;
   const { isFavorite } = useFavorites();
   const headerRef = useRef(null);
   const gridRef = useRef(null);

@@ -56,7 +56,7 @@ test('every [table:id] reference in data resolves to a generated table', () => {
       value.forEach(walk);
       return;
     }
-    for (const [key, child] of Object.entries(value)) {
+    for (const child of Object.values(value)) {
       if (typeof child === 'string') {
         for (const match of child.matchAll(/\[table:([^\]]+)\]/g)) refs.add(match[1].trim());
       } else {

@@ -21,16 +21,33 @@ export default function ClassDetail({ classData }) {
     equipment: false,
   });
 
+  const features = useMemo(
+    () => (Array.isArray(classData?.features) ? classData.features : []),
+    [classData]
+  );
+  const subclasses = useMemo(
+    () => (Array.isArray(classData?.subclasses) ? classData.subclasses : []),
+    [classData]
+  );
+  const classTable = Array.isArray(classData?.class_table) ? classData.class_table : [];
+  const tables = Array.isArray(classData?.tables) ? classData.tables : [];
+
+  const displayFeatures = useMemo(() => {
+    const baseFeatures = features.map(f => ({ ...f, isSubclass: false }));
+    if (!selectedSubclass) {
+      return baseFeatures;
+    }
+    const subclass = subclasses.find(s => s.name === selectedSubclass);
+    if (!subclass) return baseFeatures;
+    const subclassFeatures = (subclass.features || []).map(f => ({ ...f, isSubclass: true }));
+    return [...baseFeatures, ...subclassFeatures].sort((a, b) => (a.level || 0) - (b.level || 0));
+  }, [features, subclasses, selectedSubclass]);
+
   if (!classData) return <div>Данные класса не найдены</div>;
 
   const toggleSection = (section) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
-
-  const features = Array.isArray(classData.features) ? classData.features : [];
-  const subclasses = Array.isArray(classData.subclasses) ? classData.subclasses : [];
-  const classTable = Array.isArray(classData.class_table) ? classData.class_table : [];
-  const tables = Array.isArray(classData.tables) ? classData.tables : [];
 
   const handleFeatureClick = (level) => {
     if (!openSections.features) {
@@ -47,17 +64,6 @@ export default function ClassDetail({ classData }) {
       }
     }, 150);
   };
-
-  const displayFeatures = useMemo(() => {
-    const baseFeatures = features.map(f => ({ ...f, isSubclass: false }));
-    if (!selectedSubclass) {
-      return baseFeatures;
-    }
-    const subclass = subclasses.find(s => s.name === selectedSubclass);
-    if (!subclass) return baseFeatures;
-    const subclassFeatures = (subclass.features || []).map(f => ({ ...f, isSubclass: true }));
-    return [...baseFeatures, ...subclassFeatures].sort((a, b) => (a.level || 0) - (b.level || 0));
-  }, [features, subclasses, selectedSubclass]);
 
   const getFeaturesForLevel = (level) => {
     return displayFeatures.filter(f => Number(f.level) === Number(level));
