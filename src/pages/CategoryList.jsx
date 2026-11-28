@@ -90,7 +90,7 @@ export default function CategoryList() {
       }
     });
     return options;
-  }, [items, category]);
+  }, [items, categoryConfig]);
 
   // Фильтрация и поиск
   const filteredItems = useMemo(() => {
@@ -125,7 +125,7 @@ export default function CategoryList() {
     });
 
     return sortItems(result, sortField, sortDirection);
-  }, [items, search, filters, sortField, sortDirection, showFavorites, isFavorite, category]);
+  }, [items, search, filters, sortField, sortDirection, showFavorites, isFavorite]);
 
   // initialItemCount нужен только серверному рендеру. В браузере он переводит
   // Virtuoso в режим ожидания прокрутки: короткие списки остаются пустыми,

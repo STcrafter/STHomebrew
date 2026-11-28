@@ -50,3 +50,10 @@ test('every configured filter field has a label', () => {
     }
   }
 });
+
+test('constructor schemas provide fields without labels', () => {
+  for (const [id, schema] of Object.entries(constructorSchemas)) {
+    assert.ok(Array.isArray(schema.fields), `${id} fields`);
+    assert.equal('label' in schema, false, `${id} should not own label`);
+  }
+});
