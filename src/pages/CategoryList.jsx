@@ -176,7 +176,7 @@ export default function CategoryList() {
       <div className={styles.card}>
         <div className={styles.cardHeader}>
           <Link to={`/category/${category}/${item.id}`} className={styles.cardLink}>
-            <h3>{item.name}</h3>
+            <h3 title={item.name}>{item.name}</h3>
           </Link>
           <FavoriteButton id={item.id} />
         </div>

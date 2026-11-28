@@ -132,11 +132,16 @@
   margin-top: 1.5rem;
 }
 
+/* VirtuosoGrid измеряет первый отрисованный элемент и считает все строки
+   одинаковыми. Фиксированная высота не даёт ползунку «прыгать» при скролле. */
 .gridItem {
+  height: 176px;
   min-width: 0;
 }
 
 .card {
+  height: 100%;
+  overflow: hidden;
   background: var(--bg-card);
   border-radius: 12px;
   padding: 1rem;
@@ -163,12 +168,18 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  max-height: 3.5rem; /* две строки тегов */
+  overflow: hidden;
   font-size: 0.8rem;
   color: var(--text-light);
   margin-top: 0.3rem;
 }
 
 .meta span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   background: var(--bg-card-hover);
   padding: 0.05rem 0.6rem;
   border-radius: 10px;
@@ -268,6 +279,10 @@
 }
 
 .cardHeader h3 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
