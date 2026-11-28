@@ -15,7 +15,7 @@
 export const INLINE_RE = /(\*\*\*[^*]+\*\*\*|\*\*[^*]+\*\*|\*[^*]+\*|\[tooltip:[^\]]*\])/g;
 
 const HEADING_RE = /^(#{1,3})\s+(.+)$/;
-const TABLE_REF_RE = /^\[table:([^\]]+)\]$/;
+const INLINE_TABLE_REF_RE = /\[table:([^\]]+)\]/g;
 const TABLE_SEPARATOR_RE = /^\|[\s:|-]+\|$/;
 const TOOLTIP_PREFIX = '[tooltip:';
 
@@ -83,6 +83,23 @@ export const parseMarkdown = (text) => {
     paragraph = [];
   };
 
+  const pushLineWithTableRefs = (line) => {
+    let lastIndex = 0;
+    let match;
+
+    INLINE_TABLE_REF_RE.lastIndex = 0;
+    while ((match = INLINE_TABLE_REF_RE.exec(line)) !== null) {
+      const text = line.slice(lastIndex, match.index);
+      if (text) paragraph.push(text);
+      flushParagraph();
+      blocks.push({ type: 'tableRef', id: match[1].trim() });
+      lastIndex = match.index + match[0].length;
+    }
+
+    const rest = line.slice(lastIndex);
+    if (rest) paragraph.push(rest);
+  };
+
   let i = 0;
   while (i < lines.length) {
     const line = lines[i].trim();
@@ -103,15 +120,6 @@ export const parseMarkdown = (text) => {
       continue;
     }
 
-    // Ссылка на общую таблицу
-    const tableRef = TABLE_REF_RE.exec(line);
-    if (tableRef) {
-      flushParagraph();
-      blocks.push({ type: 'tableRef', id: tableRef[1].trim() });
-      i += 1;
-      continue;
-    }
-
     // Pipe-таблица: строка | a | b | и следующая строка-разделитель | --- | --- |
     const nextLine = lines[i + 1] ? lines[i + 1].trim() : '';
     if (line.startsWith('|') && TABLE_SEPARATOR_RE.test(nextLine)) {
@@ -127,7 +135,7 @@ export const parseMarkdown = (text) => {
       continue;
     }
 
-    paragraph.push(line);
+    pushLineWithTableRefs(line);
     i += 1;
   }
 

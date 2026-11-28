@@ -7,7 +7,7 @@ import ClassDetail from '../components/ClassDetail';
 import FavoriteButton from '../components/FavoriteButton';
 import Breadcrumbs from '../components/Breadcrumbs';
 import Markdown from '../components/Markdown';
-import { renderFormattedText, renderFormattedFeature, pluralizeRu } from '../utils/helpers';
+import { pluralizeRu } from '../utils/helpers';
 import { resolveStatblocks } from '../utils/statblocks';
 
 export default function ItemDetail() {
@@ -46,7 +46,7 @@ export default function ItemDetail() {
             )}
             <div className={styles.description}>
               <h3>Описание</h3>
-              {renderFormattedText(item.description)}
+              <Markdown content={item.description} />
             </div>
             <StatBlock monster={item} />
             {item.tags && (
@@ -75,11 +75,11 @@ export default function ItemDetail() {
             </div>
             <div className={styles.description}>
               <h3>Описание</h3>
-              {renderFormattedText(item.description)}
+              <Markdown content={item.description} />
               {item.higher_levels && (
                 <>
                   <h3>На более высоких уровнях</h3>
-                  {renderFormattedText(item.higher_levels)}
+                  <Markdown content={item.higher_levels} />
                 </>
               )}
             </div>
@@ -127,7 +127,7 @@ export default function ItemDetail() {
       {/* Общее описание */}
       <div className={styles.description}>
         <h3>Описание</h3>
-        {renderFormattedText(item.description)}
+        <Markdown content={item.description} />
       </div>
 
       {/* Общие особенности */}
@@ -136,7 +136,7 @@ export default function ItemDetail() {
           <h3>Общие особенности</h3>
           {item.commonFeatures.map((feat, i) => (
             <div key={i} className={styles.raceFeature}>
-              {renderFormattedFeature(feat.name, feat.description)}
+              <Markdown content={feat.description} featureName={feat.name} />
             </div>
           ))}
         </div>
@@ -167,7 +167,7 @@ export default function ItemDetail() {
                   <div id={`${sectionKey}-body`} className={styles.variantBody}>
                     {variant.description && (
                       <div className={styles.description}>
-                        {renderFormattedText(variant.description)}
+                        <Markdown content={variant.description} />
                       </div>
                     )}
                     {Array.isArray(variant.features) && variant.features.length > 0 && (
@@ -175,7 +175,7 @@ export default function ItemDetail() {
                         <h4>Особенности варианта</h4>
                         {variant.features.map((feat, j) => (
                           <div key={j} className={styles.raceFeature}>
-                            {renderFormattedFeature(feat.name, feat.description)}
+                            <Markdown content={feat.description} featureName={feat.name} />
                           </div>
                         ))}
                       </div>
@@ -202,7 +202,7 @@ export default function ItemDetail() {
             </div>
             <div className={styles.description}>
               <h3>Описание</h3>
-              {renderFormattedText(item.description)}
+              <Markdown content={item.description} />
             </div>
           </>
         );
@@ -215,7 +215,7 @@ export default function ItemDetail() {
             </div>
             <div className={styles.description}>
               <h3>Описание</h3>
-              {renderFormattedText(item.description)}
+              <Markdown content={item.description} />
             </div>
           </>
         );
@@ -226,7 +226,7 @@ export default function ItemDetail() {
             <div className={styles.subclassDescription}>
               <h2>Описание подкласса</h2>
               {item.subtitle && <p className={styles.subclassSubtitle}>{item.subtitle}</p>}
-              {renderFormattedText(item.description)}
+              <Markdown content={item.description} />
             </div>
             {item.features && item.features.length > 0 && (
               <div className={styles.subclassFeatures}>
@@ -239,7 +239,7 @@ export default function ItemDetail() {
                     </div>
                     <hr className={styles.featureDivider} />
                     <div className={styles.featureDescription}>
-                      {renderFormattedText(feature.description)}
+                      <Markdown content={feature.description} />
                     </div>
                   </div>
                 ))}
@@ -313,7 +313,7 @@ export default function ItemDetail() {
       {/* Описание */}
       <div className={styles.description}>
         <h3>Описание</h3>
-        {renderFormattedText(item.description)}
+        <Markdown content={item.description} />
       </div>
     </>
   );
