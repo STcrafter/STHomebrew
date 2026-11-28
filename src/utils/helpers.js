@@ -133,4 +133,3 @@ export const generateLegendaryDescription = (name, uses, lairUses = null) => {
   const restorePart = `${name} восстанавливает все потраченные использования в начале своего хода.`;
   return `${base}${lairPart}. ${actionPart} ${restorePart}`;
 };
-

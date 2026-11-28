@@ -122,10 +122,9 @@ export default function Markdown({ content, className = '', featureName = null }
 
   if (label) {
     renderedBlocks = [...blocks];
-    prefixIndex = renderedBlocks.findIndex((block) => block.type === 'paragraph');
-    if (prefixIndex === -1) {
+    prefixIndex = 0;
+    if (renderedBlocks[0]?.type !== 'paragraph') {
       renderedBlocks.unshift({ type: 'paragraph', text: '' });
-      prefixIndex = 0;
     }
   }
 

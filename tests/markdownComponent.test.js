@@ -55,6 +55,17 @@ test('feature name is inserted before a first tableRef block', () => {
   assert.ok(html.indexOf('Название.') < html.indexOf('<table'));
 });
 
+test('feature name heads a description that starts with a table', () => {
+  const html = renderMarkdown('[table:mind_domain_spells]\n\nПосле', 'Название');
+  assert.ok(html.indexOf('<table') !== -1);
+  assert.ok(html.indexOf('Название.') < html.indexOf('<table'));
+});
+
+test('feature name heads a description that starts with a heading', () => {
+  const html = renderMarkdown('# Заголовок\n\nТекст', 'Название');
+  assert.ok(html.indexOf('Название.') < html.indexOf('<h2'));
+});
+
 test('feature name alone does not add a second dot', () => {
   const html = renderMarkdown('Текст', 'Название.');
   assert.ok(!html.includes('Название..'));
