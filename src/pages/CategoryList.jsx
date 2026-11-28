@@ -6,9 +6,10 @@ import FilterPanel from '../components/FilterPanel';
 import SearchBar from '../components/SearchBar';
 import FavoriteButton from '../components/FavoriteButton';
 import Breadcrumbs from '../components/Breadcrumbs';
+import CardMeta from '../components/CardMeta';
 import { useFavorites } from '../context/FavoritesContext';
 import styles from './CategoryList.module.css';
-import { formatChallengeRating, getDangerColor, pluralizeRu } from '../utils/helpers';
+import { pluralizeRu } from '../utils/helpers';
 import { getSortOptions, sortItems, toggleSortDirection } from '../utils/sorting';
 import { defaultListViewState, loadListViewPreferences, saveListViewPreferences } from '../utils/listViewPreferences';
 import { isItemVisible } from '../utils/itemVisibility';
@@ -148,87 +149,17 @@ export default function CategoryList() {
     updateCurrentView(current => ({ ...current, search: query }));
   };
 
-  const renderItem = (item) => {
-    const levelCount = Array.isArray(item.features)
-      ? new Set(item.features.map(f => f.level)).size
-      : 0;
-    return (
-      <div className={styles.card}>
-        <div className={styles.cardHeader}>
-          <Link to={`/category/${category}/${item.id}`} className={styles.cardLink}>
-            <h3 title={item.name}>{item.name}</h3>
-          </Link>
-          <FavoriteButton id={item.id} />
-        </div>
-
-        {category === 'monsters' && (
-          <div className={styles.meta}>
-            {item.challenge_rating !== undefined && (
-              <span
-                className={styles.dangerDot}
-                style={{ backgroundColor: getDangerColor(item.challenge_rating) }}
-                title={`ОП ${formatChallengeRating(item.challenge_rating)}`}
-              />
-            )}
-            <span>ОП {formatChallengeRating(item.challenge_rating)}</span>
-            {Array.isArray(item.habitat) && item.habitat.length > 0 && (
-              <span>{item.habitat.slice(0, 2).join(', ')}</span>
-            )}
-          </div>
-        )}
-        {category === 'spells' && (
-          <div className={styles.meta}>
-            <span>{item.level} {pluralizeRu(item.level, ['уровень', 'уровня', 'уровней'])}</span>
-            <span>{item.school}</span>
-          </div>
-        )}
-        {category === 'items' && (
-          <div className={styles.meta}>
-            <span>{item.rarity}</span>
-            <span>{item.type}</span>
-          </div>
-        )}
-        {category === 'classes' && (
-          <div className={styles.meta}>
-            <span>
-              {pluralizeRu(levelCount, ['Уровень', 'Уровня', 'Уровней'])}: {levelCount}
-            </span>
-          </div>
-        )}
-        {category === 'subclasses' && (
-          <div className={styles.meta}>
-            <span>{item.class}</span>
-            {item.tags && item.tags.length > 0 && (
-              <span>{item.tags.slice(0, 3).join(', ')}</span>
-            )}
-          </div>
-        )}
-        {category === 'races' && (
-          <div className={styles.meta}>
-            <span>Особенностей: {item.features?.length || 0}</span>
-          </div>
-        )}
-        {category === 'backgrounds' && (
-          <div className={styles.meta}>
-            {Array.isArray(item.abilities) && item.abilities.map((ab, i) => (
-              <span key={i}>{ab}</span>
-            ))}
-          </div>
-        )}
-        {category === 'feats' && (
-          <div className={styles.meta}>
-            {item.category && <span>{item.category}</span>}
-            <span>{item.prerequisites || 'Нет требований'}</span>
-          </div>
-        )}
-        {category === 'homerules' && (
-          <div className={styles.meta}>
-            <span>{item.source}</span>
-          </div>
-        )}
+  const renderItem = (item) => (
+    <div className={styles.card}>
+      <div className={styles.cardHeader}>
+        <Link to={`/category/${category}/${item.id}`} className={styles.cardLink}>
+          <h3 title={item.name}>{item.name}</h3>
+        </Link>
+        <FavoriteButton id={item.id} />
       </div>
-    );
-  };
+      <CardMeta category={category} item={item} styles={styles} />
+    </div>
+  );
 
   return (
     <div className={styles.page} id="main-content">

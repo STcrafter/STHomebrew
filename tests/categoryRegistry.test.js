@@ -16,6 +16,11 @@ test('category config keys match data and constructor schemas', () => {
   assert.deepEqual(Object.keys(constructorSchemas).sort(), Object.keys(data).sort());
 });
 
+test('config directory has exactly three files', () => {
+  const configDir = path.resolve('src/config');
+  assert.deepEqual(fs.readdirSync(configDir).sort(), ['categories.js', 'categoryViews.jsx', 'constructorSchemas.js']);
+});
+
 test('config files have no forbidden imports', () => {
   const configDir = path.resolve('src/config');
   for (const file of fs.readdirSync(configDir)) {
@@ -29,6 +34,9 @@ test('config files have no forbidden imports', () => {
         assert.ok(!resolved.includes('/src/components'), `${file} imports components: ${spec}`);
         assert.ok(!resolved.includes('/src/pages'), `${file} imports pages: ${spec}`);
         assert.notEqual(spec, 'react');
+      }
+      if (file === 'categoryViews.jsx') {
+        assert.ok(!resolved.includes('/src/pages'), `${file} imports pages: ${spec}`);
       }
     }
   }
