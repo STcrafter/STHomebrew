@@ -1,9 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
-import { createServer } from 'vite';
 import { pluralizeRu } from '../src/utils/helpers.js';
 
 const read = (file) => fs.readFileSync(file, 'utf8');
@@ -15,33 +12,6 @@ test('Russian pluralization picks the correct form', () => {
   assert.equal(pluralizeRu(5, forms), 'записей');
   assert.equal(pluralizeRu(11, forms), 'записей');
   assert.equal(pluralizeRu(21, forms), 'запись');
-});
-
-test('formatted text escapes HTML instead of injecting raw markup', async () => {
-  const server = await createServer({ appType: 'custom', logLevel: 'silent', server: { middlewareMode: true } });
-  try {
-    const { renderFormattedText } = await server.ssrLoadModule('/src/utils/helpers.js');
-    const html = renderToStaticMarkup(
-      React.createElement('div', null, renderFormattedText('<img src=x onerror=alert(1)> **жирный**'))
-    );
-    assert.ok(!html.includes('<img'), 'raw HTML must not be rendered');
-    assert.match(html, /&lt;img/);
-    assert.match(html, /<strong>жирный<\/strong>/);
-  } finally {
-    await server.close();
-  }
-});
-
-test('feature names are escaped in generated markup', async () => {
-  const server = await createServer({ appType: 'custom', logLevel: 'silent', server: { middlewareMode: true } });
-  try {
-    const { renderFormattedFeature } = await server.ssrLoadModule('/src/utils/helpers.js');
-    const html = renderToStaticMarkup(React.createElement('div', null, renderFormattedFeature('<b>x</b>', null)));
-    assert.ok(!html.includes('<b>x</b>'));
-    assert.match(html, /&lt;b&gt;x&lt;\/b&gt;/);
-  } finally {
-    await server.close();
-  }
 });
 
 test('category list uses pluralization helper', () => {

@@ -31,13 +31,15 @@ const renderInline = (text, keyPrefix) =>
     }
   });
 
-const renderParagraph = (text, key) => {
+const renderParagraph = (text, key, prefixNode = null) => {
   const lines = text.split('\n');
   return (
     <p key={key} className={styles.paragraph}>
       {lines.map((line, lineIndex) => (
         <Fragment key={`${key}-l${lineIndex}`}>
           {lineIndex > 0 && <br />}
+          {lineIndex === 0 && prefixNode}
+          {lineIndex === 0 && prefixNode && line && ' '}
           {renderInline(line, `${key}-l${lineIndex}`)}
         </Fragment>
       ))}
@@ -70,7 +72,7 @@ const renderTable = (headers, rows, key) => (
   </div>
 );
 
-const renderBlock = (block, index) => {
+const renderBlock = (block, index, prefixNode = null) => {
   const key = `block-${index}`;
 
   switch (block.type) {
@@ -97,6 +99,7 @@ const renderBlock = (block, index) => {
     case 'table':
       return renderTable(block.headers, block.rows, key);
     case 'paragraph':
+      return renderParagraph(block.text, key, prefixNode);
     default:
       return renderParagraph(block.text, key);
   }
@@ -106,14 +109,31 @@ const renderBlock = (block, index) => {
  * Рендерит markdown-подобный текст страницы (например, хоумрула) как документ.
  * Возможности разметки описаны в src/utils/markdown.js
  */
-export default function Markdown({ content, className = '' }) {
+export default function Markdown({ content, className = '', featureName = null }) {
   const blocks = useMemo(() => parseMarkdown(content), [content]);
+  const label = String(featureName ?? '').trim();
 
-  if (blocks.length === 0) return null;
+  if (!blocks.length && !label) return null;
+
+  const prefixText = label && !label.endsWith('.') ? `${label}.` : label;
+  const prefixNode = label ? <em><strong>{prefixText}</strong></em> : null;
+  let renderedBlocks = blocks;
+  let prefixIndex = -1;
+
+  if (label) {
+    renderedBlocks = [...blocks];
+    prefixIndex = renderedBlocks.findIndex((block) => block.type === 'paragraph');
+    if (prefixIndex === -1) {
+      renderedBlocks.unshift({ type: 'paragraph', text: '' });
+      prefixIndex = 0;
+    }
+  }
 
   return (
     <div className={`${styles.markdown} ${className}`.trim()}>
-      {blocks.map(renderBlock)}
+      {renderedBlocks.map((block, index) =>
+        renderBlock(block, index, index === prefixIndex ? prefixNode : null)
+      )}
     </div>
   );
 }
