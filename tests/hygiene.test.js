@@ -149,6 +149,14 @@ test('no transition: all in stylesheets', () => {
   });
 });
 
+test('formatted tooltip has hover and focus styles', () => {
+  const css = read('src/index.css');
+  assert.match(css, /\.formatted-tooltip\s*\{/);
+  assert.match(css, /content:\s*attr\(data-tip\)/);
+  assert.match(css, /\.formatted-tooltip:hover[^{]*,\s*\.formatted-tooltip:focus/);
+  assert.match(css, /\.formatted-tooltip:focus-visible/);
+});
+
 test('unused ClassTable component is removed', () => {
   assert.ok(!fs.existsSync('src/components/ClassTable.jsx'));
   assert.ok(!fs.existsSync('src/components/ClassTable.module.css'));
