@@ -13,13 +13,6 @@ export const pluralizeRu = (count, forms) => {
   return forms[2];
 };
 
-const escapeHtml = (value) => String(value)
-  .replace(/&/g, '&amp;')
-  .replace(/</g, '&lt;')
-  .replace(/>/g, '&gt;')
-  .replace(/"/g, '&quot;')
-  .replace(/'/g, '&#39;');
-
 /**
  * Форматирует значение Challenge Rating для отображения
  * 0.125 → 1/8
@@ -145,25 +138,84 @@ export const generateLegendaryDescription = (name, uses, lairUses = null) => {
 };
 
 /**
- * Преобразует текст с Markdown-подобной разметкой в React-элементы.
- * Поддерживает:
- * - **жирный текст** (оборачивает в <strong>)
- * - абзацы через \n\n
- * - переносы строк внутри абзаца через \n → <br/>
+ * Разбивает текст на строки, заменяя \n на <br />. React сам экранирует текст.
  */
-const renderPlainText = (text) => {
+const renderTextLines = (text, keyPrefix) => text.split('\n').flatMap((line, index) => {
+  const nodes = [];
+  if (index > 0) {
+    nodes.push(React.createElement('br', { key: `${keyPrefix}-br-${index}` }));
+  }
+  if (line) nodes.push(line);
+  return nodes;
+});
+
+/**
+ * Токенизирует один абзац: [tooltip: текст] → маркер, **жирный** → <strong>.
+ * Текст подсказки остаётся обычным текстом атрибута data-tip.
+ */
+const renderParagraphText = (text, keyPrefix) => {
+  const nodes = [];
+  const tooltipRegex = /\[tooltip:([^\]]*)\]/g;
+  let lastIndex = 0;
+  let match;
+  let segmentIndex = 0;
+
+  const renderChunk = (chunk, keyBase) => {
+    const boldRegex = /\*\*(.*?)\*\*/g;
+    let boldLast = 0;
+    let boldMatch;
+    let piece = 0;
+
+    while ((boldMatch = boldRegex.exec(chunk)) !== null) {
+      const key = `${keyBase}-${piece++}`;
+      if (boldMatch.index > boldLast) {
+        nodes.push(...renderTextLines(chunk.slice(boldLast, boldMatch.index), `${key}-t`));
+      }
+      nodes.push(React.createElement(
+        'strong',
+        { key: `${key}-strong` },
+        ...renderTextLines(boldMatch[1], `${key}-s`)
+      ));
+      boldLast = boldMatch.index + boldMatch[0].length;
+    }
+    if (boldLast < chunk.length) {
+      nodes.push(...renderTextLines(chunk.slice(boldLast), `${keyBase}-${piece}-t`));
+    }
+  };
+
+  while ((match = tooltipRegex.exec(text)) !== null) {
+    renderChunk(text.slice(lastIndex, match.index), `${keyPrefix}-s${segmentIndex++}`);
+    nodes.push(React.createElement(
+      'span',
+      {
+        key: `${keyPrefix}-tooltip-${segmentIndex++}`,
+        className: 'formatted-tooltip',
+        tabIndex: 0,
+        'data-tip': match[1].trim(),
+      },
+      'i'
+    ));
+    lastIndex = match.index + match[0].length;
+  }
+  renderChunk(text.slice(lastIndex), `${keyPrefix}-s${segmentIndex}`);
+  return nodes;
+};
+
+/**
+ * Собирает абзацы из текста с Markdown-подобной разметкой.
+ * Поддерживает **жирный**, [tooltip: текст], \n\n и \n → <br />.
+ * prefixNode добавляется в начало первого абзаца.
+ */
+const renderParagraphs = (text, keyPrefix, prefixNode = null) => {
   if (!text) return null;
-  const paragraphs = text.split(/\n\n+/);
-  return paragraphs.map((p, idx) => {
-   const html = escapeHtml(p)
-     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-     .replace(/\n/g, '<br/>');
-    return React.createElement('p', {
-      key: `p-${idx}`,
-      className: 'formatted-paragraph',
-      dangerouslySetInnerHTML: { __html: html }
-    });
-  });
+  return text.split(/\n\n+/).map((paragraph, idx) =>
+    React.createElement(
+      'p',
+      { key: `${keyPrefix}-p${idx}`, className: 'formatted-paragraph' },
+      idx === 0 ? prefixNode : null,
+      ...renderParagraphText(paragraph, `${keyPrefix}-p${idx}`)
+    )
+  );
 };
 
 const renderTable = (headers, rows, idx) => {
@@ -203,7 +255,7 @@ const renderTable = (headers, rows, idx) => {
   }, table);
 };
 
-export const renderFormattedText = (text) => {
+export const renderFormattedText = (text, prefixNode = null) => {
   if (!text) return null;
 
   const tableRefRegex = /\[table:([^\]]+)\]/g;
@@ -227,10 +279,11 @@ export const renderFormattedText = (text) => {
   }
 
   if (parts.every(p => p.type === 'text')) {
-    return renderPlainText(text);
+    return renderParagraphs(text, 'p', prefixNode);
   }
 
-  return parts.map((part, idx) => {
+  let prefixUsed = false;
+  return parts.flatMap((part, idx) => {
     if (part.type === 'table-ref') {
       const tableData = tables[part.id];
       if (tableData && tableData.headers && tableData.rows) {
@@ -243,7 +296,9 @@ export const renderFormattedText = (text) => {
         );
       }
     } else {
-      return renderPlainText(part.content);
+      const prefix = prefixUsed ? null : prefixNode;
+      prefixUsed = true;
+      return renderParagraphs(part.content, `part-${idx}`, prefix);
     }
   });
 };

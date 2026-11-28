@@ -8,6 +8,16 @@ import { pluralizeRu } from '../src/utils/helpers.js';
 
 const read = (file) => fs.readFileSync(file, 'utf8');
 
+async function renderFormatted(input) {
+  const server = await createServer({ appType: 'custom', logLevel: 'silent', server: { middlewareMode: true } });
+  try {
+    const { renderFormattedText } = await server.ssrLoadModule('/src/utils/helpers.js');
+    return renderToStaticMarkup(React.createElement('div', null, renderFormattedText(input)));
+  } finally {
+    await server.close();
+  }
+}
+
 test('Russian pluralization picks the correct form', () => {
   const forms = ['запись', 'записи', 'записей'];
   assert.equal(pluralizeRu(1, forms), 'запись');
@@ -30,6 +40,38 @@ test('formatted text escapes HTML instead of injecting raw markup', async () => 
   } finally {
     await server.close();
   }
+});
+
+test('formatted text renders a tooltip marker instead of raw markup', async () => {
+  const html = await renderFormatted('Перед [tooltip: Подсказка] после');
+  assert.match(html, /data-tip="Подсказка"/);
+  assert.match(html, />i<\/span>/);
+  assert.ok(!html.includes('[tooltip:'));
+});
+
+test('formatted text renders bold text next to a tooltip', async () => {
+  const html = await renderFormatted('**жирный** [tooltip: Подсказка]');
+  assert.match(html, /<strong>жирный<\/strong>/);
+  assert.match(html, /data-tip="Подсказка"/);
+});
+
+test('tooltip text escapes HTML', async () => {
+  const html = await renderFormatted('[tooltip:<img src=x onerror=alert(1)>]');
+  assert.ok(!html.includes('<img'));
+  assert.match(html, /&lt;img/);
+});
+
+test('formatted text keeps inline table references', async () => {
+  const html = await renderFormatted('**Мутации** [table:ruinbound_mutations]');
+  assert.match(html, /formatted-table/);
+  assert.ok(!html.includes('[table:'));
+});
+
+test('formatted text preserves paragraphs and line breaks', async () => {
+  const html = await renderFormatted('первая\nвторая\n\nтретья');
+  assert.equal((html.match(/formatted-paragraph/g) || []).length, 2);
+  assert.match(html, /<br\/>/);
+  assert.match(html, /третья/);
 });
 
 test('feature names are escaped in generated markup', async () => {
