@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import path from 'node:path';
 import { pluralizeRu } from '../src/utils/helpers.js';
 
 const read = (file) => fs.readFileSync(file, 'utf8');
@@ -65,4 +66,16 @@ test('no transition: all in stylesheets', () => {
 test('unused ClassTable component is removed', () => {
   assert.ok(!fs.existsSync('src/components/ClassTable.jsx'));
   assert.ok(!fs.existsSync('src/components/ClassTable.module.css'));
+});
+
+const sourceFiles = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+  const full = path.join(dir, entry.name);
+  return entry.isDirectory() ? sourceFiles(full) : [full];
+});
+
+test('no dangerouslySetInnerHTML anywhere in src', () => {
+  const offenders = sourceFiles('src')
+    .filter((file) => /\.(js|jsx)$/.test(file))
+    .filter((file) => fs.readFileSync(file, 'utf8').includes('dangerouslySetInnerHTML'));
+  assert.deepEqual(offenders, []);
 });
