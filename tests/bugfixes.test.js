@@ -9,6 +9,7 @@ import { StaticRouter } from 'react-router-dom/server.js';
 import { createServer } from 'vite';
 import { data } from '../src/data/index.js';
 import { tables } from '../src/data/tables.js';
+import { primeStore } from './helpers/primeStore.js';
 
 async function withServer(fn) {
   const savedStorage = globalThis.localStorage;
@@ -18,6 +19,7 @@ async function withServer(fn) {
     logLevel: 'silent',
     server: { middlewareMode: true },
   });
+  await primeStore(server);
   try {
     return await fn(server);
   } finally {
@@ -109,18 +111,29 @@ test('previous/next links skip monsters marked hidden', async () => {
     const sorted = [...serverData.monsters].sort((a, b) => a.name.localeCompare(b.name));
     const current = sorted[5];
     const hiddenNeighbour = sorted[6];
-    hiddenNeighbour.hidden = true;
-    try {
-      const html = await renderRoute(
-        server,
-        '/src/pages/ItemDetail.jsx',
-        '/category/:category/:id',
-        `/category/monsters/${current.id}`
-      );
-      assert.ok(!html.includes(`/${hiddenNeighbour.id}`), 'link to hidden monster must not be rendered');
-    } finally {
-      delete hiddenNeighbour.hidden;
-    }
+    const modifiedMonsters = serverData.monsters.map((item) =>
+      item.id === hiddenNeighbour.id ? { ...item, hidden: true } : item
+    );
+    await primeStore(server, { monsters: modifiedMonsters });
+
+    const html = await renderRoute(
+      server,
+      '/src/pages/ItemDetail.jsx',
+      '/category/:category/:id',
+      `/category/monsters/${current.id}`
+    );
+    assert.ok(!html.includes(`href="/category/monsters/${hiddenNeighbour.id}"`), 'link to hidden monster must not be rendered');
+
+    const hiddenHtml = await renderRoute(
+      server,
+      '/src/pages/ItemDetail.jsx',
+      '/category/:category/:id',
+      `/category/monsters/${hiddenNeighbour.id}`
+    );
+    assert.ok(
+      !hiddenHtml.includes(`href="/category/monsters/${sorted[0].id}"`),
+      'hidden item page must not link to the first visible monster'
+    );
   });
 });
 

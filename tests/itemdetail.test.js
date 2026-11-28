@@ -6,6 +6,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server.js';
 import { createServer } from 'vite';
 import { JSDOM } from 'jsdom';
+import { primeStore } from './helpers/primeStore.js';
 
 test('missing spell statblock warning is announced as an alert', async () => {
   const savedLocalStorage = globalThis.localStorage;
@@ -15,6 +16,7 @@ test('missing spell statblock warning is announced as an alert', async () => {
     logLevel: 'silent',
     server: { middlewareMode: true },
   });
+  await primeStore(server);
   let spell;
   let pushed = false;
   try {
@@ -64,6 +66,7 @@ test('race feature names render as bold italic, not escaped markup', async () =>
     logLevel: 'silent',
     server: { middlewareMode: true, watch: null },
   });
+  await primeStore(server);
   try {
     const { default: ItemDetail } = await server.ssrLoadModule('/src/pages/ItemDetail.jsx');
     const { FavoritesProvider } = await server.ssrLoadModule('/src/context/FavoritesContext.jsx');
@@ -118,6 +121,7 @@ test('expanded variant features render as bold italic, not escaped markup', asyn
     logLevel: 'silent',
     server: { middlewareMode: true, watch: null },
   });
+  await primeStore(server);
   try {
     const { default: ItemDetail } = await server.ssrLoadModule('/src/pages/ItemDetail.jsx');
     const { FavoritesProvider } = await server.ssrLoadModule('/src/context/FavoritesContext.jsx');
@@ -183,6 +187,7 @@ test('subclass detail renders a tooltip marker instead of raw markup', async () 
     logLevel: 'silent',
     server: { middlewareMode: true, watch: null },
   });
+  await primeStore(server);
   try {
     const { default: ItemDetail } = await server.ssrLoadModule('/src/pages/ItemDetail.jsx');
     const { FavoritesProvider } = await server.ssrLoadModule('/src/context/FavoritesContext.jsx');

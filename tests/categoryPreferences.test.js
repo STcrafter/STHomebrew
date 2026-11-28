@@ -5,6 +5,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { Route, Routes } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server.js';
 import { createServer } from 'vite';
+import { isItemVisible } from '../src/utils/itemVisibility.js';
+import { primeStore } from './helpers/primeStore.js';
 
 async function withSavedPreferences(preferences, run) {
   const savedLocalStorage = globalThis.localStorage;
@@ -18,6 +20,7 @@ async function withSavedPreferences(preferences, run) {
     logLevel: 'silent',
     server: { middlewareMode: true },
   });
+  await primeStore(server);
   try {
     await run(server);
   } finally {
@@ -84,7 +87,7 @@ test('saved filters apply only to their own category', async () => {
     const { data } = await server.ssrLoadModule('/src/data/index.js');
 
     const level3 = data.spells.filter((entry) => entry.level === 3).length;
-    const visibleMonsters = data.monsters.filter((entry) => entry.hidden !== true).length;
+    const visibleMonsters = data.monsters.filter(isItemVisible).length;
     assert.match(spellsHtml, new RegExp(`${level3} записей`));
     assert.match(monstersHtml, new RegExp(`${visibleMonsters} записей`));
   });

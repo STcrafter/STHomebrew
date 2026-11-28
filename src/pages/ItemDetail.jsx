@@ -1,22 +1,15 @@
 import { useParams, Link } from 'react-router-dom';
-import { data } from '../data';
 import styles from './ItemDetail.module.css';
 import FavoriteButton from '../components/FavoriteButton';
 import Breadcrumbs from '../components/Breadcrumbs';
-import { isItemVisible } from '../utils/itemVisibility';
 import { categoryViews } from '../config/categoryViews';
+import { useCategoryData } from '../hooks/useCategoryData';
 
 export default function ItemDetail() {
   const { category, id } = useParams();
-  const items = data[category] || [];
-  const item = items.find(it => it.id === id);
-  // Навигация Prev/Next (по алфавиту)
-  const sortedItems = [...items]
-    .filter(isItemVisible)
-    .sort((a, b) => a.name.localeCompare(b.name));
-  const currentIndex = sortedItems.findIndex(i => i.id === id);
-  const prevItem = currentIndex > 0 ? sortedItems[currentIndex - 1] : null;
-  const nextItem = currentIndex < sortedItems.length - 1 ? sortedItems[currentIndex + 1] : null;
+  const { getById, getNeighbours } = useCategoryData(category);
+  const item = getById(id);
+  const { prev: prevItem, next: nextItem } = getNeighbours(id);
 
   if (!item) {
     return (

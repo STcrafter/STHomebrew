@@ -7,6 +7,10 @@ import { pluralizeRu } from '../src/utils/helpers.js';
 
 const read = (file) => fs.readFileSync(file, 'utf8');
 
+function readImportSpecifiers(source) {
+  return [...source.matchAll(/(?:import|export)\s+(?:[^'"]*?\s+from\s+)?['"]([^'"]+)['"]/g)].map((m) => m[1]);
+}
+
 test('Russian pluralization picks the correct form', () => {
   const forms = ['запись', 'записи', 'записей'];
   assert.equal(pluralizeRu(1, forms), 'запись');
@@ -138,6 +142,21 @@ test('unused ClassTable component is removed', () => {
 const sourceFiles = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
   const full = path.join(dir, entry.name);
   return entry.isDirectory() ? sourceFiles(full) : [full];
+});
+
+test('runtime modules do not import the data barrel', () => {
+  const barrel = path.resolve('src/data/index.js');
+  for (const file of sourceFiles('src')) {
+    if (!/\.(js|jsx)$/.test(file)) continue;
+    for (const spec of readImportSpecifiers(fs.readFileSync(file, 'utf8'))) {
+      if (!spec.startsWith('.')) continue;
+      const resolved = path.resolve(path.dirname(file), spec).replace(/\\/g, '/');
+      assert.ok(
+        resolved !== barrel && resolved !== barrel.replace(/\\/g, '/').replace(/\/index\.js$/, ''),
+        `${file} imports the data barrel: ${spec}`
+      );
+    }
+  }
 });
 
 test('no dangerouslySetInnerHTML anywhere in src', () => {

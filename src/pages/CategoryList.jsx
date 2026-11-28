@@ -1,6 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { data } from '../data';
 import { VirtuosoGrid } from 'react-virtuoso';
 import FilterPanel from '../components/FilterPanel';
 import SearchBar from '../components/SearchBar';
@@ -12,14 +11,13 @@ import styles from './CategoryList.module.css';
 import { pluralizeRu } from '../utils/helpers';
 import { getSortOptions, sortItems, toggleSortDirection } from '../utils/sorting';
 import { defaultListViewState, loadListViewPreferences, saveListViewPreferences } from '../utils/listViewPreferences';
-import { isItemVisible } from '../utils/itemVisibility';
 import { categories } from '../config/categories';
-
-const EMPTY_ITEMS = [];
+import { useCategoryData } from '../hooks/useCategoryData';
 
 export default function CategoryList() {
   const { category } = useParams();
-  const items = data[category] ?? EMPTY_ITEMS;
+  const { getVisible } = useCategoryData(category);
+  const items = getVisible();
   const { isFavorite } = useFavorites();
   const headerRef = useRef(null);
   const gridRef = useRef(null);
@@ -95,7 +93,6 @@ export default function CategoryList() {
   // Фильтрация и поиск
   const filteredItems = useMemo(() => {
     let result = items.filter(item => {
-      if (!isItemVisible(item)) return false;
       if (search && !item.name.toLowerCase().includes(search.toLowerCase())) return false;
 
       for (const [key, filter] of Object.entries(filters)) {

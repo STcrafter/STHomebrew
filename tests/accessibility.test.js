@@ -6,6 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { Route, Routes } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server.js';
 import { createServer } from 'vite';
+import { primeStore } from './helpers/primeStore.js';
 
 async function withServer(fn) {
   const savedStorage = globalThis.localStorage;
@@ -15,6 +16,7 @@ async function withServer(fn) {
     logLevel: 'silent',
     server: { middlewareMode: true },
   });
+  await primeStore(server);
   try {
     return await fn(server);
   } finally {

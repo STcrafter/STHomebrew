@@ -5,6 +5,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { Route, Routes } from 'react-router-dom';
 import { StaticRouter } from 'react-router-dom/server.js';
 import { createServer } from 'vite';
+import { isItemVisible } from '../src/utils/itemVisibility.js';
+import { primeStore } from './helpers/primeStore.js';
 
 let server;
 let savedLocalStorage;
@@ -21,6 +23,7 @@ before(async () => {
     logLevel: 'silent',
     server: { middlewareMode: true, watch: null },
   });
+  await primeStore(server);
   ({ default: ItemDetail } = await server.ssrLoadModule('/src/pages/ItemDetail.jsx'));
   ({ FavoritesProvider } = await server.ssrLoadModule('/src/context/FavoritesContext.jsx'));
   ({ data } = await server.ssrLoadModule('/src/data/index.js'));
@@ -62,7 +65,7 @@ test('categoryViews covers every category with Detail function and no CardMeta k
 
 test('detail route renders for every category', async (t) => {
   for (const [category, items] of Object.entries(data)) {
-    const item = items.find((entry) => entry.hidden !== true);
+    const item = items.find(isItemVisible);
     await t.test(`detail route renders for ${category}`, () => {
       const html = renderDetail(`/category/${category}/${item.id}`);
       assert.ok(html.includes(item.name), `${category} did not render item name`);

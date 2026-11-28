@@ -7,8 +7,10 @@ import { StaticRouter } from 'react-router-dom/server.js';
 import { createServer } from 'vite';
 import { JSDOM } from 'jsdom';
 import { data } from '../src/data/index.js';
+import { isItemVisible } from '../src/utils/itemVisibility.js';
+import { primeStore } from './helpers/primeStore.js';
 
-const visibleMonsterCount = data.monsters.filter((item) => item.hidden !== true).length;
+const visibleMonsterCount = data.monsters.filter(isItemVisible).length;
 
 async function withServer(fn, config = {}) {
   const savedStorage = globalThis.localStorage;
@@ -19,6 +21,7 @@ async function withServer(fn, config = {}) {
     server: { middlewareMode: true, watch: null },
     ...config,
   });
+  await primeStore(server);
   try {
     return await fn(server);
   } finally {

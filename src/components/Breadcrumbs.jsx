@@ -1,12 +1,13 @@
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { data } from '../data';
 import { categories } from '../config/categories';
 import styles from './Breadcrumbs.module.css';
+import { useCategoryData } from '../hooks/useCategoryData';
 
 export default function Breadcrumbs() {
   const location = useLocation();
   const params = useParams();
   const { category, id } = params;
+  const { getById } = useCategoryData(category);
   const pathnames = location.pathname.split('/').filter(x => x);
 
   // Убираем 'STHomebrew' из пути
@@ -26,9 +27,7 @@ export default function Breadcrumbs() {
 
   // Если есть id, добавляем объект (последний, без ссылки)
   if (id) {
-    const items = data[category] || [];
-    const item = items.find(it => it.id === id);
-    const objectName = item ? item.name : id;
+    const objectName = getById(id)?.name ?? id;
     crumbs.push({ label: objectName, path: null });
   }
 
