@@ -8,7 +8,8 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test"
+    "test": "node --test",
+    "lint": "eslint --ext .js,.jsx --max-warnings 0 src scripts tests vite.config.js"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -20,6 +21,10 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "js-yaml": "^4.1.0",
     "jsdom": "^31.0.1",
     "vite": "^4.4.5"
   }

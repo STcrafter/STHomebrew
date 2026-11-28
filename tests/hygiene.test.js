@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import yaml from 'js-yaml';
 import { pluralizeRu } from '../src/utils/helpers.js';
 
 const read = (file) => fs.readFileSync(file, 'utf8');
@@ -40,11 +41,69 @@ test('404 page is generated from index.html at build time', () => {
   assert.ok(!workflow.includes('cp dist/index.html'));
 });
 
-test('deploy workflow uses npm ci without redundant table generation', () => {
-  const workflow = read('.github/workflows/deploy.yml');
-  assert.match(workflow, /npm ci/);
-  assert.ok(!workflow.includes('npm install'));
-  assert.equal((workflow.match(/generate-tables/g) || []).length, 1);
+test('checks workflow uses npm ci with a single table generation', () => {
+  const checks = read('.github/workflows/checks.yml');
+  assert.match(checks, /npm ci/);
+  assert.ok(!checks.includes('npm install'));
+  assert.equal((checks.match(/generate-tables/g) || []).length, 1);
+});
+
+test('checks workflow generates tables before lint, tests and build', () => {
+  const checks = read('.github/workflows/checks.yml');
+  assert.match(checks, /generate-tables/);
+  assert.match(checks, /npm (run )?lint/);
+  assert.match(checks, /npm test/);
+  assert.match(checks, /npm run build/);
+  const at = (pattern) => checks.search(pattern);
+  assert.ok(at(/generate-tables/) < at(/npm (run )?lint/));
+  assert.ok(at(/npm (run )?lint/) < at(/npm test/));
+  assert.ok(at(/npm test/) < at(/npm run build/));
+});
+
+test('deploy workflow does not build or generate tables itself', () => {
+  const deploy = read('.github/workflows/deploy.yml');
+  assert.match(deploy, /needs:/);
+  assert.ok(!/npm run build/.test(deploy));
+  assert.ok(!/generate-tables/.test(deploy));
+  assert.match(deploy, /test -f dist\/index\.html/);
+  assert.match(deploy, /test -f dist\/404\.html/);
+});
+
+test('ci workflow is triggered by pull requests', () => {
+  assert.match(read('.github/workflows/ci.yml'), /pull_request/);
+});
+
+test('checks artifact is opt-in and retained for one day', () => {
+  const checks = read('.github/workflows/checks.yml');
+  const deploy = read('.github/workflows/deploy.yml');
+  assert.match(checks, /default:\s*false/);
+  assert.match(checks, /name:\s*dist/);
+  assert.match(deploy, /name:\s*dist/);
+  assert.match(checks, /retention-days:\s*1/);
+});
+
+test('reusable workflow wiring matches its callers', () => {
+  const checks = yaml.load(read('.github/workflows/checks.yml'));
+  const ci = yaml.load(read('.github/workflows/ci.yml'));
+  const deploy = yaml.load(read('.github/workflows/deploy.yml'));
+  const reuse = './.github/workflows/checks.yml';
+
+  assert.equal(ci.jobs.checks.uses, reuse);
+  assert.equal(deploy.jobs.checks.uses, reuse);
+  assert.deepEqual(Object.keys(deploy.jobs.checks.with), Object.keys(checks.on.workflow_call.inputs));
+  assert.equal(deploy.jobs.checks.with['upload-artifact'], true);
+  assert.equal(deploy.jobs.deploy.needs, 'checks');
+});
+
+test('checks workflow uses a Node version supported by the locked test dependencies', () => {
+  const checks = yaml.load(read('.github/workflows/checks.yml'));
+  const setupNode = checks.jobs.checks.steps.find((step) => step.uses === 'actions/setup-node@v4');
+  assert.equal(String(setupNode.with['node-version']), '24');
+});
+
+test('package.json exposes a lint script', () => {
+  const pkg = JSON.parse(read('package.json'));
+  assert.match(pkg.scripts.lint, /eslint/);
 });
 
 test('build output is ignored by git', () => {
