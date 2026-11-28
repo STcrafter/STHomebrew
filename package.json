@@ -7,6 +7,7 @@
     "generate-tables": "node scripts/generateTables.js",
     "dev": "vite dev",
     "build": "vite build",
+    "check:bundles": "node scripts/checkBundles.js",
     "preview": "vite preview",
     "test": "node --test",
     "lint": "eslint --ext .js,.jsx --max-warnings 0 src scripts tests vite.config.js"

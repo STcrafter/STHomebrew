@@ -58,10 +58,12 @@ test('checks workflow generates tables before lint, tests and build', () => {
   assert.match(checks, /npm (run )?lint/);
   assert.match(checks, /npm test/);
   assert.match(checks, /npm run build/);
+  assert.match(checks, /npm run check:bundles/);
   const at = (pattern) => checks.search(pattern);
   assert.ok(at(/generate-tables/) < at(/npm (run )?lint/));
   assert.ok(at(/npm (run )?lint/) < at(/npm test/));
   assert.ok(at(/npm test/) < at(/npm run build/));
+  assert.ok(at(/npm run build/) < at(/npm run check:bundles/));
 });
 
 test('deploy workflow does not build or generate tables itself', () => {
