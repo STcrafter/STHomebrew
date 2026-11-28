@@ -4,12 +4,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import yaml from 'js-yaml';
 import { pluralizeRu } from '../src/utils/helpers.js';
+import { readImportSpecifiers, resolvesToDataBarrel } from './helpers/dataBarrel.js';
 
 const read = (file) => fs.readFileSync(file, 'utf8');
-
-function readImportSpecifiers(source) {
-  return [...source.matchAll(/(?:import|export)\s+(?:[^'"]*?\s+from\s+)?['"]([^'"]+)['"]/g)].map((m) => m[1]);
-}
 
 test('Russian pluralization picks the correct form', () => {
   const forms = ['запись', 'записи', 'записей'];
@@ -147,14 +144,12 @@ const sourceFiles = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMa
 });
 
 test('runtime modules do not import the data barrel', () => {
-  const barrel = path.resolve('src/data/index.js');
   for (const file of sourceFiles('src')) {
     if (!/\.(js|jsx)$/.test(file)) continue;
     for (const spec of readImportSpecifiers(fs.readFileSync(file, 'utf8'))) {
       if (!spec.startsWith('.')) continue;
-      const resolved = path.resolve(path.dirname(file), spec).replace(/\\/g, '/');
       assert.ok(
-        resolved !== barrel && resolved !== barrel.replace(/\\/g, '/').replace(/\/index\.js$/, ''),
+        !resolvesToDataBarrel(file, spec),
         `${file} imports the data barrel: ${spec}`
       );
     }

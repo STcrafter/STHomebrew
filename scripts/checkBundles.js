@@ -24,7 +24,8 @@ function escapedNeedle(value) {
 }
 
 function chunkHasNeedle(source, needle) {
-  return source.includes(needle) || source.includes(escapedNeedle(needle));
+  const haystack = source.toLowerCase();
+  return haystack.includes(needle.toLowerCase()) || haystack.includes(escapedNeedle(needle).toLowerCase());
 }
 
 const monsterNeedle = data.monsters[0].name;
