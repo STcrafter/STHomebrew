@@ -22,12 +22,13 @@ test('ClassDetail keeps hook order when data arrives after an empty render', asy
   define('Node', dom.window.Node);
   define('IS_REACT_ACT_ENVIRONMENT', true);
 
-  const server = await createServer({
-    appType: 'custom',
-    logLevel: 'silent',
-    server: { middlewareMode: true, watch: null },
-  });
+  let server;
   try {
+    server = await createServer({
+      appType: 'custom',
+      logLevel: 'silent',
+      server: { middlewareMode: true, watch: null },
+    });
     const { default: ClassDetail } = await server.ssrLoadModule('/src/components/ClassDetail.jsx');
     const { createRoot } = await import('react-dom/client');
     const { act } = await import('react');
@@ -46,12 +47,13 @@ test('ClassDetail keeps hook order when data arrives after an empty render', asy
         root.render(render({ features: [], subclasses: [], class_table: [], tables: [] }));
       });
       assert.ok(!container.textContent.includes('Данные класса не найдены'));
+      assert.match(container.textContent, /Нет способностей для отображения/);
     } finally {
       await act(async () => { root.unmount(); });
       container.remove();
     }
   } finally {
-    await server.close();
+    if (server) await server.close();
     keys.forEach((key) => {
       if (savedGlobals[key] === undefined) delete globalThis[key];
       else define(key, savedGlobals[key]);

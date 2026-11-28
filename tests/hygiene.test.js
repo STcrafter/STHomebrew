@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import yaml from 'js-yaml';
 import { pluralizeRu } from '../src/utils/helpers.js';
 
 const read = (file) => fs.readFileSync(file, 'utf8');
@@ -82,13 +83,22 @@ test('checks artifact is opt-in and retained for one day', () => {
 });
 
 test('reusable workflow wiring matches its callers', () => {
-  const checks = read('.github/workflows/checks.yml');
-  const deploy = read('.github/workflows/deploy.yml');
-  assert.match(checks, /workflow_call:/);
-  assert.match(checks, /upload-artifact:/);
-  assert.match(deploy, /upload-artifact:\s*true/);
-  assert.match(deploy, /needs:\s*checks/);
-  assert.match(checks, /^\s{2}checks:/m);
+  const checks = yaml.load(read('.github/workflows/checks.yml'));
+  const ci = yaml.load(read('.github/workflows/ci.yml'));
+  const deploy = yaml.load(read('.github/workflows/deploy.yml'));
+  const reuse = './.github/workflows/checks.yml';
+
+  assert.equal(ci.jobs.checks.uses, reuse);
+  assert.equal(deploy.jobs.checks.uses, reuse);
+  assert.deepEqual(Object.keys(deploy.jobs.checks.with), Object.keys(checks.on.workflow_call.inputs));
+  assert.equal(deploy.jobs.checks.with['upload-artifact'], true);
+  assert.equal(deploy.jobs.deploy.needs, 'checks');
+});
+
+test('checks workflow uses a Node version supported by the locked test dependencies', () => {
+  const checks = yaml.load(read('.github/workflows/checks.yml'));
+  const setupNode = checks.jobs.checks.steps.find((step) => step.uses === 'actions/setup-node@v4');
+  assert.equal(String(setupNode.with['node-version']), '24');
 });
 
 test('package.json exposes a lint script', () => {

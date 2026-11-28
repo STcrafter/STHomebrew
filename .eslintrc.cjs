@@ -1,6 +1,7 @@
 module.exports = {
-  // ESLint 8 is a deliberate debt: move to flat config before the next Node bump
-  // or when npm audit starts blocking. Node 18 is EOL since April 2025.
+  // ESLint 8 is a deliberate debt: CI has already moved 18 -> 24 for jsdom 31
+  // (^22.22.2 || ^24.15.0 || >=26), so migrate to flat config before any further
+  // Node bump or when npm audit starts blocking. Node 18 has been EOL since April 2025.
   env: { browser: true, es2020: true },
   ignorePatterns: ['src/data/**', 'dist/**'],
   overrides: [
