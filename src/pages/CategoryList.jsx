@@ -12,18 +12,7 @@ import { formatChallengeRating, getDangerColor, pluralizeRu } from '../utils/hel
 import { getSortOptions, sortItems, toggleSortDirection } from '../utils/sorting';
 import { defaultListViewState, loadListViewPreferences, saveListViewPreferences } from '../utils/listViewPreferences';
 import { isItemVisible } from '../utils/itemVisibility';
-
-const categoryLabels = {
-  monsters: 'Монстры',
-  spells: 'Заклинания',
-  classes: 'Классы',
-  subclasses: 'Подклассы',
-  races: 'Расы',
-  backgrounds: 'Предыстории',   // ← добавлено
-  items: 'Предметы',
-  feats: 'Черты',
-  homerules: 'Домашние правила',
-};
+import { categories } from '../config/categories';
 
 const EMPTY_ITEMS = [];
 
@@ -64,26 +53,14 @@ export default function CategoryList() {
     return () => observer.disconnect();
   }, []);
 
+  const categoryConfig = categories[category];
+
   // Генерация опций для фильтров
   const filterOptions = useMemo(() => {
     if (!items.length) return {};
 
-    let filterFields = [];
-    if (category === 'monsters') {
-      filterFields = ['habitat', 'challenge_rating', 'category'];
-    } else if (category === 'spells') {
-      filterFields = ['classes', 'level', 'school', 'concentration'];
-    } else if (category === 'items') {
-      filterFields = ['rarity', 'type', 'attunement'];
-    } else if (category === 'subclasses') {
-      filterFields = ['class','tags'];
-    } else if (category === 'feats') {
-      filterFields = ['category','ability'];
-    } else if (category === 'backgrounds') {
-      filterFields = ['abilities'];
-    } else {
-      return {};
-    }
+    const filterFields = categoryConfig?.filters ?? [];
+    if (filterFields.length === 0) return {};
 
     const options = {};
     filterFields.forEach(field => {
@@ -258,7 +235,7 @@ export default function CategoryList() {
       <Breadcrumbs />
       <div className={styles.header} ref={headerRef}>
         <Link to="/" className={styles.back}>← На главную</Link>
-        <h1>{categoryLabels[category] || category}</h1>
+        <h1>{categoryConfig?.label || category}</h1>
         <span className={styles.count} aria-live="polite">
           {filteredItems.length} {pluralizeRu(filteredItems.length, ['запись', 'записи', 'записей'])}
         </span>
@@ -267,7 +244,7 @@ export default function CategoryList() {
       <div className={styles.content}>
         {Object.keys(filterOptions).length > 0 && (
           <aside className={styles.filterPanel}>
-            <FilterPanel options={filterOptions} selected={filters} onFilterChange={handleFilterChange} labels={category === 'feats' ? { category: 'Категория' } : {}}/>
+            <FilterPanel options={filterOptions} selected={filters} onFilterChange={handleFilterChange} labels={categoryConfig?.fieldLabels ?? {}}/>
           </aside>
         )}
 

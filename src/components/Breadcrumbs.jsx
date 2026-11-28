@@ -1,18 +1,7 @@
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { data } from '../data';
+import { categories } from '../config/categories';
 import styles from './Breadcrumbs.module.css';
-
-const categoryLabels = {
-  monsters: 'Монстры',
-  spells: 'Заклинания',
-  classes: 'Классы',
-  subclasses: 'Подклассы',
-  races: 'Расы',
-  items: 'Предметы',
-  backgrounds: 'Предыстории',
-  feats: 'Черты',
-  homerules: 'Домашние правила',
-};
 
 export default function Breadcrumbs() {
   const location = useLocation();
@@ -31,7 +20,7 @@ export default function Breadcrumbs() {
 
   // Если есть категория, добавляем её
   if (category) {
-    const categoryLabel = categoryLabels[category] || category;
+    const categoryLabel = categories[category]?.label || category;
     crumbs.push({ label: categoryLabel, path: `/category/${category}` });
   }
 

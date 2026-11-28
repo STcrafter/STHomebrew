@@ -1,18 +1,6 @@
 import { Link } from 'react-router-dom';
 import styles from './Home.module.css';
-
-// Список категорий с названиями, иконками и цветами
-const categories = [
-  { id: 'monsters', label: 'Монстры', icon: '🐉', color: '#4d6bfe' },
-  { id: 'spells', label: 'Заклинания', icon: '✨', color: '#7c3aed' },
-  { id: 'classes', label: 'Классы', icon: '⚔️', color: '#ea580c' },
-  { id: 'subclasses', label: 'Подклассы', icon: '🛡️', color: '#b45309' },
-  { id: 'races', label: 'Расы', icon: '🧝', color: '#059669' },
-  { id: 'backgrounds', label: 'Предыстории', icon: '🎭', color: '#0ea5e9' }, // ← добавлено
-  { id: 'items', label: 'Предметы', icon: '🧪', color: '#d97706' },
-  { id: 'feats', label: 'Черты', icon: '💪', color: '#dc2626' },
-  { id: 'homerules', label: 'Домашние правила', icon: '📜', color: '#6366f1' },
-];
+import { categories } from '../config/categories';
 
 export default function Home() {
   return (
@@ -22,8 +10,8 @@ export default function Home() {
         <p>Выберите категорию для просмотра</p>
       </header>
       <div className={styles.grid}>
-        {categories.map((cat) => (
-          <Link to={`/category/${cat.id}`} key={cat.id} className={styles.card}>
+        {Object.entries(categories).map(([id, cat]) => (
+          <Link to={`/category/${id}`} key={id} className={styles.card}>
             <div className={styles.icon} style={{ backgroundColor: cat.color }}>
               {cat.icon}
             </div>

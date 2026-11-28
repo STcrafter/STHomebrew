@@ -5,6 +5,7 @@ import path from 'node:path';
 import { categories } from '../src/config/categories.js';
 import { constructorSchemas } from '../src/config/constructorSchemas.js';
 import { data } from '../src/data/index.js';
+import { fieldLabels as globalFieldLabels } from '../src/utils/fieldLabels.js';
 
 function readImportSpecifiers(source) {
   return [...source.matchAll(/(?:import|export)\s+(?:[^'"]*?\s+from\s+)?['"]([^'"]+)['"]/g)].map((m) => m[1]);
@@ -29,6 +30,15 @@ test('config files have no forbidden imports', () => {
         assert.ok(!resolved.includes('/src/pages'), `${file} imports pages: ${spec}`);
         assert.notEqual(spec, 'react');
       }
+    }
+  }
+});
+
+test('every configured filter field has a label', () => {
+  for (const [category, config] of Object.entries(categories)) {
+    for (const field of config.filters) {
+      const label = config.fieldLabels?.[field] ?? globalFieldLabels[field];
+      assert.ok(label, `${category}.${field} missing label`);
     }
   }
 });

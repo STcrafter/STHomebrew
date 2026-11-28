@@ -1,23 +1,6 @@
 import { useState } from 'react';
 import styles from './FilterPanel.module.css';
-
-// Словарь перевода названий полей
-const fieldLabels = {
-  habitat: 'Места обитания',
-  challenge_rating: 'Уровень опасности (ОП)',
-  category: 'Тип существа',
-  classes: 'Классы',
-  level: 'Уровень заклинания',
-  school: 'Школа магии',
-  concentration: 'Концентрация',
-  rarity: 'Редкость',
-  abilities: 'Характеристики',
-  type: 'Тип предмета',
-  tags:'Теги',
-  attunement: 'Настройка',
-  class: 'Класс',
-  ability: 'Увеличиваемая характеристика',  // ← добавляем
-};
+import { fieldLabels } from '../utils/fieldLabels';
 
 export default function FilterPanel({ options, selected = {}, onFilterChange, labels = {} }) {
   const [openSections, setOpenSections] = useState({});

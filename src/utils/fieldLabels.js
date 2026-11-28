@@ -1,0 +1,16 @@
+﻿export const fieldLabels = {
+  habitat: 'Места обитания',
+  challenge_rating: 'Уровень опасности (ОП)',
+  category: 'Тип существа',
+  classes: 'Классы',
+  level: 'Уровень заклинания',
+  school: 'Школа магии',
+  concentration: 'Концентрация',
+  rarity: 'Редкость',
+  abilities: 'Характеристики',
+  type: 'Тип предмета',
+  tags: 'Теги',
+  attunement: 'Настройка',
+  class: 'Класс',
+  ability: 'Увеличиваемая характеристика',
+};
