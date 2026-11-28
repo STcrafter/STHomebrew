@@ -1,0 +1,32 @@
+name: Checks
+
+on:
+  workflow_call:
+    inputs:
+      upload-artifact:
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+      - run: npm ci
+      - run: npm run generate-tables
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.upload-artifact }}
+        with:
+          name: dist
+          path: dist
+          retention-days: 1
