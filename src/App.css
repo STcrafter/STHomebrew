@@ -1,3 +1,12 @@
+.route-loading {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  font-size: 1.125rem;
+}
+
 .theme-toggle {
   position: fixed;
   bottom: 2rem;

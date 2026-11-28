@@ -29,7 +29,6 @@ export default defineConfig({
             return 'react-vendor';
           }
           if (id.includes('/node_modules/')) return 'vendor';
-          if (id.includes('/src/data/')) return 'data';
         },
       },
     },
