@@ -54,3 +54,41 @@ test('missing spell statblock warning is announced as an alert', async () => {
     else globalThis.localStorage = savedLocalStorage;
   }
 });
+
+test('race feature names render as bold italic, not escaped markup', async () => {
+  const savedLocalStorage = globalThis.localStorage;
+  globalThis.localStorage = { getItem: () => null, setItem: () => {} };
+  const server = await createServer({
+    appType: 'custom',
+    logLevel: 'silent',
+    server: { middlewareMode: true, watch: null },
+  });
+  try {
+    const { default: ItemDetail } = await server.ssrLoadModule('/src/pages/ItemDetail.jsx');
+    const { FavoritesProvider } = await server.ssrLoadModule('/src/context/FavoritesContext.jsx');
+    const html = renderToStaticMarkup(
+      React.createElement(
+        StaticRouter,
+        { location: '/category/races/kelpling' },
+        React.createElement(
+          FavoritesProvider,
+          null,
+          React.createElement(
+            Routes,
+            null,
+            React.createElement(Route, {
+              path: '/category/:category/:id',
+              element: React.createElement(ItemDetail),
+            })
+          )
+        )
+      )
+    );
+    assert.match(html, /<em><strong>/);
+    assert.ok(!html.includes('&lt;em&gt;'));
+  } finally {
+    await server.close();
+    if (savedLocalStorage === undefined) delete globalThis.localStorage;
+    else globalThis.localStorage = savedLocalStorage;
+  }
+});

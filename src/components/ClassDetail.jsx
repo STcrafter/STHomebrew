@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './ClassDetail.module.css';
-import { renderFormattedText, pluralizeRu } from '../utils/helpers';
+import Markdown from './Markdown';
+import { pluralizeRu } from '../utils/helpers';
 
 const columnLabels = {
   level: 'Уровень',
@@ -102,7 +103,7 @@ export default function ClassDetail({ classData }) {
                     <div key={idx} className={`${styles.featureItem} ${feature.isSubclass ? styles.subclassFeature : ''}`}>
                       <div className={styles.featureName}>{feature.name || 'Без названия'}</div>
                       <div className={styles.featureDescription}>
-                        {renderFormattedText(feature.description)}
+                        <Markdown content={feature.description} />
                       </div>
                     </div>
                   ))}
@@ -252,7 +253,7 @@ export default function ClassDetail({ classData }) {
         </div>
       )}
       <div className={styles.classDescription}>
-        {renderFormattedText(classData.description)}
+        <Markdown content={classData.description} />
       </div>
 
       <div className={styles.classStats}>
