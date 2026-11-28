@@ -56,6 +56,10 @@ test('getSortOptions returns category-specific options', () => {
   assert.deepEqual(getSortOptions('items'), [{ field: 'name', label: 'По алфавиту' }]);
 });
 
+test('getSortOptions falls back for unknown category', () => {
+  assert.deepEqual(getSortOptions('legacy_category'), [{ field: 'name', label: 'По алфавиту' }]);
+});
+
 test('toggleSortDirection', () => {
   assert.equal(toggleSortDirection('asc'), 'desc');
   assert.equal(toggleSortDirection('desc'), 'asc');

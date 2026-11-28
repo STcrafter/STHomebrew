@@ -1,18 +1,10 @@
+import { categories } from '../config/categories.js';
+
 const baseOptions = [{ field: 'name', label: 'По алфавиту' }];
 
 export function getSortOptions(category) {
-  const options = [...baseOptions];
-  if (category === 'monsters') {
-    options.push({ field: 'challenge_rating', label: 'По опасности' });
-  }
-  if (category === 'spells') {
-    options.push(
-      { field: 'level', label: 'По уровню' },
-      { field: 'school', label: 'По школе' },
-      { field: 'classes', label: 'По классу' },
-    );
-  }
-  return options;
+  const extras = categories[category]?.sort ?? [];
+  return [...baseOptions, ...extras];
 }
 
 export function toggleSortDirection(direction) {

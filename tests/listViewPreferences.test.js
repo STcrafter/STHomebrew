@@ -69,3 +69,18 @@ test('save writes JSON under the shared key and survives a reload', () => {
   assert.equal(JSON.parse(storage.data[LIST_VIEW_STORAGE_KEY]).spells.sortField, 'level');
   assert.deepEqual(loadListViewPreferences(storage), preferences);
 });
+
+test('normalize falls back to base sort for unknown categories', () => {
+  const result = normalizeListViewState({ sortField: 'level' }, 'no_such_category');
+  assert.equal(result.sortField, 'name');
+});
+
+test('load ignores stale category keys without throwing', () => {
+  const storage = fakeStorage({
+    [LIST_VIEW_STORAGE_KEY]: JSON.stringify({
+      legacy_category: { sortField: 'level', sortDirection: 'desc' },
+    }),
+  });
+  assert.doesNotThrow(() => loadListViewPreferences(storage));
+  assert.equal(loadListViewPreferences(storage).legacy_category.sortField, 'name');
+});
