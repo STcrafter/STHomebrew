@@ -319,15 +319,21 @@ export const renderFormattedFeature = (name, description) => {
     ));
   }
 
-  // Разделяем описание на абзацы, в первый подставляем название
-  const paragraphs = description.split(/\n\n+/);
-  const firstParagraph = `<em><strong>${name}.</strong></em> ${paragraphs[0]}`;
-  const rest = paragraphs.slice(1);
-  const combined = [firstParagraph, ...rest].join('\n\n');
+  // Название — настоящие React-элементы, чтобы разметка не экранировалась
+  const prefixNode = React.createElement(
+    React.Fragment,
+    null,
+    React.createElement(
+      'em',
+      null,
+      React.createElement('strong', null, `${name}.`)
+    ),
+    ' '
+  );
 
   return React.createElement(
     'div',
     { className: 'formatted-feature' },
-    ...renderFormattedText(combined)
+    ...renderFormattedText(description, prefixNode)
   );
 };

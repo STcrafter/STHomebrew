@@ -86,6 +86,21 @@ test('feature names are escaped in generated markup', async () => {
   }
 });
 
+test('feature description renders a tooltip', async () => {
+  const server = await createServer({ appType: 'custom', logLevel: 'silent', server: { middlewareMode: true } });
+  try {
+    const { renderFormattedFeature } = await server.ssrLoadModule('/src/utils/helpers.js');
+    const html = renderToStaticMarkup(
+      React.createElement('div', null, renderFormattedFeature('Название', 'Описание [tooltip: Подсказка]'))
+    );
+    assert.match(html, /<em><strong>Название\.<\/strong><\/em>/);
+    assert.match(html, /data-tip="Подсказка"/);
+    assert.ok(!html.includes('[tooltip:'));
+  } finally {
+    await server.close();
+  }
+});
+
 test('category list uses pluralization helper', () => {
   const source = read('src/pages/CategoryList.jsx');
   assert.match(source, /pluralizeRu\(/);
