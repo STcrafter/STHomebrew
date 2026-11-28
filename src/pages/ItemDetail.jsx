@@ -9,6 +9,7 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import Markdown from '../components/Markdown';
 import { pluralizeRu } from '../utils/helpers';
 import { resolveStatblocks } from '../utils/statblocks';
+import { isItemVisible } from '../utils/itemVisibility';
 
 export default function ItemDetail() {
   const { category, id } = useParams();
@@ -17,7 +18,7 @@ export default function ItemDetail() {
   const [openVariants, setOpenVariants] = useState({});
   // Навигация Prev/Next (по алфавиту)
   const sortedItems = [...items]
-    .filter(entry => entry.hidden !== true)
+    .filter(isItemVisible)
     .sort((a, b) => a.name.localeCompare(b.name));
   const currentIndex = sortedItems.findIndex(i => i.id === id);
   const prevItem = currentIndex > 0 ? sortedItems[currentIndex - 1] : null;

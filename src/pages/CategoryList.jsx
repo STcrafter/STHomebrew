@@ -11,6 +11,7 @@ import styles from './CategoryList.module.css';
 import { formatChallengeRating, getDangerColor, pluralizeRu } from '../utils/helpers';
 import { getSortOptions, sortItems, toggleSortDirection } from '../utils/sorting';
 import { defaultListViewState, loadListViewPreferences, saveListViewPreferences } from '../utils/listViewPreferences';
+import { isItemVisible } from '../utils/itemVisibility';
 
 const categoryLabels = {
   monsters: 'Монстры',
@@ -116,7 +117,7 @@ export default function CategoryList() {
   // Фильтрация и поиск
   const filteredItems = useMemo(() => {
     let result = items.filter(item => {
-      if (category === 'monsters' && item.hidden === true) return false;
+      if (!isItemVisible(item)) return false;
       if (search && !item.name.toLowerCase().includes(search.toLowerCase())) return false;
 
       for (const [key, filter] of Object.entries(filters)) {
